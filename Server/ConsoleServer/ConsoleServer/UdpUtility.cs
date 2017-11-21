@@ -19,14 +19,14 @@ namespace ConsoleServer
             Client = new UdpClient();
         }
 
-        public async Task<Received> Receive()
+        public async Task<Package> Receive()
         {
             var result = await Client.ReceiveAsync();
-            return new Received()
+            return new Package()
             {
-                _Message = Encoding.ASCII.GetString(result.Buffer, 0, result.Buffer.Length),
+                //_Message = Encoding.ASCII.GetString(result.Buffer, 0, result.Buffer.Length),
                 _Sender = result.RemoteEndPoint,
-                _Buffer = result.Buffer
+                _PackageData = result.Buffer
             };
         }
     }
@@ -36,7 +36,7 @@ namespace ConsoleServer
     {
         private IPEndPoint _listenOn;
 
-        public UdpListener() : this(new IPEndPoint(IPAddress.Any, 32123))
+        public UdpListener() : this(new IPEndPoint(IPAddress.Any, 16000))
         {
         }
 
@@ -46,10 +46,14 @@ namespace ConsoleServer
             Client = new UdpClient(_listenOn);
         }
 
-        public void Reply(string message, IPEndPoint endpoint)
+        void SendToTerminal(byte[] datagram, IPEndPoint endpoint)
         {
-            var datagram = Encoding.ASCII.GetBytes(message);
             Client.Send(datagram, datagram.Length, endpoint);
+        }
+        public void SendToTerminal(byte[] datagram, string ip , int port = 16000)
+        {
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), port);
+            Client.Send(datagram, datagram.Length, iep);
         }
 
     }

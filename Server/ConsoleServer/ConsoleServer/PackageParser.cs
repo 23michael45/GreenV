@@ -11,14 +11,12 @@ namespace ConsoleServer
     public struct Package
     {
         public IPEndPoint _Sender;
-
+        public byte[] _PackageData;
 
         public char _Cmd;
         public Int16 _Frame;
         public Int16 _Len;
         public byte[] _Data;
-
-       
 
     }
 
@@ -78,6 +76,8 @@ namespace ConsoleServer
 
             Package pkg = new Package()
             {
+                _PackageData = data,
+
                 _Cmd = cmd,
                 _Frame = frame,
                 _Len = len,
