@@ -31,6 +31,10 @@ namespace ConsoleServer
             return _PackageParser.Pack('s', 0, 'p');
         }
 
+        public byte[] SendTerminalCollect()
+        {
+            return _PackageParser.Pack('c', 0, 'p');
+        }
 
 
         #endregion
