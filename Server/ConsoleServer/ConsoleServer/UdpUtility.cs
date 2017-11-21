@@ -73,8 +73,11 @@ namespace ConsoleServer
         public void Send(string message)
         {
             var datagram = Encoding.ASCII.GetBytes(message);
+            Send(datagram);
+        }
+        public void Send(byte[] datagram)
+        {
             Client.Send(datagram, datagram.Length);
         }
-
     }
 }

@@ -154,14 +154,17 @@ namespace ConsoleServer
                 if (ret == 't')
                 {
 
+                    Console.WriteLine("ReceiveStart OK");
                 }
                 else if (ret == 'p')
                 {
 
+                    Console.WriteLine("ReceiveStop OK");
                 }
                 else if (ret == 'e')
                 {
 
+                    Console.WriteLine("ReceiveStartStop Error");
                 }
 
             }
@@ -177,10 +180,12 @@ namespace ConsoleServer
                 if (ret == 'o')
                 {
 
+                    Console.WriteLine("ReceiveCollection OK");
                 }
                 else if (ret == 'e')
                 {
 
+                    Console.WriteLine("ReceiveCollection Error");
                 }
             }
         }
@@ -192,10 +197,12 @@ namespace ConsoleServer
 
                 if (ret == 'o')
                 {
+                    Console.WriteLine("ReceiveMCU OK");
 
                 }
                 else if (ret == 'e')
                 {
+                    Console.WriteLine("ReceiveMCU Error");
 
                 }
 
@@ -211,10 +218,12 @@ namespace ConsoleServer
                 if (ret == 'o')
                 {
 
+                    Console.WriteLine("ReceiveMCUData OK");
                 }
                 else if (ret == 'e')
                 {
 
+                    Console.WriteLine("ReceiveMCUData Error");
                 }
 
 
@@ -235,6 +244,7 @@ namespace ConsoleServer
             }
 
 
+            Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
 
         }
         #endregion

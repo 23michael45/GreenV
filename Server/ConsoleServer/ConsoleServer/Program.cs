@@ -121,7 +121,7 @@ namespace ConsoleServer
         static void StartUdpClient()
         {
             //create a new client
-            _Client = UdpUser.ConnectTo("127.0.0.1", 32123);
+            _Client = UdpUser.ConnectTo("127.0.0.1", 16000);
 
             //wait for reply messages from server and send them to console 
             Task.Factory.StartNew(async () =>
@@ -150,13 +150,39 @@ namespace ConsoleServer
                 do
                 {
                     read = Console.ReadLine();
-                    _Client.Send(read);
+                    if(read == "sim")
+                    {
+                        _Client.Send(DebugPackageData());
+                    }
+
                 } while (read != "quit");
 
                 _bQuit = true;
             });
 
            
+        }
+
+
+        static byte[] DebugPackageData()
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryWriter w = new BinaryWriter(ms);
+
+            char cmd = 'T';
+            Int16 frame = 0;
+            Int16 len = 0;
+
+            ms.Seek(0, SeekOrigin.Begin);
+            w.Write(cmd);
+            w.Write(frame);
+            w.Write(len);
+
+
+            ms.Seek(0, SeekOrigin.Begin);
+
+            byte[] buffer = ms.GetBuffer();
+            return buffer;
         }
     }
 }
