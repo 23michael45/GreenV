@@ -11,9 +11,14 @@ namespace ConsoleServer
     {
         PackageParser _PackageParser;
 
+
+        static MySqlConnector _MySqlConnector = new MySqlConnector();
+
+
         public CommandParser()
         {
             _PackageParser = new PackageParser();
+            _MySqlConnector.Connect();
         }
         
 
@@ -86,9 +91,12 @@ namespace ConsoleServer
 
         #region Receive Cmd
 
-        public void ReceiveData(byte[] receiveddata)
+        public void ReceiveData(Package pkg)
         {
-            if(receiveddata .Length >= 5)
+            byte[] receiveddata = pkg._PackageData;
+            string ip = pkg._Sender.Address.ToString();
+
+            if (receiveddata .Length >= 5)
             {
 
                 MemoryStream stream = new MemoryStream(receiveddata);
@@ -124,7 +132,7 @@ namespace ConsoleServer
                 else if (cmd == 'A')
                 {
 
-                    ReceiveSensorData(datalen, reader);
+                    ReceiveSensorData(datalen, reader,ip);
                 }
 
 
@@ -230,7 +238,7 @@ namespace ConsoleServer
             }
         }
 
-        void ReceiveSensorData(int len, BinaryReader reader)
+        void ReceiveSensorData(int len, BinaryReader reader,string ip )
         {
 
             int timestamps = reader.ReadInt32();
@@ -241,6 +249,13 @@ namespace ConsoleServer
             for(int i = 0;i < len - 12;i += 2)//每次处理4个字节
             {
                 Int16 advalue = reader.ReadInt16();
+
+
+                if(_MySqlConnector != null)
+                {
+                    _MySqlConnector.Insert(ip, timestampms, advalue);
+
+                }
             }
 
 

@@ -26,6 +26,7 @@ namespace ConsoleServer
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                mConnection = null;
             }
 
         }
@@ -60,7 +61,11 @@ namespace ConsoleServer
 
             MySqlCommand cmd = new MySqlCommand(sql, mConnection);
             cmd.ExecuteNonQuery();
-            
+
+
+
+            Console.WriteLine(string.Format("Insert SensorData : {0} {1} {2} ") ,dv,timestamp,data);
+
         }
 
     }

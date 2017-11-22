@@ -16,7 +16,6 @@ namespace ConsoleServer
         static UdpListener _Server;
         static UdpUser _Client;
 
-        static MySqlConnector _MySqlConnector = new MySqlConnector();
 
         static void Main(string[] args)
         {
@@ -28,9 +27,6 @@ namespace ConsoleServer
 
 
             StartUdpServer();
-
-            _MySqlConnector.Connect();
-            _MySqlConnector.Insert("102.178.2.3", 19398, 342);
 
             while (!_bQuit)
             {
@@ -118,7 +114,7 @@ namespace ConsoleServer
                 while (true)
                 {
                     var received = await _Server.Receive();
-                    _CmdParser.ReceiveData(received._PackageData);
+                    _CmdParser.ReceiveData(received);
                 }
             });
 
