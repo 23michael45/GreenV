@@ -14,6 +14,8 @@ namespace ConsoleServer
     {
         protected UdpClient Client;
 
+        protected int _Port = 16000;
+
         protected UdpBase()
         {
             Client = new UdpClient();
@@ -35,13 +37,10 @@ namespace ConsoleServer
     class UdpListener : UdpBase
     {
         private IPEndPoint _listenOn;
-
-        public UdpListener() : this(new IPEndPoint(IPAddress.Any, 16000))
+        
+        public UdpListener()
         {
-        }
-
-        public UdpListener(IPEndPoint endpoint)
-        {
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, _Port);
             _listenOn = endpoint;
             Client = new UdpClient(_listenOn);
         }
@@ -50,9 +49,9 @@ namespace ConsoleServer
         {
             Client.Send(datagram, datagram.Length, endpoint);
         }
-        public void SendToTerminal(byte[] datagram, string ip , int port = 16000)
+        public void SendToTerminal(byte[] datagram, string ip )
         {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), port);
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _Port);
             Client.Send(datagram, datagram.Length, iep);
         }
 
