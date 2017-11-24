@@ -14,7 +14,7 @@ namespace ConsoleServer
     {
         protected UdpClient Client;
 
-        protected int _Port = 16000;
+        protected int _Port = 5000;
 
         protected UdpBase()
         {

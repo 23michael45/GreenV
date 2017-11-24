@@ -131,7 +131,7 @@ namespace ConsoleServer
         static void StartUdpClient()
         {
             //create a new client
-            _Client = UdpUser.ConnectTo("127.0.0.1", 16000);
+            _Client = UdpUser.ConnectTo("127.0.0.1", 5000);
 
             //wait for reply messages from server and send them to console 
             Task.Factory.StartNew(async () =>
