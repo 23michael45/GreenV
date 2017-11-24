@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LitJson;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -17,12 +18,12 @@ namespace ConsoleServer
         static UdpUser _Client;
 
 
+
         static void Main(string[] args)
         {
-           
-            if(args[0] == "simulateclient")
+            if (args[0] == "simulateclient")
             {
-                StartUdpClient();
+                //StartUdpClient();
             }
 
 
@@ -91,9 +92,25 @@ namespace ConsoleServer
             }
            
         }
-
+        public static void SendToWeb(byte[] data)
+        {
+            int len = 0;
+            if (data != null)
+            {
+                len = data.Length;
+            }
+            _Server.SendToWeb(data);
+            Console.WriteLine(string.Format("SendToWeb: Len:{0}", len));
+        }
         public static void SendToTerminal(byte[] data,string ip)
         {
+            int len = 0;
+            if(data !=null)
+            {
+                len = data.Length;
+            }
+
+            Console.WriteLine(string.Format("SendToTerminal: {0}  Len:{1}", ip, len));
             _Server.SendToTerminal(data, ip);
         }
 
@@ -162,7 +179,7 @@ namespace ConsoleServer
                     read = Console.ReadLine();
                     if(read == "sim")
                     {
-                        _Client.Send(DebugPackageData());
+                        _Client.Send(DebugPackageJsonData());
                     }
 
                 } while (read != "quit");
@@ -173,7 +190,17 @@ namespace ConsoleServer
            
         }
 
+        static byte[] DebugPackageJsonData()
+        {
+            JsonData inputdata = new JsonData();
+            inputdata["cmd"] = "check";
+            inputdata["ip"] = "192.168.1.1";
 
+            string inputjsonstr = inputdata.ToJson();
+            byte[] bytedata = ASCIIEncoding.ASCII.GetBytes(inputjsonstr);
+            return bytedata;
+            
+        }
         static byte[] DebugPackageData()
         {
             MemoryStream ms = new MemoryStream();

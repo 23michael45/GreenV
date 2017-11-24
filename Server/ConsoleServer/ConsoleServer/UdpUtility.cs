@@ -14,7 +14,8 @@ namespace ConsoleServer
     {
         protected UdpClient Client;
 
-        protected int _Port = 5000;
+        protected int _TerminalPort = 5000;
+        protected int _WebPort = 6000;
 
         protected UdpBase()
         {
@@ -40,18 +41,20 @@ namespace ConsoleServer
         
         public UdpListener()
         {
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, _Port);
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, _TerminalPort);
             _listenOn = endpoint;
             Client = new UdpClient(_listenOn);
         }
 
-        void SendToTerminal(byte[] datagram, IPEndPoint endpoint)
+      
+        public  void SendToWeb(byte[] datagram)
         {
-            Client.Send(datagram, datagram.Length, endpoint);
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
+            Client.Send(datagram, datagram.Length, iep);
         }
         public void SendToTerminal(byte[] datagram, string ip )
         {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _Port);
+            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _TerminalPort);
             Client.Send(datagram, datagram.Length, iep);
         }
 

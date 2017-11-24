@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime;
+using LitJson;
 
 namespace ConsoleServer
 {
@@ -20,14 +22,178 @@ namespace ConsoleServer
             _PackageParser = new PackageParser();
             _MySqlConnector.Connect();
         }
-        
 
-        #region Send Cmd
+
+
+        #region Send Cmd Trunk
+
+
+        byte[] SendCmdBase(char cmd, Int16 framecount, byte[] data = null)
+        {
+            int len = 0;
+            if (data != null)
+            {
+                len = data.Length;
+            }
+            return _PackageParser.Pack(cmd, framecount, len, data);
+        }
+
+        byte[] SendCmdJson(string cmd,string ip,string code)
+        {
+            JsonData inputdata = new JsonData();
+            inputdata["cmd"] = cmd;
+            inputdata["ip"] =  ip;
+            inputdata["code"] = code;
+
+            string inputjsonstr = inputdata.ToJson();
+            byte[] bytedata = ASCIIEncoding.ASCII.GetBytes(inputjsonstr);
+            return bytedata;
+        }
+
+        #endregion
+        #region Receive Cmd Trunk
+
+        void ParseJsonFromWeb(byte[] receiveddata)
+        {
+            try
+            {
+                ASCIIEncoding encoding = new ASCIIEncoding();
+
+
+                string jsonstr = encoding.GetString(receiveddata);
+
+                JsonData outputdata = JsonMapper.ToObject(jsonstr);
+
+                string cmd = outputdata["cmd"].ToString();
+
+                if (cmd == "check")
+                {
+                    string ip = outputdata["ip"].ToString();
+                    Program.SendToTerminal(SendCheck(), ip);
+
+                    Program.SendToWeb(SendCmdJson("checkrsp", ip, "ok"));
+                }
+                else if (cmd == "startstop")
+                {
+                    string ip = outputdata["ip"].ToString();
+                    bool b = Convert.ToBoolean(outputdata["isstart"].ToString());
+                    Program.SendToTerminal(SendStartStop(b), ip);
+
+                }
+                else if (cmd == "collection")
+                {
+                    string ip = outputdata["ip"].ToString();
+                    short n = Convert.ToInt16(outputdata["n"].ToString());
+                    short m = Convert.ToInt16(outputdata["m"].ToString());
+                    Program.SendToTerminal(SendCollect(n,m), ip);
+
+                }
+                else if (cmd == "mcu")
+                {
+                    string ip = outputdata["ip"].ToString();
+                    int x = Convert.ToInt32(outputdata["x"].ToString());
+                    Program.SendToTerminal(SendMCU(x), ip);
+
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+        }
+
+        void ParseByteFormTerminal(byte[] receiveddata,string ip)
+        {
+            if (receiveddata.Length >= 5)
+            {
+
+                MemoryStream stream = new MemoryStream(receiveddata);
+                BinaryReader reader = new BinaryReader(stream);
+                char cmd = (char)reader.ReadByte();
+                Int16 framecount = reader.ReadInt16();
+                Int16 datalen = reader.ReadInt16();
+                byte[] data = reader.ReadBytes(datalen);
+
+                if (cmd == 'T')
+                {
+                    ReceiveCheck(datalen, reader, ip);
+                }
+                else if (cmd == 'S')
+                {
+                    ReceiveStartStop(datalen, reader, ip);
+                }
+                else if (cmd == 'C')
+                {
+
+                    ReceiveCollection(datalen, reader, ip);
+                }
+                else if (cmd == 'U')
+                {
+
+                    ReceiveMCU(datalen, reader, ip);
+                }
+                else if (cmd == 'D')
+                {
+                    ReceiveMCUData(datalen, reader, ip);
+
+                }
+                else if (cmd == 'a')
+                {
+
+                    ReceiveSensorData(datalen, reader, ip);
+                }
+            }
+            else
+            {
+
+                Console.WriteLine("ReceiveData Empty");
+            }
+
+        }
+
+        public void ReceiveData(Package pkg)
+        {
+            byte[] receiveddata = pkg._PackageData;
+            string ip = pkg._Sender.Address.ToString();
+
+            if (ip == "127.0.0.1")
+            {
+                try
+                {
+
+                    ParseJsonFromWeb(receiveddata);
+                }
+                catch(Exception ex)
+                {
+
+                    ParseByteFormTerminal(receiveddata, ip);
+                }
+
+            }
+            else
+            {
+                ParseByteFormTerminal(receiveddata,ip);
+
+            }
+
+
+
+        }
+
+        #endregion
+
+
+        #region Send Cmd To Terminal
 
         public byte[] SendCheck()
         {
             return SendCmdBase('t', 0);
         }
+
         public byte[] SendStartStop(bool bstart)
         {
             MemoryStream stream = new MemoryStream();
@@ -60,7 +226,6 @@ namespace ConsoleServer
             return SendCmdBase('c', 0, data);
         }
 
-
         public byte[] SendMCU(int x)
         {
             MemoryStream stream = new MemoryStream();
@@ -72,7 +237,6 @@ namespace ConsoleServer
 
             return SendCmdBase('u', 0, data);
         }
-
 
         public byte[] SendMCUData(byte[] filedata)
         {
@@ -88,78 +252,26 @@ namespace ConsoleServer
             return SendCmdBase('u', 0, data);
         }
 
-
         public byte[] SendSensorDataRsp()
         {
             return SendCmdBase('A', 0);
         }
         #endregion
 
-        #region Receive Cmd
-
-        public void ReceiveData(Package pkg)
-        {
-            byte[] receiveddata = pkg._PackageData;
-            string ip = pkg._Sender.Address.ToString();
-
-            if (receiveddata .Length >= 5)
-            {
-
-                MemoryStream stream = new MemoryStream(receiveddata);
-                BinaryReader reader = new BinaryReader(stream);
-                char cmd = (char)reader.ReadByte();
-                Int16 framecount = reader.ReadInt16();
-                Int16 datalen = reader.ReadInt16();
-                byte[] data = reader.ReadBytes(datalen);
-
-                if (cmd == 'T')
-                {
-                    ReceiveCheck(datalen, reader);
-                }
-                else if (cmd == 'S')
-                {
-                    ReceiveStartStop(datalen, reader);
-                }
-                else if (cmd == 'C')
-                {
-
-                    ReceiveCollection(datalen, reader);
-                }
-                else if (cmd == 'U')
-                {
-
-                    ReceiveMCU(datalen, reader);
-                }
-                else if (cmd == 'D')
-                {
-                    ReceiveMCUData(datalen, reader);
-
-                }
-                else if (cmd == 'a')
-                {
-
-                    ReceiveSensorData(datalen, reader,ip);
-                }
 
 
 
+        #region Receive Cmd FromTerminal
+        
 
-
-            }
-            else
-            {
-
-                Console.WriteLine("ReceiveData Empty");
-            }
-        }
-
-
-        void ReceiveCheck(int len, BinaryReader reader)
+        void ReceiveCheck(int len, BinaryReader reader,string ip)
         {
             Console.WriteLine("ReceiveCheck OK");
 
+            Program.SendToWeb(SendCmdJson("check", ip, "ok"));
         }
-        void ReceiveStartStop(int len, BinaryReader reader)
+
+        void ReceiveStartStop(int len, BinaryReader reader, string ip)
         {
             if(len == 1)
             {
@@ -169,23 +281,27 @@ namespace ConsoleServer
                 {
 
                     Console.WriteLine("ReceiveStart OK");
+
+                    Program.SendToWeb(SendCmdJson("startstop", ip, "startok"));
                 }
                 else if (ret == 'p')
                 {
 
                     Console.WriteLine("ReceiveStop OK");
+                    Program.SendToWeb(SendCmdJson("startstop", ip, "stopok"));
                 }
                 else if (ret == 'e')
                 {
 
                     Console.WriteLine("ReceiveStartStop Error");
+                    Program.SendToWeb(SendCmdJson("startstop", ip, "error"));
                 }
 
             }
 
         }
 
-        void ReceiveCollection(int len, BinaryReader reader)
+        void ReceiveCollection(int len, BinaryReader reader, string ip)
         {
             if (len == 1)
             {
@@ -195,15 +311,17 @@ namespace ConsoleServer
                 {
 
                     Console.WriteLine("ReceiveCollection OK");
+                    Program.SendToWeb(SendCmdJson("collection", ip, "ok"));
                 }
                 else if (ret == 'e')
                 {
 
                     Console.WriteLine("ReceiveCollection Error");
+                    Program.SendToWeb(SendCmdJson("collection", ip, "error"));
                 }
             }
         }
-        void ReceiveMCU(int len, BinaryReader reader)
+        void ReceiveMCU(int len, BinaryReader reader, string ip)
         {
             if (len == 1)
             {
@@ -212,18 +330,20 @@ namespace ConsoleServer
                 if (ret == 'o')
                 {
                     Console.WriteLine("ReceiveMCU OK");
+                    Program.SendToWeb(SendCmdJson("mcu", ip, "ok"));
 
                 }
                 else if (ret == 'e')
                 {
                     Console.WriteLine("ReceiveMCU Error");
+                    Program.SendToWeb(SendCmdJson("mcu", ip, "error"));
 
                 }
 
 
             }
         }
-        void ReceiveMCUData(int len, BinaryReader reader)
+        void ReceiveMCUData(int len, BinaryReader reader, string ip)
         {
             if (len == 1)
             {
@@ -273,15 +393,5 @@ namespace ConsoleServer
         #endregion
 
 
-        byte[] SendCmdBase(char cmd,Int16 framecount,byte[] data = null)
-        {
-            return _PackageParser.Pack(cmd, framecount, data.Length, data);
-        }
-
-        void ReceiveCmdBase(BinaryReader reader)
-        {
-
-
-        }
     }
 }
