@@ -13,9 +13,6 @@ import time
 
 def home(request):
 	
-
-	
-	Name_Test.objects.create(Name='小明', Age='11')
 	
 	"""Renders the home page."""
 	assert isinstance(request, HttpRequest)

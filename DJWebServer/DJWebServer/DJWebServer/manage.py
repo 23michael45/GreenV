@@ -18,6 +18,11 @@ if __name__ == "__main__":
         "DJANGO_SETTINGS_MODULE",
         "DJWebServer.settings"
     )
+	
+
+	
+	Name_Test.objects.create(Name='小明', Age='11')
+
 	udp = UdpControl()
 	udp.ConnectUdp()
 	udp.SendCheck('192.168.1.1')
