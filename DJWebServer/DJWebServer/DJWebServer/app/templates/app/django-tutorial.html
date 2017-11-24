@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    {% load static %}  
+    <script src="{% static 'app/scripts/jquery-1.10.2.min.js' %} "></script>
+
+     <link rel="stylesheet" href="{% static 'content/bootstrap.min.css' %}">
+
+    <script type="text/javascript">
+
+
+        function doajax(){       //给按钮的点击效果，绑定一个事件
+
+        var id=document.getElementById('name').value //获取输入框的值
+        //alert("yeah!");
+		$.ajax({                    //调用ajax
+		url:"{% url "asktime" %}",  //发出请求的地址
+        data:{paramname:id},
+		success:function(result){$("#ask").html(result);} // 服务器成功响应后，绑定的事件
+		});
+
+        
+        setTimeout("doajax();", 1000);  //设置为每1s刷新1次
+	}
+$(document).ready(function(){               //元素加载完成之后，绑定事件 
+	$("button").click(doajax);
+});
+
+        setTimeout("doajax();", 1000);  //设置为每1s刷新1次
+
+ </script>
+</head>
+<body>
+    <h1>确定打开吗？</h1> 
+    <form action="click/" method="get"> 
+         <p>姓名：<input type="text" name="name1"></p>
+         <input type="submit" value="确定">
+    </form>
+    <input type="text" id='name'> //增加一个名字的输入框
+    <div id="ask"><h2>现在几点了？</h2></div>
+    <button>询问</button>
+</body>
+</html>
