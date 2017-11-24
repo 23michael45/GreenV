@@ -82,10 +82,19 @@ namespace ConsoleServer
                     _Server.SendToTerminal(_CmdParser.SendMCUData(bytes), ip);
 
                 }
+                else if (cmd == "A")
+                {
+                    _Server.SendToTerminal(_CmdParser.SendSensorDataRsp(), ip);
 
+                }
 
             }
            
+        }
+
+        public static void SendToTerminal(byte[] data,string ip)
+        {
+            _Server.SendToTerminal(data, ip);
         }
 
         static string ParseConsoleLine(string s,int index)

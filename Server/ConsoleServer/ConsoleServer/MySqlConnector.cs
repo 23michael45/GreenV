@@ -29,6 +29,7 @@ namespace ConsoleServer
                 mConnection = null;
             }
 
+            Insert("192.168.1.110", 94382739, 684);
         }
 
         public void Close()
@@ -57,14 +58,22 @@ namespace ConsoleServer
 
         public void Insert(string dv,int timestamp,int data)
         {
-            string sql = string.Format("INSERT INTO sensordata (device,timestamp,sensorvalue) VALUES ('{0}',{1},{2})",dv,timestamp,data);
+            try
+            {
+                string sql = string.Format("INSERT INTO app_sensordata (device,timestamp,sensorvalue) VALUES ('{0}',{1},{2})", dv, timestamp, data);
 
-            MySqlCommand cmd = new MySqlCommand(sql, mConnection);
-            cmd.ExecuteNonQuery();
+                MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+                cmd.ExecuteNonQuery();
 
 
 
-            Console.WriteLine(string.Format("Insert SensorData : {0} {1} {2} ") ,dv,timestamp,data);
+                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} ", dv, timestamp, data));
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
         }
 

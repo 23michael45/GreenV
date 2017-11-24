@@ -87,6 +87,12 @@ namespace ConsoleServer
 
             return SendCmdBase('u', 0, data);
         }
+
+
+        public byte[] SendSensorDataRsp()
+        {
+            return SendCmdBase('A', 0);
+        }
         #endregion
 
         #region Receive Cmd
@@ -129,7 +135,7 @@ namespace ConsoleServer
                     ReceiveMCUData(datalen, reader);
 
                 }
-                else if (cmd == 'A')
+                else if (cmd == 'a')
                 {
 
                     ReceiveSensorData(datalen, reader,ip);
@@ -260,6 +266,8 @@ namespace ConsoleServer
 
 
             Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
+
+            Program.SendToTerminal(SendSensorDataRsp(), ip);
 
         }
         #endregion
