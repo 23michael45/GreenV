@@ -39,7 +39,7 @@ namespace ConsoleServer
 
         }
 
-        public byte[] Pack(char cmd, int frame, int len, byte[] data = null)
+        public byte[] Pack(char cmd, short frame, short len, byte[] data = null)
         {
             BinaryWriter writer = BeginWriting();
             writer.Write(cmd);

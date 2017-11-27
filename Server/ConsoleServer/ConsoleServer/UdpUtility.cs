@@ -38,26 +38,42 @@ namespace ConsoleServer
     class UdpListener : UdpBase
     {
         private IPEndPoint _listenOn;
-        
+
+        UdpClient _SendClient;
         public UdpListener()
         {
             IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, _TerminalPort);
             _listenOn = endpoint;
             Client = new UdpClient(_listenOn);
+            _SendClient = new UdpClient();
         }
 
       
         public  void SendToWeb(byte[] datagram)
         {
             IPEndPoint iep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
-            Client.Send(datagram, datagram.Length, iep);
+            
+            _SendClient.Send(datagram, datagram.Length, iep);
+
+            Console.WriteLine(string.Format("Send To SendToWeb Data Length: {0}", datagram.Length));
+
         }
         public void SendToTerminal(byte[] datagram, string ip )
         {
             IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _TerminalPort);
-            Client.Send(datagram, datagram.Length, iep);
 
-            Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", ip, datagram.Length));
+            try
+            {
+                
+                _SendClient.Send(datagram, datagram.Length, iep);
+             
+
+                Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", ip, datagram.Length));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
     }

@@ -24,16 +24,18 @@ namespace ConsoleServer
         }
 
 
+        int _CurrentMCUFrame = 0;
+        byte[] _MCUFiledata;
 
         #region Send Cmd Trunk
 
 
         byte[] SendCmdBase(char cmd, Int16 framecount, byte[] data = null)
         {
-            int len = 0;
+            short len = 0;
             if (data != null)
             {
-                len = data.Length;
+                len = (short)data.Length;
             }
             return _PackageParser.Pack(cmd, framecount, len, data);
         }
@@ -91,8 +93,8 @@ namespace ConsoleServer
                 else if (cmd == "mcu")
                 {
                     string ip = outputdata["ip"].ToString();
-                    int x = Convert.ToInt32(outputdata["x"].ToString());
-                    Program.SendToTerminal(SendMCU(x), ip);
+                    string binpath = outputdata["binpath"].ToString();
+                    Program.SendToTerminal(SendMCU(binpath), ip);
 
                 }
 
@@ -116,7 +118,7 @@ namespace ConsoleServer
                 char cmd = (char)reader.ReadByte();
                 Int16 framecount = reader.ReadInt16();
                 Int16 datalen = reader.ReadInt16();
-                byte[] data = reader.ReadBytes(datalen);
+                //byte[] data = reader.ReadBytes(datalen);
 
                 if (cmd == 'T')
                 {
@@ -146,6 +148,11 @@ namespace ConsoleServer
 
                     ReceiveSensorData(datalen, reader, ip);
                 }
+                else if (cmd == 'm')
+                {
+
+                    ReceiveMessage(datalen, reader, ip);
+                }
             }
             else
             {
@@ -157,8 +164,12 @@ namespace ConsoleServer
 
         public void ReceiveData(Package pkg)
         {
+
             byte[] receiveddata = pkg._PackageData;
             string ip = pkg._Sender.Address.ToString();
+
+
+            Console.WriteLine(string.Format("Socket ReceiveData Length: {0} ip: {1}", receiveddata.Length, ip));
 
             if (ip == "127.0.0.1")
             {
@@ -209,7 +220,12 @@ namespace ConsoleServer
 
             }
             stream.Seek(0, SeekOrigin.Begin);
-            return SendCmdBase('s', 0, stream.GetBuffer());
+
+
+            byte[] buffer = new byte[stream.Length];
+            Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
+
+            return SendCmdBase('s', 0, buffer);
         }
 
         public byte[] SendCollect(Int16 n, Int16 m)
@@ -221,40 +237,61 @@ namespace ConsoleServer
             writer.Write(m);
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] data = stream.GetBuffer();
 
-            return SendCmdBase('c', 0, data);
+            byte[] buffer = new byte[stream.Length];
+            Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
+
+            return SendCmdBase('c', 0, buffer);
         }
 
-        public byte[] SendMCU(int x)
+        public byte[] SendMCU(string path)
         {
+            FileStream fs = File.Open(path, FileMode.Open);
+            long len = fs.Length;
+
+            byte[] bytes = new byte[fs.Length];
+            fs.Read(bytes, 0, bytes.Length);
+            fs.Seek(0, SeekOrigin.Begin);
+
+            _MCUFiledata = bytes;
+
+            int x = (int)fs.Length;
+
+
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
             writer.Write(x);
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] data = stream.GetBuffer();
+            byte[] buffer = new byte[stream.Length];
+            Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-            return SendCmdBase('u', 0, data);
+            return SendCmdBase('u', 0, buffer);
         }
 
-        public byte[] SendMCUData(byte[] filedata)
+        public byte[] SendMCUData()
         {
-            MemoryStream stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
+            int fileframelen = 1200;
 
-            writer.Write(filedata.Length);
-            writer.Write(filedata);
-            stream.Seek(0, SeekOrigin.Begin);
+            byte[] buffer = new byte[fileframelen];
+            int dataleftlen = _MCUFiledata.Length - _CurrentMCUFrame * fileframelen;
+            dataleftlen = Math.Min(dataleftlen, fileframelen);
 
-            byte[] data = stream.GetBuffer();
 
-            return SendCmdBase('u', 0, data);
+            Buffer.BlockCopy(_MCUFiledata, _CurrentMCUFrame * fileframelen, buffer, 0, dataleftlen);
+
+            return SendCmdBase('d', (short)_CurrentMCUFrame, buffer);
         }
 
         public byte[] SendSensorDataRsp()
         {
             return SendCmdBase('A', 0);
+        }
+
+
+        public byte[] SendMessageRsp()
+        {
+            return SendCmdBase('M', 0);
         }
         #endregion
 
@@ -262,7 +299,7 @@ namespace ConsoleServer
 
 
         #region Receive Cmd FromTerminal
-        
+
 
         void ReceiveCheck(int len, BinaryReader reader,string ip)
         {
@@ -275,7 +312,9 @@ namespace ConsoleServer
         {
             if(len == 1)
             {
-                char ret = (char)reader.ReadByte();
+                byte bytedata = reader.ReadByte();
+
+                char ret = (char)bytedata;
 
                 if (ret == 't')
                 {
@@ -332,6 +371,10 @@ namespace ConsoleServer
                     Console.WriteLine("ReceiveMCU OK");
                     Program.SendToWeb(SendCmdJson("mcu", ip, "ok"));
 
+                    _CurrentMCUFrame = 0;
+
+                    SendMCUData();
+
                 }
                 else if (ret == 'e')
                 {
@@ -351,13 +394,22 @@ namespace ConsoleServer
 
                 if (ret == 'o')
                 {
+                    _CurrentMCUFrame++;
+                    SendMCUData();
 
-                    Console.WriteLine("ReceiveMCUData OK");
+                    Console.WriteLine("ReceiveMCUData Frame OK");
                 }
                 else if (ret == 'e')
                 {
+                    _CurrentMCUFrame = 0;
 
                     Console.WriteLine("ReceiveMCUData Error");
+                }
+                else if (ret == 'c')
+                {
+
+                    _CurrentMCUFrame = 0;
+                    Console.WriteLine("ReceiveMCUData All OK");
                 }
 
 
@@ -388,6 +440,15 @@ namespace ConsoleServer
             Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
 
             Program.SendToTerminal(SendSensorDataRsp(), ip);
+
+        }
+
+
+        void ReceiveMessage(int len, BinaryReader reader, string ip)
+        {
+
+            Console.WriteLine("ReceiveMessage OK");
+            Program.SendToTerminal(SendMessageRsp(), ip);
 
         }
         #endregion

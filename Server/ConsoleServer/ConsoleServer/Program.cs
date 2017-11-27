@@ -17,6 +17,7 @@ namespace ConsoleServer
         static UdpListener _Server;
         static UdpUser _Client;
 
+        static string _MCUFilePath = @"D:\DevelopProj\GreenV\Document\STM32F107_PTP.bin";
 
 
         static void Main(string[] args)
@@ -68,21 +69,9 @@ namespace ConsoleServer
                 }
                 else if (cmd == "u")
                 {
-                    string path = ParseConsoleLine(s, 2);
-                    FileStream fs = File.Open(path, FileMode.Open);
-                    long len = fs.Length;
-                    _Server.SendToTerminal(_CmdParser.SendMCU((int)len), ip);
+                    string path = ParseConsoleLine(s, 2);              
 
-                }
-                else if (cmd == "d")
-                {
-                    string path = ParseConsoleLine(s, 2); FileStream fs = File.Open(path, FileMode.Open);
-
-                    byte[] bytes = new byte[fs.Length];
-                    fs.Read(bytes, 0, bytes.Length);
-                    fs.Seek(0, SeekOrigin.Begin);
-
-                    _Server.SendToTerminal(_CmdParser.SendMCUData(bytes), ip);
+                    _Server.SendToTerminal(_CmdParser.SendMCU(path), ip);
 
                 }
                 else if (cmd == "A")
