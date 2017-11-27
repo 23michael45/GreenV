@@ -50,9 +50,12 @@ namespace ConsoleServer
                 writer.Write(data);
 
             }
-            EndWriting();
+            int streamlen = EndWriting();
 
-            byte[]  buffer = mStream.GetBuffer();
+            byte[] buffer = new byte[streamlen];
+
+            Buffer.BlockCopy(mStream.GetBuffer(), 0, buffer, 0, streamlen);
+            
             return buffer;
         }
         public Package Unpack(byte[] data)

@@ -21,10 +21,10 @@ namespace ConsoleServer
 
         static void Main(string[] args)
         {
-            if (args[0] == "simulateclient")
-            {
+            //if (args[0] == "simulateclient")
+            //{
                 //StartUdpClient();
-            }
+            //}
 
 
             StartUdpServer();
@@ -36,6 +36,7 @@ namespace ConsoleServer
 
                 string cmd = ParseConsoleLine(s, 0);
                 string ip = ParseConsoleLine(s, 1);
+                string param = ParseConsoleLine(s, 2);
 
                 if (cmd == "quit")
                 {
@@ -47,11 +48,11 @@ namespace ConsoleServer
                 }
                 else if (cmd == "s")
                 {
-                    if(s.EndsWith("t"))
+                    if(param == "t")
                     {
                         _Server.SendToTerminal(_CmdParser.SendStartStop(true),ip);
                     }
-                    else if (s.EndsWith("p"))
+                    else if (param == "p")
                     {
 
                         _Server.SendToTerminal(_CmdParser.SendStartStop(false), ip);
@@ -80,6 +81,7 @@ namespace ConsoleServer
                     byte[] bytes = new byte[fs.Length];
                     fs.Read(bytes, 0, bytes.Length);
                     fs.Seek(0, SeekOrigin.Begin);
+
                     _Server.SendToTerminal(_CmdParser.SendMCUData(bytes), ip);
 
                 }
@@ -134,6 +136,8 @@ namespace ConsoleServer
             //create a new server
             _Server = new UdpListener();
 
+
+            Console.WriteLine("Init UDP Server OK , Start Receiving");
             //start listening for messages and copy the messages back to the client
             Task.Factory.StartNew(async () =>
             {
@@ -149,7 +153,6 @@ namespace ConsoleServer
         {
             //create a new client
             _Client = UdpUser.ConnectTo("127.0.0.1", 5000);
-
             //wait for reply messages from server and send them to console 
             Task.Factory.StartNew(async () =>
             {
@@ -170,22 +173,22 @@ namespace ConsoleServer
             });
 
 
-            Task.Factory.StartNew(async () =>
-            {
-                //type ahead :-)
-                string read;
-                do
-                {
-                    read = Console.ReadLine();
-                    if(read == "sim")
-                    {
-                        _Client.Send(DebugPackageJsonData());
-                    }
+            //Task.Factory.StartNew(async () =>
+            //{
+            //    //type ahead :-)
+            //    string read;
+            //    do
+            //    {
+            //        read = Console.ReadLine();
+            //        if(read == "sim")
+            //        {
+            //            _Client.Send(DebugPackageJsonData());
+            //        }
 
-                } while (read != "quit");
+            //    } while (read != "quit");
 
-                _bQuit = true;
-            });
+            //    _bQuit = true;
+            //});
 
            
         }

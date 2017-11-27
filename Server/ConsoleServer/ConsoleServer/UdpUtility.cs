@@ -56,6 +56,8 @@ namespace ConsoleServer
         {
             IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _TerminalPort);
             Client.Send(datagram, datagram.Length, iep);
+
+            Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", ip, datagram.Length));
         }
 
     }
