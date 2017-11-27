@@ -381,7 +381,7 @@ namespace ConsoleServer
 
                     _CurrentMCUFrame = 0;
 
-                    SendMCUData();
+                    Program.SendToTerminal(SendMCUData(), ip);
 
                 }
                 else if (ret == 'e')
@@ -403,7 +403,8 @@ namespace ConsoleServer
                 if (ret == 'o')
                 {
                     _CurrentMCUFrame++;
-                    SendMCUData();
+
+                    Program.SendToTerminal(SendMCUData(), ip);
 
                     Console.WriteLine("ReceiveMCUData Frame OK");
                 }
