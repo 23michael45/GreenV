@@ -246,27 +246,35 @@ namespace ConsoleServer
 
         public byte[] SendMCU(string path)
         {
-            FileStream fs = File.Open(path, FileMode.Open);
-            long len = fs.Length;
+            try
+            {
+                FileStream fs = File.Open(path, FileMode.Open);
+                long len = fs.Length;
 
-            byte[] bytes = new byte[fs.Length];
-            fs.Read(bytes, 0, bytes.Length);
-            fs.Seek(0, SeekOrigin.Begin);
+                byte[] bytes = new byte[fs.Length];
+                fs.Read(bytes, 0, bytes.Length);
+                fs.Seek(0, SeekOrigin.Begin);
 
-            _MCUFiledata = bytes;
+                int x = (int)fs.Length;
+                fs.Close();
+                _MCUFiledata = bytes;
 
-            int x = (int)fs.Length;
+                MemoryStream stream = new MemoryStream();
+                BinaryWriter writer = new BinaryWriter(stream);
+                writer.Write(x);
+                stream.Seek(0, SeekOrigin.Begin);
 
+                byte[] buffer = new byte[stream.Length];
+                Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-            MemoryStream stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(x);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            byte[] buffer = new byte[stream.Length];
-            Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
-
-            return SendCmdBase('u', 0, buffer);
+                return SendCmdBase('u', 0, buffer);
+            }
+            catch(Exception ex)
+            {
+                Console.Write(ex);
+            }
+            return null;
+  
         }
 
         public byte[] SendMCUData()
