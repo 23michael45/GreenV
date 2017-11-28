@@ -14,8 +14,6 @@ namespace ConsoleServer
     {
         protected UdpClient Client;
 
-        protected int _TerminalPort = 5000;
-        protected int _WebPort = 6000;
 
         protected UdpBase()
         {
@@ -25,12 +23,22 @@ namespace ConsoleServer
         public async Task<Package> Receive()
         {
             var result = await Client.ReceiveAsync();
-            return new Package()
+
+            Package package = null;
+
+            if (result.RemoteEndPoint.Address.ToString() == "127.0.0.1")
             {
-                //_Message = Encoding.ASCII.GetString(result.Buffer, 0, result.Buffer.Length),
-                _Sender = result.RemoteEndPoint,
-                _PackageData = result.Buffer
-            };
+                package = JsonPackage.Unpack(result.Buffer);
+            }
+            else
+            {
+
+                 package = TerminalPackage.Unpack(result.RemoteEndPoint, result.Buffer);
+
+            }
+
+            Console.WriteLine(string.Format("Socket ReceiveData Package Type {0}", package._PackageType));
+            return package;
         }
     }
 
@@ -42,7 +50,7 @@ namespace ConsoleServer
         UdpClient _SendClient;
         public UdpListener()
         {
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, _TerminalPort);
+            IPEndPoint endpoint = Program.GetTerminalIPEndPoint(IPAddress.Any);
             _listenOn = endpoint;
             Client = new UdpClient(_listenOn);
             _SendClient = new UdpClient();
@@ -51,24 +59,22 @@ namespace ConsoleServer
       
         public  void SendToWeb(byte[] datagram)
         {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
-            
+            IPEndPoint iep = Program.GetWebIPEndPoint();
+
             _SendClient.Send(datagram, datagram.Length, iep);
 
             Console.WriteLine(string.Format("Send To SendToWeb Data Length: {0}", datagram.Length));
 
         }
-        public void SendToTerminal(byte[] datagram, string ip )
+        public void SendToTerminal(TerminalPackage pkg)
         {
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(ip), _TerminalPort);
-
             try
             {
                 
-                _SendClient.Send(datagram, datagram.Length, iep);
+                _SendClient.Send(pkg._FullData, pkg._FullData.Length, pkg._SendTo);
              
 
-                Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", ip, datagram.Length));
+                Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", pkg._SendTo.Address.ToString(), pkg._FullData.Length));
             }
             catch(Exception ex)
             {

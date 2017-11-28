@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ namespace ConsoleServer
         static CommandParser _CmdParser = new CommandParser();
         static UdpListener _Server;
         static UdpUser _Client;
+
+        static int _TerminalPort = 5000;
+        static int _WebPort = 6000;
 
         static string _MCUFilePath = @"D:\DevelopProj\GreenV\Document\STM32F107_PTP.bin";
 
@@ -32,53 +36,67 @@ namespace ConsoleServer
 
             while (!_bQuit)
             {
-
-                string s = Console.ReadLine();
-
-                string cmd = ParseConsoleLine(s, 0);
-                string ip = ParseConsoleLine(s, 1);
-                string param = ParseConsoleLine(s, 2);
-
-                if (cmd == "quit")
+                try
                 {
-                    _bQuit = true;
-                }
-                else if (cmd =="t")
-                {
-                    _Server.SendToTerminal(_CmdParser.SendCheck(),ip);
-                }
-                else if (cmd == "s")
-                {
-                    if(param == "t")
+                    string s = Console.ReadLine();
+
+                    string cmd = ParseConsoleLine(s, 0);
+                    string ip = ParseConsoleLine(s, 1);
+                    string param = ParseConsoleLine(s, 2);
+
+                    if (cmd == "quit")
                     {
-                        _Server.SendToTerminal(_CmdParser.SendStartStop(true),ip);
+                        _bQuit = true;
                     }
-                    else if (param == "p")
+                    else if (cmd == "stop")
+                    {
+                        char timercmd = (ParseConsoleLine(s, 1))[0];
+                        QueueNeedRsp.Instance.RemovePackage(timercmd);
+
+                    }
+                    else if (cmd == "t")
+                    {
+                        SendToTerminal(_CmdParser.SendCheck(Program.GetTerminalIPEndPoint(ip)));
+                    }
+                    else if (cmd == "s")
+                    {
+                        if (param == "t")
+                        {
+                            SendToTerminal(_CmdParser.SendStartStop(Program.GetTerminalIPEndPoint(ip), true));
+                        }
+                        else if (param == "p")
+                        {
+
+                            SendToTerminal(_CmdParser.SendStartStop(Program.GetTerminalIPEndPoint(ip), false));
+                        }
+                    }
+                    else if (cmd == "c")
                     {
 
-                        _Server.SendToTerminal(_CmdParser.SendStartStop(false), ip);
+                        short n = Convert.ToInt16(ParseConsoleLine(s, 2));
+                        short m = Convert.ToInt16(ParseConsoleLine(s, 3));
+
+                        SendToTerminal(_CmdParser.SendCollect(Program.GetTerminalIPEndPoint(ip), n, m));
+                    }
+                    else if (cmd == "u")
+                    {
+                        string path = ParseConsoleLine(s, 2);
+
+                        SendToTerminal(_CmdParser.SendMCU(Program.GetTerminalIPEndPoint(ip), path));
+
+                    }
+                    else if (cmd == "A")
+                    {
+                        SendToTerminal(_CmdParser.SendSensorDataRsp(Program.GetTerminalIPEndPoint(ip)));
+
                     }
                 }
-                else if (cmd == "c")
+                catch(Exception ex)
                 {
-
-                    short n = Convert.ToInt16(ParseConsoleLine(s, 2));
-                    short m = Convert.ToInt16(ParseConsoleLine(s, 3));
-
-                    _Server.SendToTerminal(_CmdParser.SendCollect(n, m), ip);
+                    Console.WriteLine(ex);
                 }
-                else if (cmd == "u")
-                {
-                    string path = ParseConsoleLine(s, 2);              
 
-                    _Server.SendToTerminal(_CmdParser.SendMCU(path), ip);
-
-                }
-                else if (cmd == "A")
-                {
-                    _Server.SendToTerminal(_CmdParser.SendSensorDataRsp(), ip);
-
-                }
+              
 
             }
            
@@ -93,16 +111,29 @@ namespace ConsoleServer
             _Server.SendToWeb(data);
             Console.WriteLine(string.Format("SendToWeb: Len:{0}", len));
         }
-        public static void SendToTerminal(byte[] data,string ip)
-        {
-            int len = 0;
-            if(data !=null)
-            {
-                len = data.Length;
-            }
 
-            Console.WriteLine(string.Format("SendToTerminal: {0}  Len:{1}", ip, len));
-            _Server.SendToTerminal(data, ip);
+        public static IPEndPoint GetTerminalIPEndPoint(string ip)
+        {
+            return GetTerminalIPEndPoint(IPAddress.Parse(ip));
+        }
+        public static IPEndPoint GetTerminalIPEndPoint(IPAddress ip)
+        {
+            return new IPEndPoint(ip, _TerminalPort);
+        }
+        public static IPEndPoint GetWebIPEndPoint()
+        {
+            return new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
+        }
+
+        public static void SendToTerminal(TerminalPackage pkg,bool addtimer = true)
+        {
+            Console.WriteLine(string.Format("SendToTerminal: {0}  Len:{1}", pkg._SendTo.Address, pkg._FullData.Length));
+            _Server.SendToTerminal(pkg);
+
+            if(addtimer)
+            {
+                QueueNeedRsp.Instance.AddPackage(pkg);
+            }
         }
 
         static string ParseConsoleLine(string s,int index)

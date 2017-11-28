@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime;
 using LitJson;
+using System.Net;
 
 namespace ConsoleServer
 {
@@ -30,14 +31,17 @@ namespace ConsoleServer
         #region Send Cmd Trunk
 
 
-        byte[] SendCmdBase(char cmd, Int16 framecount, byte[] data = null)
+        TerminalPackage SendCmdBase(IPEndPoint iep,char cmd, Int16 framecount, byte[] data = null)
         {
             short len = 0;
             if (data != null)
             {
                 len = (short)data.Length;
             }
-            return _PackageParser.Pack(cmd, framecount, len, data);
+
+            TerminalPackage pkg = new TerminalPackage(iep, null, cmd, framecount, len, data);
+
+            return pkg;
         }
 
         byte[] SendCmdJson(string cmd,string ip,string code)
@@ -55,46 +59,37 @@ namespace ConsoleServer
         #endregion
         #region Receive Cmd Trunk
 
-        void ParseJsonFromWeb(byte[] receiveddata)
+        void ParseJsonFromWeb(JsonPackage pkg)
         {
             try
             {
-                ASCIIEncoding encoding = new ASCIIEncoding();
-
-
-                string jsonstr = encoding.GetString(receiveddata);
-
-                JsonData outputdata = JsonMapper.ToObject(jsonstr);
-
-                string cmd = outputdata["cmd"].ToString();
+                
+                string cmd = pkg.GetString("cmd").ToString();
 
                 if (cmd == "check")
                 {
-                    string ip = outputdata["ip"].ToString();
-                    Program.SendToTerminal(SendCheck(), ip);
+                    IPEndPoint iep = Program.GetTerminalIPEndPoint(pkg.GetString("ip"));
+                    Program.SendToTerminal(SendCheck(iep));
 
-                    Program.SendToWeb(SendCmdJson("checkrsp", ip, "ok"));
+                    Program.SendToWeb(SendCmdJson("checkrsp", pkg.GetString("ip"), "ok"));
                 }
                 else if (cmd == "startstop")
                 {
-                    string ip = outputdata["ip"].ToString();
-                    bool b = Convert.ToBoolean(outputdata["isstart"].ToString());
-                    Program.SendToTerminal(SendStartStop(b), ip);
+
+                    IPEndPoint iep = Program.GetTerminalIPEndPoint(pkg.GetString("ip"));
+                    Program.SendToTerminal(SendStartStop(iep, pkg.GetBool("isstart")));
 
                 }
                 else if (cmd == "collection")
                 {
-                    string ip = outputdata["ip"].ToString();
-                    short n = Convert.ToInt16(outputdata["n"].ToString());
-                    short m = Convert.ToInt16(outputdata["m"].ToString());
-                    Program.SendToTerminal(SendCollect(n,m), ip);
+                    IPEndPoint iep = Program.GetTerminalIPEndPoint(pkg.GetString("ip"));
+                    Program.SendToTerminal(SendCollect(iep, pkg.GetInt16("n"),pkg.GetInt16("m")));
 
                 }
                 else if (cmd == "mcu")
                 {
-                    string ip = outputdata["ip"].ToString();
-                    string binpath = outputdata["binpath"].ToString();
-                    Program.SendToTerminal(SendMCU(binpath), ip);
+                    IPEndPoint iep = Program.GetTerminalIPEndPoint(pkg.GetString("ip"));
+                    Program.SendToTerminal(SendMCU(iep, pkg.GetString("binpath")));
 
                 }
 
@@ -108,17 +103,24 @@ namespace ConsoleServer
 
         }
 
-        void ParseByteFormTerminal(byte[] receiveddata,string ip)
+        void ParseByteFormTerminal(TerminalPackage pkg)
         {
-            if (receiveddata.Length >= 5)
+            byte[] data = pkg._PackageData;
+            string ip = pkg._ReceiveFrom.Address.ToString();
+            char cmd = pkg._Cmd;
+            int datalen = pkg._Len;
+            if (pkg._FullData.Length >= 5)
             {
+                BinaryReader reader = null;
+              
+                if(datalen > 0)
+                {
 
-                MemoryStream stream = new MemoryStream(receiveddata);
-                BinaryReader reader = new BinaryReader(stream);
-                char cmd = (char)reader.ReadByte();
-                Int16 framecount = reader.ReadInt16();
-                Int16 datalen = reader.ReadInt16();
-                //byte[] data = reader.ReadBytes(datalen);
+                    MemoryStream stream = new MemoryStream(data);
+                    reader = new BinaryReader(stream);
+                }
+
+                QueueNeedRsp.Instance.RemovePackage(cmd);
 
                 if (cmd == 'T')
                 {
@@ -165,29 +167,22 @@ namespace ConsoleServer
         public void ReceiveData(Package pkg)
         {
 
-            byte[] receiveddata = pkg._PackageData;
-            string ip = pkg._Sender.Address.ToString();
-
-
-            Console.WriteLine(string.Format("Socket ReceiveData Length: {0} ip: {1}", receiveddata.Length, ip));
-
-            if (ip == "127.0.0.1")
+            if (pkg._PackageType== Package.ENUMPACKAGETYPE.EPT_JSON)
             {
                 try
                 {
-
-                    ParseJsonFromWeb(receiveddata);
+                    ParseJsonFromWeb(pkg as JsonPackage);
                 }
                 catch(Exception ex)
                 {
 
-                    ParseByteFormTerminal(receiveddata, ip);
+                    ParseByteFormTerminal(pkg as TerminalPackage);
                 }
 
             }
             else
             {
-                ParseByteFormTerminal(receiveddata,ip);
+                ParseByteFormTerminal(pkg as TerminalPackage);
 
             }
 
@@ -200,12 +195,12 @@ namespace ConsoleServer
 
         #region Send Cmd To Terminal
 
-        public byte[] SendCheck()
+        public TerminalPackage SendCheck(IPEndPoint iep)
         {
-            return SendCmdBase('t', 0);
+            return SendCmdBase(iep,'t', 0);
         }
 
-        public byte[] SendStartStop(bool bstart)
+        public TerminalPackage SendStartStop(IPEndPoint iep,bool bstart)
         {
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
@@ -225,10 +220,10 @@ namespace ConsoleServer
             byte[] buffer = new byte[stream.Length];
             Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-            return SendCmdBase('s', 0, buffer);
+            return SendCmdBase(iep,'s', 0, buffer);
         }
 
-        public byte[] SendCollect(Int16 n, Int16 m)
+        public TerminalPackage SendCollect(IPEndPoint iep, Int16 n, Int16 m)
         {
             
             MemoryStream stream = new MemoryStream();
@@ -241,10 +236,10 @@ namespace ConsoleServer
             byte[] buffer = new byte[stream.Length];
             Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-            return SendCmdBase('c', 0, buffer);
+            return SendCmdBase(iep, 'c', 0, buffer);
         }
 
-        public byte[] SendMCU(string path)
+        public TerminalPackage SendMCU(IPEndPoint iep, string path)
         {
             try
             {
@@ -267,7 +262,7 @@ namespace ConsoleServer
                 byte[] buffer = new byte[stream.Length];
                 Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-                return SendCmdBase('u', 0, buffer);
+                return SendCmdBase(iep, 'u', 0, buffer);
             }
             catch(Exception ex)
             {
@@ -277,29 +272,29 @@ namespace ConsoleServer
   
         }
 
-        public byte[] SendMCUData()
+        public TerminalPackage SendMCUData(IPEndPoint iep)
         {
             int fileframelen = 1200;
 
-            byte[] buffer = new byte[fileframelen];
             int dataleftlen = _MCUFiledata.Length - _CurrentMCUFrame * fileframelen;
             dataleftlen = Math.Min(dataleftlen, fileframelen);
 
+            byte[] buffer = new byte[dataleftlen];
 
             Buffer.BlockCopy(_MCUFiledata, _CurrentMCUFrame * fileframelen, buffer, 0, dataleftlen);
 
-            return SendCmdBase('d', (short)_CurrentMCUFrame, buffer);
+            return SendCmdBase(iep, 'd', (short)_CurrentMCUFrame, buffer);
         }
 
-        public byte[] SendSensorDataRsp()
+        public TerminalPackage SendSensorDataRsp(IPEndPoint iep)
         {
-            return SendCmdBase('A', 0);
+            return SendCmdBase(iep, 'A', 0);
         }
 
 
-        public byte[] SendMessageRsp()
+        public TerminalPackage SendMessageRsp(IPEndPoint iep)
         {
-            return SendCmdBase('M', 0);
+            return SendCmdBase(iep, 'M', 0);
         }
         #endregion
 
@@ -314,6 +309,8 @@ namespace ConsoleServer
             Console.WriteLine("ReceiveCheck OK");
 
             Program.SendToWeb(SendCmdJson("check", ip, "ok"));
+
+            
         }
 
         void ReceiveStartStop(int len, BinaryReader reader, string ip)
@@ -380,8 +377,8 @@ namespace ConsoleServer
                     Program.SendToWeb(SendCmdJson("mcu", ip, "ok"));
 
                     _CurrentMCUFrame = 0;
-
-                    Program.SendToTerminal(SendMCUData(), ip);
+                    
+                    Program.SendToTerminal(SendMCUData(Program.GetTerminalIPEndPoint(ip)));
 
                 }
                 else if (ret == 'e')
@@ -404,7 +401,7 @@ namespace ConsoleServer
                 {
                     _CurrentMCUFrame++;
 
-                    Program.SendToTerminal(SendMCUData(), ip);
+                    Program.SendToTerminal(SendMCUData(Program.GetTerminalIPEndPoint(ip)));
 
                     Console.WriteLine("ReceiveMCUData Frame OK");
                 }
@@ -448,7 +445,7 @@ namespace ConsoleServer
 
             Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
 
-            Program.SendToTerminal(SendSensorDataRsp(), ip);
+            Program.SendToTerminal(SendSensorDataRsp(Program.GetTerminalIPEndPoint(ip)));
 
         }
 
@@ -457,7 +454,7 @@ namespace ConsoleServer
         {
 
             Console.WriteLine("ReceiveMessage OK");
-            Program.SendToTerminal(SendMessageRsp(), ip);
+            Program.SendToTerminal(SendMessageRsp(Program.GetTerminalIPEndPoint(ip)));
 
         }
         #endregion
