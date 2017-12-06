@@ -21,7 +21,7 @@ namespace ConsoleServer
         public CommandParser()
         {
             _PackageParser = new PackageParser();
-            _MySqlConnector.Connect();
+           // _MySqlConnector.Connect();
         }
 
 
@@ -199,30 +199,40 @@ namespace ConsoleServer
 
         public void ReceiveData(Package pkg)
         {
-
-            if (pkg._PackageType== Package.ENUMPACKAGETYPE.EPT_JSON)
+            try
             {
-                try
+                if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_JSON)
                 {
-                    ParseJsonFromWeb(pkg as JsonPackage);
-                }
-                catch(Exception ex)
-                {
+                    try
+                    {
+                        ParseJsonFromWeb(pkg as JsonPackage);
+                    }
+                    catch (Exception ex)
+                    {
 
+                        ParseByteFromTerminal(pkg as TerminalPackage);
+                    }
+
+                }
+                else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_TERMINAL)
+                {
                     ParseByteFromTerminal(pkg as TerminalPackage);
+
+                }
+                else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_STRING)
+                {
+                    ParseByteFromString(pkg as StringPackage);
+
                 }
 
             }
-            else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_TERMINAL)
+            catch (Exception ex)
             {
-                ParseByteFromTerminal(pkg as TerminalPackage);
-
+                Console.Write("Receive Data Format Error");
             }
-            else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_STRING)
-            {
-                ParseByteFromString(pkg as StringPackage);
 
-            }
+
+      
 
 
 

@@ -11,6 +11,7 @@ namespace ConsoleServer
 {
     public class Package
     {
+        public static PackageParser _Parser = new PackageParser();
         public enum ENUMPACKAGETYPE
         {
             EPT_NONE,
@@ -29,6 +30,11 @@ namespace ConsoleServer
 
         public IPEndPoint _SendTo;
         public IPEndPoint _ReceiveFrom;
+
+        public static Package Unpack(IPEndPoint iep, byte[] data)
+        {
+            return _Parser.Unpack(iep, data);
+        }
     }
     public class StringPackage : Package
     {
@@ -41,7 +47,6 @@ namespace ConsoleServer
 
         public string _StringContent;
         
-        static PackageParser _Parser = new PackageParser();
 
         public StringPackage(IPEndPoint iepto, IPEndPoint iepfrom,string str)
         {
@@ -66,11 +71,7 @@ namespace ConsoleServer
             
         }
 
-
-        public static Package Unpack(IPEndPoint iep, byte[] data)
-        {
-            return _Parser.Unpack(iep,data);
-        }
+        
     }
 
 
@@ -87,8 +88,6 @@ namespace ConsoleServer
         public Int16 _Frame;
         public Int16 _Len;
 
-        static PackageParser _Parser = new PackageParser();
-
         public TerminalPackage(IPEndPoint iepto, IPEndPoint iepfrom, char cmd, short frame, short len, byte[] data = null)
         {
             _SendTo = iepto;
@@ -102,10 +101,7 @@ namespace ConsoleServer
             _FullData = _Parser.Pack(cmd, frame, len, data);
         }
                 
-        public static Package Unpack(IPEndPoint iep, byte[] data)
-        {
-            return _Parser.Unpack(iep, data);
-        }
+    
         
     }
     public class JsonPackage : Package

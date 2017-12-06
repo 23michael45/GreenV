@@ -33,7 +33,7 @@ namespace ConsoleServer
             else
             {
 
-                 package = TerminalPackage.Unpack(result.RemoteEndPoint, result.Buffer);
+                 package = Package.Unpack(result.RemoteEndPoint, result.Buffer);
 
             }
 
