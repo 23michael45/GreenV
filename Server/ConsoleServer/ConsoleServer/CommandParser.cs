@@ -73,6 +73,13 @@ namespace ConsoleServer
 
                     Program.SendToWeb(SendCmdJson("checkrsp", pkg.GetString("ip"), "ok"));
                 }
+                else if (cmd == "reset")
+                {
+                    IPEndPoint iep = Program.GetTerminalIPEndPoint(pkg.GetString("ip"));
+                    Program.SendToTerminal(SendReset(iep));
+
+                    Program.SendToWeb(SendCmdJson("resetrsp", pkg.GetString("ip"), "ok"));
+                }
                 else if (cmd == "startstop")
                 {
 
@@ -103,7 +110,7 @@ namespace ConsoleServer
 
         }
 
-        void ParseByteFormTerminal(TerminalPackage pkg)
+        void ParseByteFromTerminal(TerminalPackage pkg)
         {
             byte[] data = pkg._PackageData;
             string ip = pkg._ReceiveFrom.Address.ToString();
@@ -155,7 +162,33 @@ namespace ConsoleServer
 
                     ReceiveMessage(datalen, reader, ip);
                 }
+               
             }
+            else
+            {
+
+                Console.WriteLine("ReceiveData Empty");
+            }
+
+        }
+        void ParseByteFromString(StringPackage pkg)
+        {
+
+            QueueNeedRsp.Instance.RemovePackage(pkg._Cmd);
+
+
+            if (pkg._Cmd == 'g')
+            {
+
+                ReceiveGroundTruth(pkg);
+            }
+            else if (pkg._Cmd == 'Y')
+            {
+
+                ReceiveSyncRsp(pkg);
+            }
+
+
             else
             {
 
@@ -176,13 +209,18 @@ namespace ConsoleServer
                 catch(Exception ex)
                 {
 
-                    ParseByteFormTerminal(pkg as TerminalPackage);
+                    ParseByteFromTerminal(pkg as TerminalPackage);
                 }
 
             }
-            else
+            else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_TERMINAL)
             {
-                ParseByteFormTerminal(pkg as TerminalPackage);
+                ParseByteFromTerminal(pkg as TerminalPackage);
+
+            }
+            else if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_STRING)
+            {
+                ParseByteFromString(pkg as StringPackage);
 
             }
 
@@ -198,6 +236,12 @@ namespace ConsoleServer
         public TerminalPackage SendCheck(IPEndPoint iep)
         {
             return SendCmdBase(iep,'t', 0);
+        }
+
+
+        public TerminalPackage SendReset(IPEndPoint iep)
+        {
+            return SendCmdBase(iep, 'r', 0);
         }
 
         public TerminalPackage SendStartStop(IPEndPoint iep,bool bstart)
@@ -274,7 +318,7 @@ namespace ConsoleServer
 
         public TerminalPackage SendMCUData(IPEndPoint iep)
         {
-            int fileframelen = 1200;
+            int fileframelen = 2048;
 
             int dataleftlen = _MCUFiledata.Length - _CurrentMCUFrame * fileframelen;
             dataleftlen = Math.Min(dataleftlen, fileframelen);
@@ -296,6 +340,33 @@ namespace ConsoleServer
         {
             return SendCmdBase(iep, 'M', 0);
         }
+
+        public StringPackage SendGroundTruthRsp(IPEndPoint iep,bool succ)
+        {
+            string str;
+            if (succ)
+            {
+                str = "G>o";
+            }
+            else
+            {
+                str = "G>e";
+
+            }
+            StringPackage pkg = new StringPackage(iep, null, str);
+
+            return pkg;
+        }
+
+        public StringPackage SendSync(IPEndPoint iep)
+        {
+            DateTime now = DateTime.Now;
+            string str = string.Format("y>{0:D2}:{1:D2}:{2:D2}:{3}", now.Hour, now.Minute, now.Second, now.Millisecond);
+
+
+            return new StringPackage(iep, null, str);
+        }
+
         #endregion
 
 
@@ -430,14 +501,14 @@ namespace ConsoleServer
             Int16 rate = reader.ReadInt16();
             Int16 gain = reader.ReadInt16();
             
-            for(int i = 0;i < len - 12;i += 2)//每次处理4个字节
+            for(int i = 0;i < len - 12;i += 2)//每次处理2个字节   len - 12 = 1200
             {
                 Int16 advalue = reader.ReadInt16();
 
 
                 if(_MySqlConnector != null)
                 {
-                    _MySqlConnector.Insert(ip, timestampms, advalue);
+                    _MySqlConnector.InsertSensor(ip, timestampms, advalue);
 
                 }
             }
@@ -454,9 +525,51 @@ namespace ConsoleServer
         {
 
             Console.WriteLine("ReceiveMessage OK");
-            Program.SendToTerminal(SendMessageRsp(Program.GetTerminalIPEndPoint(ip)));
+            Program.SendToTerminal(SendMessageRsp(Program.GetTerminalIPEndPoint(ip)),false);
 
         }
+
+        void ReceiveGroundTruth(StringPackage pkg)
+        {
+            string s = pkg._StringContent;
+            int start = s.IndexOf('>');
+            int end = s.IndexOf('=');
+            string time = s.Substring(start + 1, end - start - 1);
+            string lr = s.Substring(end + 1, 1);
+
+            string[] timeparam = time.Split(':');
+            if(timeparam.Length == 4)
+            {
+                int hour = Convert.ToInt32(timeparam[0]);
+                int min = Convert.ToInt32(timeparam[1]);
+                int sec = Convert.ToInt32(timeparam[2]);
+                int ms = Convert.ToInt32(timeparam[3]);
+            }
+            if (_MySqlConnector != null)
+            {
+                _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, lr);
+
+            }
+        }
+        void ReceiveSyncRsp(StringPackage pkg)
+        {
+            if (pkg._StringContent == "Y>o")
+            {
+
+                Console.WriteLine("ReceiveSyncRsp OK");
+                Program.SendToWeb(SendCmdJson("syncrsp", pkg._ReceiveFrom.Address.ToString(), "ok"));
+            }
+            else if (pkg._StringContent == "Y>e")
+            {
+
+                Console.WriteLine("ReceiveSyncRsp Failed");
+                Program.SendToWeb(SendCmdJson("syncrsp", pkg._ReceiveFrom.Address.ToString(), "failed"));
+            }
+        }
+
+        
+
+
         #endregion
 
 

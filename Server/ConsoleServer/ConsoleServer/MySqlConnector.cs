@@ -28,8 +28,7 @@ namespace ConsoleServer
                 Console.WriteLine(ex.ToString());
                 mConnection = null;
             }
-
-            Insert("192.168.1.110", 94382739, 684);
+            
         }
 
         public void Close()
@@ -56,7 +55,7 @@ namespace ConsoleServer
         }
 
 
-        public void Insert(string dv,int timestamp,int data)
+        public void InsertSensor(string dv,int timestamp,int data)
         {
             try
             {
@@ -68,6 +67,24 @@ namespace ConsoleServer
 
 
                 Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} ", dv, timestamp, data));
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+        }
+        public void InsertGroundTruth(string dv, string timestamp, string lr)
+        {
+            try
+            {
+                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright) VALUES ('{0}',{1},{2})", dv, timestamp, lr);
+
+                MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+                cmd.ExecuteNonQuery();
+                
+                Console.WriteLine(string.Format("Insert app_groundtruthdata : {0} {1} {2} ", dv, timestamp, lr));
 
             }
             catch (Exception ex)

@@ -11,7 +11,7 @@ namespace ConsoleServer
     {
         public class PackageTimerData
         {
-            public TerminalPackage _Package;
+            public Package _Package;
             public Timer _Timer;
             public int _Count = 0;
         }
@@ -39,9 +39,14 @@ namespace ConsoleServer
         int _MaxRetry = 3;
         Dictionary<char, PackageTimerData> _WaitingRspDic = new Dictionary<char, PackageTimerData>();
 
-        public void AddPackage(TerminalPackage pkg)
+        public void AddPackage(Package pkg)
         {
             char cmd = pkg._Cmd;
+
+
+            //全变成小写
+            cmd = Char.ToLower(cmd);
+
             if (_WaitingRspDic.ContainsKey(cmd))
             {
                 Console.WriteLine("QueueNeedRsp Key Exsit:" + cmd);
@@ -58,6 +63,9 @@ namespace ConsoleServer
         }
         public void RemovePackage(char cmd)
         {
+            //全变成小写
+            cmd = Char.ToLower(cmd);
+
             if (_WaitingRspDic.ContainsKey(cmd))
             {
                 PackageTimerData ptdata = _WaitingRspDic[cmd];
@@ -91,7 +99,7 @@ namespace ConsoleServer
             PackageTimerData ptdata = data as PackageTimerData;
             ptdata._Count++;
 
-            if(ptdata._Count > _MaxRetry)
+            if(ptdata._Count > _MaxRetry && _WaitingRspDic.ContainsKey(ptdata._Package._Cmd))
             {
                 RemovePackage(ptdata._Package._Cmd);
 

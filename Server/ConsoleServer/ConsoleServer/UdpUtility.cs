@@ -66,7 +66,7 @@ namespace ConsoleServer
             Console.WriteLine(string.Format("Send To SendToWeb Data Length: {0}", datagram.Length));
 
         }
-        public void SendToTerminal(TerminalPackage pkg)
+        public void SendToTerminal(Package pkg)
         {
             try
             {

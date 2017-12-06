@@ -16,12 +16,64 @@ namespace ConsoleServer
             EPT_NONE,
             EPT_TERMINAL,
             EPT_JSON,
+            EPT_STRING,
         }
         public virtual ENUMPACKAGETYPE _PackageType
         {
             get { return ENUMPACKAGETYPE.EPT_NONE; }
         }
+
+
+        public char _Cmd;
+        public byte[] _FullData; //整包数据
+
+        public IPEndPoint _SendTo;
+        public IPEndPoint _ReceiveFrom;
     }
+    public class StringPackage : Package
+    {
+        public override ENUMPACKAGETYPE _PackageType
+        {
+            get { return ENUMPACKAGETYPE.EPT_STRING; }
+        }
+
+
+
+        public string _StringContent;
+        
+        static PackageParser _Parser = new PackageParser();
+
+        public StringPackage(IPEndPoint iepto, IPEndPoint iepfrom,string str)
+        {
+            _SendTo = iepto;
+            _ReceiveFrom = iepfrom;
+            _Cmd = str[0];
+            _StringContent = str;
+
+            _FullData = System.Text.Encoding.Default.GetBytes(str);
+        }
+
+        public StringPackage(IPEndPoint iepto, IPEndPoint iepfrom, byte[] data)
+        {
+            _SendTo = iepto;
+            _ReceiveFrom = iepfrom;
+
+            _FullData = data;
+            string str = System.Text.Encoding.Default.GetString(data);
+
+            _Cmd = str[0];
+            _StringContent = str;
+            
+        }
+
+
+        public static Package Unpack(IPEndPoint iep, byte[] data)
+        {
+            return _Parser.Unpack(iep,data);
+        }
+    }
+
+
     public class TerminalPackage : Package
     {
         public override ENUMPACKAGETYPE _PackageType
@@ -29,16 +81,11 @@ namespace ConsoleServer
             get { return ENUMPACKAGETYPE.EPT_TERMINAL; }
         }
 
-        public IPEndPoint _SendTo;
-        public IPEndPoint _ReceiveFrom;
-        public byte[] _PackageData;
+        public byte[] _PackageData;  //包内数据
 
         public char _Cmd;
         public Int16 _Frame;
         public Int16 _Len;
-        public byte[] _Data;
-
-        public byte[] _FullData;
 
         static PackageParser _Parser = new PackageParser();
 
@@ -51,12 +98,11 @@ namespace ConsoleServer
             _Cmd = cmd;
             _Frame = frame;
             _Len = len;
-            _Data = data;
 
             _FullData = _Parser.Pack(cmd, frame, len, data);
         }
                 
-        public static TerminalPackage Unpack(IPEndPoint iep, byte[] data)
+        public static Package Unpack(IPEndPoint iep, byte[] data)
         {
             return _Parser.Unpack(iep, data);
         }
@@ -146,8 +192,12 @@ namespace ConsoleServer
 
         public int position { get { return (int)mStream.Position; } set { mStream.Seek(value, SeekOrigin.Begin); } }
 
+        List<char> _GroundTruthCmdList = new List<char>();
+
         public PackageParser()
         {
+            _GroundTruthCmdList.Add('g');
+            _GroundTruthCmdList.Add('Y');
 
             mStream = new MemoryStream();
             mWriter = new BinaryWriter(mStream);
@@ -174,7 +224,7 @@ namespace ConsoleServer
             return buffer;
         }
 
-        public TerminalPackage Unpack(IPEndPoint iep, byte[] data)
+        public Package Unpack(IPEndPoint iep, byte[] data)
         {
             BeginWriting();
             mWriter.Write(data);
@@ -182,21 +232,34 @@ namespace ConsoleServer
 
             BinaryReader reader = BeginReading();
             char cmd = (char)reader.ReadByte();
-            Int16 frame = (Int16)reader.ReadInt16();
-            Int16 len = (Int16)reader.ReadInt16();
 
-            byte[] rdata = null;
-            if (len > 0)
+            if(_GroundTruthCmdList.Contains(cmd))
             {
-                rdata = reader.ReadBytes(len);
+                
+                StringPackage pkg = new StringPackage(null, iep, data);
+                return pkg;
+            }
+            else
+            {
+                Int16 frame = (Int16)reader.ReadInt16();
+                Int16 len = (Int16)reader.ReadInt16();
 
+                byte[] rdata = null;
+                if (len > 0)
+                {
+                    rdata = reader.ReadBytes(len);
+
+                }
+
+
+                TerminalPackage pkg = new TerminalPackage(null, iep, cmd, frame, len, rdata);
+
+
+                return pkg;
             }
 
+            
 
-            TerminalPackage pkg = new TerminalPackage(null,iep, cmd, frame, len, rdata);
-
-
-            return pkg;
         }
         
 

@@ -58,6 +58,10 @@ namespace ConsoleServer
                     {
                         SendToTerminal(_CmdParser.SendCheck(Program.GetTerminalIPEndPoint(ip)));
                     }
+                    else if (cmd == "r")
+                    {
+                        SendToTerminal(_CmdParser.SendReset(Program.GetTerminalIPEndPoint(ip)));
+                    }
                     else if (cmd == "s")
                     {
                         if (param == "t")
@@ -88,6 +92,23 @@ namespace ConsoleServer
                     else if (cmd == "A")
                     {
                         SendToTerminal(_CmdParser.SendSensorDataRsp(Program.GetTerminalIPEndPoint(ip)));
+
+                    }
+                    else if (cmd == "G")
+                    {
+                        if (param == "o")
+                        {
+                            SendToTerminal(_CmdParser.SendGroundTruthRsp(Program.GetTerminalIPEndPoint(ip), true));
+                        }
+                        else if (param == "e")
+                        {
+
+                            SendToTerminal(_CmdParser.SendGroundTruthRsp(Program.GetTerminalIPEndPoint(ip), false));
+                        }
+                    }
+                    else if (cmd == "y")
+                    {
+                        SendToTerminal(_CmdParser.SendSync(Program.GetTerminalIPEndPoint(ip)));
 
                     }
                 }
@@ -125,7 +146,7 @@ namespace ConsoleServer
             return new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
         }
 
-        public static void SendToTerminal(TerminalPackage pkg,bool addtimer = true)
+        public static void SendToTerminal(Package pkg,bool addtimer = true)
         {
             Console.WriteLine(string.Format("SendToTerminal: {0}  Len:{1}", pkg._SendTo.Address, pkg._FullData.Length));
             _Server.SendToTerminal(pkg);
