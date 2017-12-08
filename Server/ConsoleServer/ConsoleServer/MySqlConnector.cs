@@ -5,16 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
-
+using System.IO;
 
 namespace ConsoleServer
 {
-    class MySqlConnector
+    public class MySqlConnector
     {
         MySqlConnection mConnection;
         public void Connect()
         {
-            string connStr = "server=localhost;user=root;database=greenv;port=3306;password=";
+
+
+            FileStream fs = new FileStream("dbconfig.txt", FileMode.Open);
+            var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+
+            List<string> cmdlist = new List<string>();
+            string connStr = file.ReadLine();
+            fs.Close();
+            
             mConnection = new MySqlConnection(connStr);
             try
             {
@@ -55,18 +63,22 @@ namespace ConsoleServer
         }
 
 
-        public void InsertSensor(string dv,int timestamp,int data)
+        public void InsertSensor(string dv,int timestamp,byte[] data)
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_sensordata (device,timestamp,sensorvalue) VALUES ('{0}',{1},{2})", dv, timestamp, data);
+                string sql = string.Format("INSERT INTO app_sensordata (device,timestamp,sensorvalue) VALUES ('{0}',{1},(@blobData))", dv, timestamp, data);
 
+
+
+
+                MySqlParameter par = new MySqlParameter("@blobData", MySqlDbType.Blob);
+                par.Value = data;
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+                cmd.Parameters.Add(par);
                 cmd.ExecuteNonQuery();
+                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1}", dv, timestamp));
 
-
-
-                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} ", dv, timestamp, data));
 
             }
             catch (Exception ex)
@@ -75,11 +87,12 @@ namespace ConsoleServer
             }
 
         }
-        public void InsertGroundTruth(string dv, string timestamp, string lr)
+        public void InsertGroundTruth(string dv, string timestamp, Int16 lr)
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright) VALUES ('{0}',{1},{2})", dv, timestamp, lr);
+                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright) VALUES ('{0}','{1}',{2})", dv, timestamp, lr);
+
 
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
                 cmd.ExecuteNonQuery();

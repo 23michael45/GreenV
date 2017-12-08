@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleServer
@@ -26,14 +27,73 @@ namespace ConsoleServer
 
         static void Main(string[] args)
         {
-            //if (args[0] == "simulateclient")
-            //{
-                //StartUdpClient();
-            //}
-
+            if(!_CmdParser.ConnectMySql())
+            {
+                Console.WriteLine("Connect Data Base Failed");
+                Thread.Sleep(2000);
+                return;
+            }
 
             StartUdpServer();
 
+            FileStream fs = new FileStream("cmd.txt", FileMode.Open);
+            var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+
+            List<string> cmdlist = new List<string>();
+            string lineOfText;
+            while ((lineOfText = file.ReadLine()) != null)
+            {
+                lineOfText = lineOfText.Trim();
+                cmdlist.Add(lineOfText);
+            }
+            fs.Close();
+
+            Action<object> action = (object obj) =>
+            {
+                for(int i = 0; i<cmdlist.Count;i++)
+                {
+                    string cmdline = cmdlist[i];
+
+                    if(cmdline.StartsWith("s"))
+                    {
+                        string[] strarray = cmdline.Split(' ');
+                        string ip = strarray[1];
+                        if (cmdline.EndsWith("t"))
+                        {
+                            SendToTerminal(_CmdParser.SendStartStop(Program.GetTerminalIPEndPoint(ip), true));
+                        }
+                        else if (cmdline.EndsWith("p"))
+                        {
+
+                            SendToTerminal(_CmdParser.SendStartStop(Program.GetTerminalIPEndPoint(ip), false));
+                        }
+                    }
+                   
+                    else if (cmdline.StartsWith("c"))
+                    {
+                        string[] strarray = cmdline.Split(' ');
+                        string ip = strarray[1];
+                        short n = Convert.ToInt16(strarray[2]);
+                        short m = Convert.ToInt16(strarray[3]);
+
+                        SendToTerminal(_CmdParser.SendCollect(Program.GetTerminalIPEndPoint(ip), n, m));
+
+                    }
+                    else if (cmdline.StartsWith("time"))
+                    {
+                        string[] strarray = cmdline.Split(' ');
+                        Thread.Sleep(Convert.ToInt32(strarray[1]));
+                    }
+
+
+                }
+
+            };
+
+            // Create a task but do not start it.
+            Task t1 = new Task(action, "Cmd Script Task");
+            t1.Start();
+            /*
             while (!_bQuit)
             {
                 try
@@ -120,7 +180,13 @@ namespace ConsoleServer
               
 
             }
-           
+           */
+
+            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6 };
+            CommandParser._MySqlConnector.InsertSensor("192.168.8.52", 243912389, data);
+            CommandParser._MySqlConnector.InsertGroundTruth("192.168.8.52", "09:32:23:421", 1);
+
+            t1.Wait();
         }
         public static void SendToWeb(byte[] data)
         {

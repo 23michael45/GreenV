@@ -15,15 +15,29 @@ namespace ConsoleServer
         PackageParser _PackageParser;
 
 
-        static MySqlConnector _MySqlConnector = new MySqlConnector();
+        public static MySqlConnector _MySqlConnector;
 
 
         public CommandParser()
         {
+            _MySqlConnector = new MySqlConnector();
             _PackageParser = new PackageParser();
-           // _MySqlConnector.Connect();
+           
         }
 
+        public bool  ConnectMySql()
+        {
+            try
+            {
+
+                _MySqlConnector.Connect();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
 
         int _CurrentMCUFrame = 0;
         byte[] _MCUFiledata;
@@ -511,16 +525,23 @@ namespace ConsoleServer
             Int16 rate = reader.ReadInt16();
             Int16 gain = reader.ReadInt16();
             
-            for(int i = 0;i < len - 12;i += 2)//每次处理2个字节   len - 12 = 1200
+            //for(int i = 0;i < len - 12;i += 2)//每次处理2个字节   len - 12 = 1200
+            //{
+            //    Int16 advalue = reader.ReadInt16();
+
+
+            //    if(_MySqlConnector != null)
+            //    {
+            //        _MySqlConnector.InsertSensor(ip, timestampms, advalue);
+
+            //    }
+            //}
+
+            byte[] bufferdata = reader.ReadBytes(len - 12);
+            if (_MySqlConnector != null)
             {
-                Int16 advalue = reader.ReadInt16();
+                _MySqlConnector.InsertSensor(ip, timestampms, bufferdata);
 
-
-                if(_MySqlConnector != null)
-                {
-                    _MySqlConnector.InsertSensor(ip, timestampms, advalue);
-
-                }
             }
 
 
@@ -557,7 +578,7 @@ namespace ConsoleServer
             }
             if (_MySqlConnector != null)
             {
-                _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, lr);
+                _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, Convert.ToInt16(lr));
 
             }
         }

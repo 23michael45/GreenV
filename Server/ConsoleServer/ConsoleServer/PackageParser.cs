@@ -83,8 +83,7 @@ namespace ConsoleServer
         }
 
         public byte[] _PackageData;  //包内数据
-
-        public char _Cmd;
+        
         public Int16 _Frame;
         public Int16 _Len;
 
