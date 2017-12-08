@@ -84,7 +84,10 @@ namespace ConsoleServer
                         string[] strarray = cmdline.Split(' ');
                         Thread.Sleep(Convert.ToInt32(strarray[1]));
                     }
-
+                    else if (cmdline.StartsWith("totxt"))
+                    {
+                        LoadSqlAndSaveTxt();
+                    }
 
                 }
 
@@ -182,9 +185,9 @@ namespace ConsoleServer
             }
            */
 
-            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6 };
-            CommandParser._MySqlConnector.InsertSensor("192.168.8.52", 243912389, data);
-            CommandParser._MySqlConnector.InsertGroundTruth("192.168.8.52", "09:32:23:421", 1);
+            //byte[] data = new byte[] { 1, 2, 3, 4, 5, 6 };
+            //CommandParser._MySqlConnector.InsertSensor("192.168.8.52", 243912389, data);
+            //CommandParser._MySqlConnector.InsertGroundTruth("192.168.8.52", "09:32:23:421", 1);
 
             t1.Wait();
         }
@@ -235,9 +238,7 @@ namespace ConsoleServer
             return "";
         }
 
-
-
-
+        
         static void StartUdpServer()
         {
             //create a new server
@@ -330,6 +331,12 @@ namespace ConsoleServer
 
             byte[] buffer = ms.GetBuffer();
             return buffer;
+        }
+
+
+        static void LoadSqlAndSaveTxt()
+        {
+            CommandParser._MySqlConnector.SaveTxt();
         }
     }
 }

@@ -107,5 +107,84 @@ namespace ConsoleServer
 
         }
 
+
+
+        public void SaveTxt()
+        {
+            SaveSensor();
+            SaveGroundTruth();
+
+        }
+
+        void SaveSensor()
+        {
+            FileStream fs = new FileStream("sensor.txt", FileMode.OpenOrCreate);
+            var file = new System.IO.StreamWriter(fs);
+
+
+
+            string sql = string.Format("select * from app_sensordata");
+            MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                int id = rdr.GetInt32(0);
+                string device = rdr.GetString(1);
+                int timestamp = rdr.GetInt32(2);
+
+
+
+                byte[] data = new byte[1200];
+                long len = rdr.GetBytes(3, 0, data, 0, 1200);
+                MemoryStream ms = new MemoryStream(data);
+                BinaryReader reader = new BinaryReader(ms);
+
+
+
+                string s = string.Format("id:{0} device:{1} timestamp:{2} data: ", id, device, timestamp);
+                for (int i = 0; i < len/2; i++)
+                {
+                    short d = reader.ReadInt16();
+                    s += " " + d.ToString();
+                }
+                file.WriteLine(s);
+            }
+
+            rdr.Close();
+
+            file.Flush();
+            fs.Close();
+        }
+        void SaveGroundTruth()
+        {
+            FileStream fs = new FileStream("groundtruth.txt", FileMode.OpenOrCreate);
+            var file = new System.IO.StreamWriter(fs);
+
+
+
+            string sql = string.Format("select * from app_groundtruthdata");
+            MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                int id = rdr.GetInt32(0);
+                string device = rdr.GetString(1);
+                string timestamp = rdr.GetString(2);
+                int leftright = rdr.GetInt16(3);
+
+                
+
+                string s = string.Format("id:{0} device:{1} timestamp:{2} leftright:{3} ", id, device, timestamp, leftright);
+               
+                file.WriteLine(s);
+            }
+
+            rdr.Close();
+
+            file.Flush();
+            fs.Close();
+        }
     }
 }
