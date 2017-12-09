@@ -541,7 +541,7 @@ namespace ConsoleServer
             byte[] bufferdata = reader.ReadBytes(len - 12);
             if (_MySqlConnector != null)
             {
-                _MySqlConnector.InsertSensor(ip, timestampms, bufferdata);
+                _MySqlConnector.InsertSensor(ip, timestamps, timestampms,bufferdata);
 
             }
 

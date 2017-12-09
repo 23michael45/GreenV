@@ -63,11 +63,11 @@ namespace ConsoleServer
         }
 
 
-        public void InsertSensor(string dv, UInt32 timestamp,byte[] data)
+        public void InsertSensor(string dv, UInt32 timestamps, UInt32 timestampms,byte[] data)
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_sensordata (device,timestamp,sensorvalue) VALUES ('{0}',{1},(@blobData))", dv, timestamp, data);
+                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,sensorvalue) VALUES ('{0}',{1},{2},(@blobData))", dv, timestamps,timestampms, data);
 
 
 
@@ -77,7 +77,7 @@ namespace ConsoleServer
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
                 cmd.Parameters.Add(par);
                 cmd.ExecuteNonQuery();
-                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1}", dv, timestamp));
+                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2}", dv, timestamps,timestampms));
 
 
             }
@@ -131,18 +131,19 @@ namespace ConsoleServer
             {
                 int id = rdr.GetInt32(0);
                 string device = rdr.GetString(1);
-                UInt32 timestamp = rdr.GetUInt32(2);
+                UInt32 timestamps = rdr.GetUInt32(2);
+                UInt32 timestampms = rdr.GetUInt32(3);
 
 
 
                 byte[] data = new byte[1200];
-                long len = rdr.GetBytes(3, 0, data, 0, 1200);
+                long len = rdr.GetBytes(4, 0, data, 0, 1200);
                 MemoryStream ms = new MemoryStream(data);
                 BinaryReader reader = new BinaryReader(ms);
 
 
 
-                string s = string.Format("id:{0} device:{1} timestamp:{2} data: ", id, device, timestamp);
+                string s = string.Format("id:{0} device:{1} timestamp:{2} : {3}  data: ", id, device, timestamps,timestampms);
                 for (int i = 0; i < len/2; i++)
                 {
                     UInt16 d = reader.ReadUInt16();
