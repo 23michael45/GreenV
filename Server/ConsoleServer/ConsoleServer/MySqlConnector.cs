@@ -63,7 +63,7 @@ namespace ConsoleServer
         }
 
 
-        public void InsertSensor(string dv,int timestamp,byte[] data)
+        public void InsertSensor(string dv, UInt32 timestamp,byte[] data)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace ConsoleServer
             {
                 int id = rdr.GetInt32(0);
                 string device = rdr.GetString(1);
-                int timestamp = rdr.GetInt32(2);
+                UInt32 timestamp = rdr.GetUInt32(2);
 
 
 
@@ -145,7 +145,7 @@ namespace ConsoleServer
                 string s = string.Format("id:{0} device:{1} timestamp:{2} data: ", id, device, timestamp);
                 for (int i = 0; i < len/2; i++)
                 {
-                    short d = reader.ReadInt16();
+                    UInt16 d = reader.ReadUInt16();
                     s += " " + d.ToString();
                 }
                 file.WriteLine(s);

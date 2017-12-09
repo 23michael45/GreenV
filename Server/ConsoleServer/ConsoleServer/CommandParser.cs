@@ -519,9 +519,10 @@ namespace ConsoleServer
 
         void ReceiveSensorData(int len, BinaryReader reader,string ip )
         {
+            Program.SendToTerminal(SendSensorDataRsp(Program.GetTerminalIPEndPoint(ip)));
 
-            int timestamps = reader.ReadInt32();
-            int timestampms = reader.ReadInt32();
+            UInt32 timestamps = reader.ReadUInt32();
+            UInt32 timestampms = reader.ReadUInt32();
             Int16 rate = reader.ReadInt16();
             Int16 gain = reader.ReadInt16();
             
@@ -546,8 +547,6 @@ namespace ConsoleServer
 
 
             Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
-
-            Program.SendToTerminal(SendSensorDataRsp(Program.GetTerminalIPEndPoint(ip)));
 
         }
 

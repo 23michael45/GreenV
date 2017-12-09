@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50720
 File Encoding         : 65001
 
-Date: 2017-12-08 13:38:55
+Date: 2017-12-08 17:46:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS `app_sensordata`;
 CREATE TABLE `app_sensordata` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `device` varchar(255) DEFAULT NULL,
-  `timestamp` int(11) DEFAULT NULL,
+  `timestamp` bigint(11) DEFAULT NULL,
   `sensorvalue` blob,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
