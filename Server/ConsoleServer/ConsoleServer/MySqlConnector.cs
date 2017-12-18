@@ -37,6 +37,7 @@ namespace ConsoleServer
                 mConnection = null;
             }
             
+
         }
 
         public void Close()
@@ -114,6 +115,14 @@ namespace ConsoleServer
             SaveSensor();
             SaveGroundTruth();
 
+
+            string sql = string.Format("TRUNCATE TABLE app_sensordata");
+            MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+            cmd.ExecuteNonQuery();
+
+            sql = string.Format("TRUNCATE TABLE app_groundtruthdata");
+            cmd = new MySqlCommand(sql, mConnection);
+            cmd.ExecuteNonQuery();
         }
 
         void SaveSensor()

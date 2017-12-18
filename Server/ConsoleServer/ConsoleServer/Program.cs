@@ -27,7 +27,19 @@ namespace ConsoleServer
 
         static void Main(string[] args)
         {
-            if(!_CmdParser.ConnectMySql())
+            //if(args[0] == "client")
+            //{
+            //    StartUdpClient();
+
+            //    while(Console.ReadLine() != "quit")
+            //    {
+            //    }
+            //    return;
+            //}
+
+            
+
+            if (!_CmdParser.ConnectMySql())
             {
                 Console.WriteLine("Connect Data Base Failed");
                 Thread.Sleep(2000);
@@ -260,7 +272,7 @@ namespace ConsoleServer
         static void StartUdpClient()
         {
             //create a new client
-            _Client = UdpUser.ConnectTo("127.0.0.1", 5000);
+            _Client = UdpUser.ConnectTo("192.168.8.112", 5000);
             //wait for reply messages from server and send them to console 
             Task.Factory.StartNew(async () =>
             {
@@ -268,10 +280,45 @@ namespace ConsoleServer
                 {
                     try
                     {
-                        var received = await _Client.Receive();
-                      
+                        //var received = await _Client.Receive();
+
+                        MemoryStream stream = new MemoryStream();
+                        BinaryWriter writer = new BinaryWriter(stream);
+                        writer.Write('a');
+
+                        Int16 fn = 0;
+                        writer.Write(fn);
+
+                        Int16 len = 1212;
+                        writer.Write(len);
+
+                        Int32 times = DateTime.Now.Second;
+                        Int32 timems = DateTime.Now.Millisecond;
+                        Int16 rate = 1;
+                        Int16 ad = 1;
+                        writer.Write(times);
+                        writer.Write(timems);
+                        writer.Write(rate);
+                        writer.Write(ad);
+                
+
+                        for (int i = 0; i< 600;i++)
+                        {
+                            Int16 d = (Int16)i;
+                            writer.Write(d);
+                            
+                        }
 
 
+                        stream.Seek(0, SeekOrigin.Begin);
+
+
+                        byte[] buffer = new byte[stream.Length];
+                        Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
+
+                        _Client.Send(buffer);
+
+                        Thread.Sleep(60);
                     }
                     catch (Exception ex)
                     {
