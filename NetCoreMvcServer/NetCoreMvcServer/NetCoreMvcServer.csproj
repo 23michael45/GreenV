@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20171213101600_Initial.cs" />
+    <Compile Remove="Migrations\20171213101600_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20171213102043_Initial.cs" />
+    <Compile Remove="Migrations\20171213102043_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20171213102527_Initial.cs" />
+    <Compile Remove="Migrations\20171213102527_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20171213102748_Initial.cs" />
+    <Compile Remove="Migrations\20171213102748_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20171213110708_Initial.cs" />
+    <Compile Remove="Migrations\20171213110708_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20171213110910_Initial.cs" />
+    <Compile Remove="Migrations\20171213110910_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="1" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.4.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+</Project>
