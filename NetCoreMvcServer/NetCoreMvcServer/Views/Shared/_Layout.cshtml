@@ -211,19 +211,20 @@
 				<!-- /.search form -->
 				<!-- Sidebar Menu -->
 				<ul class="sidebar-menu">
-					
+					@await Component.InvokeAsync("Navigation");
+					@*
 					<li class="treeview">
-							<a href="#">
-								<i class="fa fa-link"></i> <span>Multilevel</span>
-								<span class="pull-right-container">
-									<i class="fa fa-angle-left pull-right"></i>
-								</span>
-							</a>
-							<ul class="treeview-menu">
-								<li><a href="#">Link in level 2</a></li>
-								<li><a href="#">Link in level 2</a></li>
-							</ul>
-						</li>
+						<a href="#">
+							<i class="fa fa-link"></i> <span>Multilevel</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-left pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="#">Link in level 2</a></li>
+							<li><a href="#">Link in level 2</a></li>
+						</ul>
+					</li>*@
 				</ul>
 				<!-- /.sidebar-menu -->
 			</section>
@@ -233,15 +234,15 @@
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			@*<section class="content-header">
-					<h1>
-						Page Header
-						<small>Optional description</small>
-					</h1>
-					<ol class="breadcrumb">
-						<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-						<li class="active">Here</li>
-					</ol>
-				</section>*@
+				<h1>
+					Page Header
+					<small>Optional description</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+					<li class="active">Here</li>
+				</ol>
+			</section>*@
 			<!-- Main content -->
 			<section class="content">
 				<!--当创建基于_Layout.cshtml布局页面的视图时，视图的内容会和布局页面合并，视图的内容会渲染呈现在@RenderBody()处-->

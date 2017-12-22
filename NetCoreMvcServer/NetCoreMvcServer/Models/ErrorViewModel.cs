@@ -1,5 +1,6 @@
 using System;
 
+
 namespace NetCoreMvcServer.Models
 {
     public class ErrorViewModel

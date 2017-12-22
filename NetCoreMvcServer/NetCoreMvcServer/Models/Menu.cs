@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fonour.Domain.Entities
+
+namespace NetCoreMvcServer.Models
 {
     /// <summary>
     /// 功能菜单实体

@@ -55,6 +55,179 @@ namespace NetCoreMvcServer.Migrations
 
                     b.ToTable("App_SensorData");
                 });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("ContactNumber");
+
+                    b.Property<DateTime?>("CreateTime");
+
+                    b.Property<Guid>("CreateUserId");
+
+                    b.Property<int>("IsDeleted");
+
+                    b.Property<string>("Manager");
+
+                    b.Property<string>("Name");
+
+                    b.Property<Guid>("ParentId");
+
+                    b.Property<string>("Remarks");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.Menu", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("Icon");
+
+                    b.Property<string>("Name");
+
+                    b.Property<Guid>("ParentId");
+
+                    b.Property<string>("Remarks");
+
+                    b.Property<int>("SerialNumber");
+
+                    b.Property<int>("Type");
+
+                    b.Property<string>("Url");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Menus");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Code");
+
+                    b.Property<DateTime?>("CreateTime");
+
+                    b.Property<Guid>("CreateUserId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Remarks");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.RoleMenu", b =>
+                {
+                    b.Property<Guid>("RoleId");
+
+                    b.Property<Guid>("MenuId");
+
+                    b.Property<Guid?>("MenuId1");
+
+                    b.HasKey("RoleId", "MenuId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("MenuId1");
+
+                    b.ToTable("RoleMenus");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime?>("CreateTime");
+
+                    b.Property<Guid>("CreateUserId");
+
+                    b.Property<Guid>("DepartmentId");
+
+                    b.Property<string>("EMail");
+
+                    b.Property<int>("IsDeleted");
+
+                    b.Property<DateTime>("LastLoginTime");
+
+                    b.Property<int>("LoginTimes");
+
+                    b.Property<string>("MobileNumber");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Password");
+
+                    b.Property<string>("Remarks");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId");
+
+                    b.Property<Guid>("RoleId");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.RoleMenu", b =>
+                {
+                    b.HasOne("NetCoreMvcServer.Models.Role", "Role")
+                        .WithMany("RoleMenus")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NetCoreMvcServer.Models.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId1");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.User", b =>
+                {
+                    b.HasOne("NetCoreMvcServer.Models.Department", "Department")
+                        .WithMany("Users")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.UserRole", b =>
+                {
+                    b.HasOne("NetCoreMvcServer.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NetCoreMvcServer.Models.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
 #pragma warning restore 612, 618
         }
     }

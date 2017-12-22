@@ -8,6 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NetCoreMvcServer.Models;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using System.Threading;
+using ConsoleServer;
 
 namespace NetCoreMvcServer
 {
@@ -16,6 +20,11 @@ namespace NetCoreMvcServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Thread t = new Thread(MainEntry.Entry);
+            t.Start();
+
+            InitMapper();
         }
 
         public IConfiguration Configuration { get; }
@@ -23,18 +32,34 @@ namespace NetCoreMvcServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
 
             services.AddDbContext<GVContext>(options =>
             options.UseMySql(Configuration.GetConnectionString("GVContext")));
+
+
+            //依赖注入
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserAppService, UserAppService>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IMenuAppService, MenuAppService>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IDepartmentAppService, DepartmentAppService>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleAppService, RoleAppService>();
+
+            services.AddMvc();
+            //Session服务
+            services.AddSession();
+
             
             //services.AddDbContext<MovieContext>(options =>
             //        options.UseSqlServer(Configuration.GetConnectionString("MovieContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, GVContext gvcontext)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -42,10 +67,20 @@ namespace NetCoreMvcServer
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Shared/Error");
             }
-
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
+            });
+
+
+            //Session
+            app.UseSession();
+
+            app.UseWebSockets();
+            
 
             app.UseMvc(routes =>
             {
@@ -57,6 +92,31 @@ namespace NetCoreMvcServer
                 routes.MapRoute(
                     name: "default", 
                     template: "{controller=Login}/{action=Index}/{id?}");
+            });
+
+            
+            //SeedData.Initialize(gvcontext); //初始化数据
+
+
+        }
+
+
+        void InitMapper()
+        {
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Menu, MenuDto>();
+                cfg.CreateMap<MenuDto, Menu>();
+                cfg.CreateMap<Department, DepartmentDto>();
+                cfg.CreateMap<DepartmentDto, Department>();
+                cfg.CreateMap<RoleDto, Role>();
+                cfg.CreateMap<Role, RoleDto>();
+                cfg.CreateMap<RoleMenuDto, RoleMenu>();
+                cfg.CreateMap<RoleMenu, RoleMenuDto>();
+                cfg.CreateMap<UserDto, User>();
+                cfg.CreateMap<User, UserDto>();
+                cfg.CreateMap<UserRoleDto, UserRole>();
+                cfg.CreateMap<UserRole, UserRoleDto>();
             });
         }
     }

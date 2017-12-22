@@ -1,60 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.Encodings.Web;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NetCoreMvcServer.Models;
-using WcfService;
+//using UserService;
 
-namespace NetCoreMvcServer.Controllers
+
+// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace Fonour.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        // GET: /<controller>/
+        public ActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+            //Task<string> task = GetUserCallName();
+            //return Content(task.Result);
 
             return View();
         }
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //async Task<string> GetUserCallName()
+        //{
+        //    UserClient client = new UserClient();
+        //    await client.OpenAsync();
+        //    //client.OnSendCheckCBReceived += OnSendCheckCB;
 
+        //    //await client.StartServiceAsync();
+        //    return await client.ShowNameAsync("Client Call");
+        //}
+        
 
+        //void OnSendCheckCB(object sender,OnSendCheckCBReceivedEventArgs args)
+        //{
 
-        public string IndexString()
-        {
-            string str = WaitForService().Result;
-            return "This is my default action..." + str;
-        }
-
-        public string Welcome(string name, int numTimes = 1)
-        {
-            return HtmlEncoder.Default.Encode($"Hello {name}, NumTimes is: {numTimes}");
-        }
-
-        async Task<string> WaitForService()
-        {
-            UserClient client = new UserClient();
-            Task<string> task = client.ShowNameAsync("michaellee");
-            string s = await task;
-            return s;
-        }
+        //}
     }
 }
