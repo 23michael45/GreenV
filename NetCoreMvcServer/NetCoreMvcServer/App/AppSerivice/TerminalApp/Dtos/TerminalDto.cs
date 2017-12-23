@@ -18,12 +18,12 @@ namespace NetCoreMvcServer.Models
         /// <summary>
         /// X
         /// </summary>
-        public float PositionX { get; set; }
+        public int PositionX { get; set; }
 
         /// <summary>
         /// Y
         /// </summary>
-        public float PositionY { get; set; }
+        public int PositionY { get; set; }
 
 
         public string desc { get; set; }

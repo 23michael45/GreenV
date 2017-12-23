@@ -18,8 +18,13 @@ namespace NetCoreMvcServer.Models
         public Terminal GetFromIP(string ip)
         {
             var list = _dbContext.Set<Terminal>().Where(it => (it.ip == ip)).OrderBy(it => it.Id);
-            Terminal terminal = list.FirstOrDefault<Terminal>();
-            return terminal;
+            if(list != null)
+            {
+
+                Terminal terminal = list.FirstOrDefault<Terminal>();
+                return terminal;
+            }
+            return null;
         }
 
     }

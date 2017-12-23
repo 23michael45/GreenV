@@ -158,7 +158,7 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<string>("ip");
 
-                    b.Property<float>("positiony");
+                    b.Property<float>("Positiony");
 
                     b.HasKey("Id");
 

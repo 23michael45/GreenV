@@ -39,9 +39,12 @@ namespace NetCoreMvcServer.Models
             if (Get(dto.Id) != null)
                 _repository.Delete(dto.Id);
 
-            if (_repository.Get(dto.ip) != null)
-                _repository.Delete(dto.Id);
 
+            Terminal t = _repository.GetFromIP(dto.ip);
+            if (t != null)
+            {
+                _repository.Delete(t.Id);
+            }
             var terminal = _repository.InsertOrUpdate(Mapper.Map<Terminal>(dto));
             return Mapper.Map<TerminalDto>(terminal);
         }

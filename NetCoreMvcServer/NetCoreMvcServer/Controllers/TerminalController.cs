@@ -27,12 +27,15 @@ namespace Fonour.MVC.Controllers
             int rowCount = 0;
             var result = _service.GetTerminalByDepartment(departmentId, startPage, pageSize, out rowCount);
       
-            return Json(new
+            JsonResult jr = Json(new
             {
                 rowCount = rowCount,
                 pageCount = Math.Ceiling(Convert.ToDecimal(rowCount) / pageSize),
                 rows = result,
             });
+
+            string s = jr.ToString();
+            return jr;
         }
 
         public IActionResult Edit(TerminalDto dto, string roles)
@@ -43,7 +46,7 @@ namespace Fonour.MVC.Controllers
                 {
                     dto.Id = Guid.NewGuid();
                 }
-               
+                
                 var Terminal = _service.InsertOrUpdate(dto);
                 return Json(new { Result = "Success" });
             }

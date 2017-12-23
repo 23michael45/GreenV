@@ -13,9 +13,9 @@ namespace NetCoreMvcServer.Models
         [Column(Order = 2)]
         public string ip { get; set; }
         [Column(Order = 3)]
-        public float PositionX { get; set; }
+        public int PositionX { get; set; }
         [Column(Order = 4)]
-        public float positiony { get; set; }
+        public int Positiony { get; set; }
         [Column(Order = 5)]
         public string desc { get; set; }
 

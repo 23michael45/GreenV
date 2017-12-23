@@ -101,7 +101,7 @@ namespace NetCoreMvcServer.Migrations
                     PositionX = table.Column<float>(nullable: false),
                     desc = table.Column<string>(nullable: true),
                     ip = table.Column<string>(nullable: true),
-                    positiony = table.Column<float>(nullable: false)
+                    Positiony = table.Column<float>(nullable: false)
                 },
                 constraints: table =>
                 {

@@ -10,5 +10,6 @@ namespace NetCoreMvcServer.Models
     /// </summary>
     public interface ITerminalRepository : IRepository<Terminal>
     {
+        Terminal GetFromIP(string ip);
     }
 }
