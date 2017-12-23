@@ -21,8 +21,8 @@ namespace NetCoreMvcServer
         {
             Configuration = configuration;
 
-            Thread t = new Thread(MainEntry.Entry);
-            t.Start();
+            //Thread t = new Thread(MainEntry.Entry);
+            //t.Start();
 
             InitMapper();
         }
@@ -46,6 +46,10 @@ namespace NetCoreMvcServer
             services.AddScoped<IDepartmentAppService, DepartmentAppService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IRoleAppService, RoleAppService>();
+
+
+            services.AddScoped<ITerminalAppService, TerminalAppService>();
+            services.AddScoped<ITerminalRepository, TerminalRepository>();
 
             services.AddMvc();
             //Session服务
@@ -77,10 +81,7 @@ namespace NetCoreMvcServer
 
 
             //Session
-            app.UseSession();
-
-            app.UseWebSockets();
-            
+            app.UseSession();            
 
             app.UseMvc(routes =>
             {
@@ -94,8 +95,8 @@ namespace NetCoreMvcServer
                     template: "{controller=Login}/{action=Index}/{id?}");
             });
 
-            
-            //SeedData.Initialize(gvcontext); //初始化数据
+
+            SeedData.Initialize(gvcontext); //初始化数据
 
 
         }
@@ -117,6 +118,10 @@ namespace NetCoreMvcServer
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<UserRoleDto, UserRole>();
                 cfg.CreateMap<UserRole, UserRoleDto>();
+
+
+                cfg.CreateMap<TerminalDto, Terminal>();
+                cfg.CreateMap<Terminal, TerminalDto>();
             });
         }
     }

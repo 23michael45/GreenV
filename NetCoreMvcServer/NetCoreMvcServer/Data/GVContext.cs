@@ -23,6 +23,7 @@ namespace NetCoreMvcServer.Models
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RoleMenu> RoleMenus { get; set; }
+        public DbSet<Terminal> Terminals { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -21,7 +21,7 @@ namespace NetCoreMvcServer.Models
                new Department
                {
                    Id = departmentId,
-                   Name = "Fonour集团总部",
+                   Name = "集团总部",
                    ParentId = Guid.Empty
                }
             );
@@ -30,8 +30,8 @@ namespace NetCoreMvcServer.Models
                  new User
                  {
                      UserName = "admin",
-                     Password = "123456", //暂不进行加密
-                         Name = "超级管理员",
+                     Password = "admin", //暂不进行加密
+                         Name = "super admin",
                      DepartmentId = departmentId
                  }
             );
@@ -39,37 +39,53 @@ namespace NetCoreMvcServer.Models
             context.Menus.AddRange(
                new Menu
                {
-                   Name = "组织机构管理",
-                   Code = "Department",
+                   Name = "控制传感器终端",
+                   Code = "Terminal",
                    SerialNumber = 0,
                    ParentId = Guid.Empty,
-                   Icon = "fa fa-link"
+                   Icon = "fa fa-link",
+                   Url = "Terminal/Index",
                },
                new Menu
                {
-                   Name = "角色管理",
-                   Code = "Role",
+                   Name = "GroundTruth管理",
+                   Code = "GroundTruth",
                    SerialNumber = 1,
                    ParentId = Guid.Empty,
-                   Icon = "fa fa-link"
+                   Icon = "fa fa-link",
+                   Url = "GroundTruth/Index",
                },
                new Menu
                {
-                   Name = "用户管理",
-                   Code = "User",
+                   Name = "传感器数据",
+                   Code = "App_SensorData",
                    SerialNumber = 2,
                    ParentId = Guid.Empty,
-                   Icon = "fa fa-link"
+                   Icon = "fa fa-link",
+                   Url = "App_SensorData/Index",
                },
                new Menu
                {
-                   Name = "功能管理",
-                   Code = "Department",
+                   Name = "GroundTruth数据",
+                   Code = "App_GroundTruthData",
                    SerialNumber = 3,
                    ParentId = Guid.Empty,
-                   Icon = "fa fa-link"
+                   Icon = "fa fa-link",
+                   Url = "App_GroundTruthData/Index",
+               },
+               new Menu
+               {
+                   Name = "设备地图",
+                   Code = "Map",
+                   SerialNumber = 4,
+                   ParentId = Guid.Empty,
+                   Icon = "fa fa-link",
+                   Url = "Map/Index",
                }
             );
+
+
+            
             context.SaveChanges();
         }
 

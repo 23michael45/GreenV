@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public class App_SensorData
+    public class App_SensorData : Entity
     {
-        [Column("id",Order = 0)]
-        public int id { get; set; }
         [Column(Order = 1)]
         public string device { get; set; }
         [Column(Order = 2)]

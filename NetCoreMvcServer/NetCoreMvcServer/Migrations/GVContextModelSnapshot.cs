@@ -22,9 +22,8 @@ namespace NetCoreMvcServer.Migrations
 
             modelBuilder.Entity("NetCoreMvcServer.Models.App_GroundTruthData", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("device");
 
@@ -32,16 +31,15 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<long>("timestamp");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("App_GroundTruthData");
                 });
 
             modelBuilder.Entity("NetCoreMvcServer.Models.App_SensorData", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("device");
 
@@ -51,7 +49,7 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<long>("timestamps");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("App_SensorData");
                 });
@@ -145,6 +143,26 @@ namespace NetCoreMvcServer.Migrations
                     b.HasIndex("MenuId1");
 
                     b.ToTable("RoleMenus");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.Terminal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("DepartmentId");
+
+                    b.Property<float>("PositionX");
+
+                    b.Property<string>("desc");
+
+                    b.Property<string>("ip");
+
+                    b.Property<float>("positiony");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Terminals");
                 });
 
             modelBuilder.Entity("NetCoreMvcServer.Models.User", b =>

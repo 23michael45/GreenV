@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public class App_GroundTruthData
+    public class App_GroundTruthData : Entity
     {
-        [Column("id", Order = 0)]
-        public int id { get; set; }
+
         [Column(Order = 1)]
         public string device { get; set; }
         [Column(Order = 2)]

@@ -25,7 +25,7 @@ namespace NetCoreMvcServer.Controllers
         }
 
         // GET: App_SensorData/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(Guid id)
         {
             if (id == null)
             {
@@ -33,7 +33,7 @@ namespace NetCoreMvcServer.Controllers
             }
 
             var app_SensorData = await _context.App_SensorData
-                .SingleOrDefaultAsync(m => m.id == id);
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (app_SensorData == null)
             {
                 return NotFound();
@@ -65,14 +65,14 @@ namespace NetCoreMvcServer.Controllers
         }
 
         // GET: App_SensorData/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var app_SensorData = await _context.App_SensorData.SingleOrDefaultAsync(m => m.id == id);
+            var app_SensorData = await _context.App_SensorData.SingleOrDefaultAsync(m => m.Id == id);
             if (app_SensorData == null)
             {
                 return NotFound();
@@ -85,9 +85,9 @@ namespace NetCoreMvcServer.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,device,timestamps,timestampms,sendsorvalue")] App_SensorData app_SensorData)
+        public async Task<IActionResult> Edit(Guid id, [Bind("id,device,timestamps,timestampms,sendsorvalue")] App_SensorData app_SensorData)
         {
-            if (id != app_SensorData.id)
+            if (id != app_SensorData.Id)
             {
                 return NotFound();
             }
@@ -101,7 +101,7 @@ namespace NetCoreMvcServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!App_SensorDataExists(app_SensorData.id))
+                    if (!App_SensorDataExists(app_SensorData.Id))
                     {
                         return NotFound();
                     }
@@ -116,7 +116,7 @@ namespace NetCoreMvcServer.Controllers
         }
 
         // GET: App_SensorData/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
             {
@@ -124,7 +124,7 @@ namespace NetCoreMvcServer.Controllers
             }
 
             var app_SensorData = await _context.App_SensorData
-                .SingleOrDefaultAsync(m => m.id == id);
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (app_SensorData == null)
             {
                 return NotFound();
@@ -136,17 +136,17 @@ namespace NetCoreMvcServer.Controllers
         // POST: App_SensorData/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var app_SensorData = await _context.App_SensorData.SingleOrDefaultAsync(m => m.id == id);
+            var app_SensorData = await _context.App_SensorData.SingleOrDefaultAsync(m => m.Id == id);
             _context.App_SensorData.Remove(app_SensorData);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool App_SensorDataExists(int id)
+        private bool App_SensorDataExists(Guid id)
         {
-            return _context.App_SensorData.Any(e => e.id == id);
+            return _context.App_SensorData.Any(e => e.Id == id);
         }
     }
 }
