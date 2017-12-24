@@ -14,8 +14,8 @@ namespace NetCoreMvcServer.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     device = table.Column<string>(nullable: true),
-                    timestamp = table.Column<long>(nullable: false),
                     leftright = table.Column<int>(nullable: false),
+                    timestamp = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,9 +28,11 @@ namespace NetCoreMvcServer.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     device = table.Column<string>(nullable: true),
-                    timestamps = table.Column<long>(nullable: false),
-                    timestampms = table.Column<long>(nullable: false),
+                    gain = table.Column<short>(nullable: false),
+                    rate = table.Column<short>(nullable: false),
                     sendsorvalue = table.Column<byte[]>(nullable: true),
+                    timestampms = table.Column<int>(nullable: false),
+                    timestamps = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,10 +100,10 @@ namespace NetCoreMvcServer.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     DepartmentId = table.Column<Guid>(nullable: false),
-                    PositionX = table.Column<float>(nullable: false),
+                    PositionX = table.Column<int>(nullable: false),
+                    PositionY = table.Column<int>(nullable: false),
                     desc = table.Column<string>(nullable: true),
-                    ip = table.Column<string>(nullable: true),
-                    Positiony = table.Column<float>(nullable: false)
+                    ip = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

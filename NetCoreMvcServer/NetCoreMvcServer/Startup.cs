@@ -21,8 +21,8 @@ namespace NetCoreMvcServer
         {
             Configuration = configuration;
 
-            //Thread t = new Thread(MainEntry.Entry);
-            //t.Start();
+            Thread t = new Thread(MainEntry.Entry);
+            t.Start();
 
             InitMapper();
         }
@@ -114,8 +114,8 @@ namespace NetCoreMvcServer
                 cfg.CreateMap<Role, RoleDto>();
                 cfg.CreateMap<RoleMenuDto, RoleMenu>();
                 cfg.CreateMap<RoleMenu, RoleMenuDto>();
-                cfg.CreateMap<UserDto, User>();
-                cfg.CreateMap<User, UserDto>();
+                cfg.CreateMap<App_SensorDataDto, User>();
+                cfg.CreateMap<User, App_SensorDataDto>();
                 cfg.CreateMap<UserRoleDto, UserRole>();
                 cfg.CreateMap<UserRole, UserRoleDto>();
 

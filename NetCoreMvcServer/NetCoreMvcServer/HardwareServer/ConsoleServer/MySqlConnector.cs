@@ -64,11 +64,11 @@ namespace ConsoleServer
         }
 
 
-        public void InsertSensor(string dv, UInt32 timestamps, UInt32 timestampms,byte[] data)
+        public void InsertSensor(string dv, UInt32 timestamps, UInt32 timestampms, UInt16 rate,UInt16 gain,byte[] data)
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,sensorvalue) VALUES ('{0}',{1},{2},(@blobData))", dv, timestamps,timestampms, data);
+                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,rate,gain,sensorvalue) VALUES ('{0}',{1},{2},{3},{4},(@blobData))", dv, timestamps,timestampms, rate,gain,data);
 
 
 
@@ -78,7 +78,7 @@ namespace ConsoleServer
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
                 cmd.Parameters.Add(par);
                 cmd.ExecuteNonQuery();
-                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2}", dv, timestamps,timestampms));
+                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} {3} {4}", dv, timestamps,timestampms,rate,gain));
 
 
             }
@@ -140,8 +140,10 @@ namespace ConsoleServer
             {
                 int id = rdr.GetInt32(0);
                 string device = rdr.GetString(1);
-                int timestamps = rdr.GetInt32(2);
-                int timestampms = rdr.GetInt32(3);
+                int timestamps = rdr.GetInt32(6);
+                int timestampms = rdr.GetInt32(5);
+                int rate = rdr.GetInt32(3);
+                int gain = rdr.GetInt32(2);
 
 
 
@@ -152,7 +154,7 @@ namespace ConsoleServer
 
 
 
-                string s = string.Format("id:{0} device:{1} timestamp:{2} : {3}  data: ", id, device, timestamps,timestampms);
+                string s = string.Format("id:{0} device:{1} timestamp:{2} : {3}  rate: {4}  gain:{5} data: ", id, device, timestamps,timestampms,rate,gain);
                 for (int i = 0; i < len/2; i++)
                 {
                     UInt16 d = reader.ReadUInt16();
@@ -181,8 +183,8 @@ namespace ConsoleServer
             {
                 int id = rdr.GetInt32(0);
                 string device = rdr.GetString(1);
-                string timestamp = rdr.GetString(2);
-                int leftright = rdr.GetInt16(3);
+                string timestamp = rdr.GetString(3);
+                int leftright = rdr.GetInt16(2);
 
                 
 

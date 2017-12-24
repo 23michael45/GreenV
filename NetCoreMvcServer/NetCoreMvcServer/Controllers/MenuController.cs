@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Fonour.MVC.Models;
-using Microsoft.AspNetCore.Http;
 using NetCoreMvcServer.Models;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Fonour.MVC.Controllers
+namespace NetCoreMvcServer.Controllers
 {
     /// <summary>
     /// 功能管理控制器

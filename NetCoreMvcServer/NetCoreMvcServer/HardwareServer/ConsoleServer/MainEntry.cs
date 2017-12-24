@@ -26,8 +26,7 @@ namespace ConsoleServer
 
         #region Callback
 
-        public static Action<object> _SendCheckCallBack;
-
+        public static Dictionary<string, Dictionary<string, Action<object>>> _SendCheckCallBackDic = new Dictionary<string, Dictionary<string, Action<object>>>();
 
 
         #endregion
@@ -37,6 +36,19 @@ namespace ConsoleServer
 
         public static void Entry()
         {
+            List<string> SendCBNames = new List<string>();
+            SendCBNames.Add("SendT");
+            SendCBNames.Add("SendR");
+            SendCBNames.Add("SendST");
+            SendCBNames.Add("SendSP");
+            SendCBNames.Add("SendC");
+            SendCBNames.Add("SendU");
+            SendCBNames.Add("SendY");
+            foreach(string name in SendCBNames)
+            {
+                _SendCheckCallBackDic[name] = new Dictionary<string, Action<object>>();
+            }
+
             StartUdpServer();
         }
         public static void SendToWeb(byte[] data)
@@ -264,10 +276,44 @@ namespace ConsoleServer
 
 
 
-        public static void SendCheck(string ip,Action<object> cb)
+        public static void SendT(string ip,Action<object> cb)
         {
-            _SendCheckCallBack = cb;
+            _SendCheckCallBackDic["SendT"][ip] = cb;
             SendToTerminal(_CmdParser.SendCheck(MainEntry.GetTerminalIPEndPoint(ip)));
+        }
+
+        public static void SendS(string ip,bool start,Action<object> cb)
+        {
+            if(start)
+            {
+                _SendCheckCallBackDic["SendST"][ip] = cb;
+                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),true));
+
+            }
+            else
+            {
+
+                _SendCheckCallBackDic["SendSP"][ip] = cb;
+                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),false));
+            }
+
+        }
+        public static void SendC(string ip,short m,short n, Action<object> cb)
+        {
+            _SendCheckCallBackDic["SendC"][ip] = cb;
+            SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip),m,n));
+        }
+
+        public static void SendCBParse(string name,string ip)
+        {
+            if(_SendCheckCallBackDic[name].ContainsKey(ip))
+            {
+                if (_SendCheckCallBackDic[name][ip] != null)
+                {
+                    _SendCheckCallBackDic[name][ip](ip);
+                    _SendCheckCallBackDic[name].Remove(ip);
+                }
+            }
         }
     }
 }

@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Fonour.MVC.Models;
+using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Utility;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Fonour.MVC.Controllers
+namespace NetCoreMvcServer.Controllers
 {
     public class LoginController : Controller
     {
@@ -40,7 +40,7 @@ namespace Fonour.MVC.Controllers
                     HttpContext.Session.SetString("CurrentUserId", user.Id.ToString());
                     HttpContext.Session.Set("CurrentUser", ByteConvertHelper.Object2Bytes(user));
                     //跳转到系统首页
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Terminal");
                 }
                 ViewBag.ErrorInfo = "用户名或密码错误。";
                 return View();

@@ -43,11 +43,15 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<string>("device");
 
+                    b.Property<short>("gain");
+
+                    b.Property<short>("rate");
+
                     b.Property<byte[]>("sendsorvalue");
 
-                    b.Property<long>("timestampms");
+                    b.Property<int>("timestampms");
 
-                    b.Property<long>("timestamps");
+                    b.Property<int>("timestamps");
 
                     b.HasKey("Id");
 
@@ -152,13 +156,13 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<Guid>("DepartmentId");
 
-                    b.Property<float>("PositionX");
+                    b.Property<int>("PositionX");
+
+                    b.Property<int>("PositionY");
 
                     b.Property<string>("desc");
 
                     b.Property<string>("ip");
-
-                    b.Property<float>("Positiony");
 
                     b.HasKey("Id");
 

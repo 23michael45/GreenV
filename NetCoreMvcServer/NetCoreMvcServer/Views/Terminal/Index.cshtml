@@ -24,6 +24,9 @@
 					<button id="btnDelete" title="" class="btn btn-danger" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
 						<i class="fa fa-times"></i>&nbsp;&nbsp;删除
 					</button>
+					<button id="btnCheckAll" title="" class="btn btn-primary" type="button" data-original-title="检查全部" data-toggle="tooltip" data-widget="">
+						检查全部
+					</button>
 				</div>
 			</div>
 			<div class="box-body">
@@ -41,6 +44,9 @@
 								<th tabindex="0" aria-label="">
 									坐标Y
 								</th>
+								<th tabindex="0" aria-label="">
+									描述
+								</th>
 							</tr>
 						</thead>
 						<tbody id="tableBody"></tbody>
@@ -52,9 +58,58 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="col-md-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">已经连接的传感器终端</h3>
+				<div class="pull-right box-tools">
+					采集速率
+					<input type="text" id="rate_input">
+					放大倍数
+					<input type="text" id="gain_input">
+					<button id="btnUpdateSetupAll" title="" class="btn btn-primary" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
+						 全部更新设置
+					</button>
+
+					<button id="btnStartAll" class="btn btn-primary" type="button" data-original-title="新增终端" data-toggle="tooltip" data-widget="">
+					  全部开始
+					</button>
+
+					<button id="btnStopAll" title="" class="btn btn-primary" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
+						全部停止
+					</button>
+				</div>
+			</div>
+			<div class="box-body">
+				<div class="table-scrollable">
+					<table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="sample_2_info">
+						<thead>
+							<tr role="row">
+								<th class="table-checkbox" style="width:40px;text-align:center;"><input id="checkAll" class="group-checkable" type="checkbox"></th>
+								<th tabindex="0" aria-label="">
+									IP地址
+								</th>
+								<th tabindex="0" aria-label="">
+									采集速率
+								</th>
+								<th tabindex="0" aria-label="">
+									放大倍数
+								</th>
+							</tr>
+						</thead>
+						<tbody id="tableconnectedBody"></tbody>
+					</table>
+					<div class="paging-toolbar">
+						<ul id="grid_paging_part"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
-@Html.Partial("_Edit")
-@section scripts{
-	<script src="~/Views/Terminal/Index.js"></script>
-}
+	@Html.Partial("_Edit")
+	@section scripts{
+		<script src="~/Views/Terminal/Index.js"></script>
+	}

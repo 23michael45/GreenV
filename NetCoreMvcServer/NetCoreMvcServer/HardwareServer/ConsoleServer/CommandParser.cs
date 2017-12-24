@@ -386,8 +386,6 @@ namespace ConsoleServer
         {
             DateTime now = DateTime.Now;
             string str = string.Format("y>{0:D2}:{1:D2}:{2:D2}:{3}", now.Hour, now.Minute, now.Second, now.Millisecond);
-
-
             return new StringPackage(iep, null, str);
         }
 
@@ -402,8 +400,7 @@ namespace ConsoleServer
         void ReceiveCheck(int len, BinaryReader reader,string ip)
         {
             Console.WriteLine("ReceiveCheck OK");
-            //Program.SendToWeb(SendCmdJson("check", ip, "ok"));
-            MainEntry._SendCheckCallBack(ip);
+            MainEntry.SendCBParse("SendT",ip);
           
         }
 
@@ -419,20 +416,19 @@ namespace ConsoleServer
                 {
 
                     Console.WriteLine("ReceiveStart OK");
-
-                    MainEntry.SendToWeb(SendCmdJson("startstop", ip, "startok"));
+                    MainEntry.SendCBParse("SendST", ip);
                 }
                 else if (ret == 'p')
                 {
 
                     Console.WriteLine("ReceiveStop OK");
-                    MainEntry.SendToWeb(SendCmdJson("startstop", ip, "stopok"));
+                    MainEntry.SendCBParse("SendSP", ip);
                 }
                 else if (ret == 'e')
                 {
-
                     Console.WriteLine("ReceiveStartStop Error");
-                    MainEntry.SendToWeb(SendCmdJson("startstop", ip, "error"));
+                    MainEntry.SendCBParse("SendST", "error");
+                    MainEntry.SendCBParse("SendSP", "error");
                 }
 
             }
@@ -449,13 +445,13 @@ namespace ConsoleServer
                 {
 
                     Console.WriteLine("ReceiveCollection OK");
-                    MainEntry.SendToWeb(SendCmdJson("collection", ip, "ok"));
+                    MainEntry.SendCBParse("SendC", ip);
                 }
                 else if (ret == 'e')
                 {
 
                     Console.WriteLine("ReceiveCollection Error");
-                    MainEntry.SendToWeb(SendCmdJson("collection", ip, "error"));
+                    MainEntry.SendCBParse("SendC", "error");
                 }
             }
         }
@@ -468,7 +464,8 @@ namespace ConsoleServer
                 if (ret == 'o')
                 {
                     Console.WriteLine("ReceiveMCU OK");
-                    MainEntry.SendToWeb(SendCmdJson("mcu", ip, "ok"));
+
+                    MainEntry.SendCBParse("SendU", ip);
 
                     _CurrentMCUFrame = 0;
                     
@@ -478,7 +475,7 @@ namespace ConsoleServer
                 else if (ret == 'e')
                 {
                     Console.WriteLine("ReceiveMCU Error");
-                    MainEntry.SendToWeb(SendCmdJson("mcu", ip, "error"));
+                    MainEntry.SendCBParse("SendU", "error");
 
                 }
 
@@ -522,8 +519,8 @@ namespace ConsoleServer
 
             UInt32 timestamps = reader.ReadUInt32();
             UInt32 timestampms = reader.ReadUInt32();
-            Int16 rate = reader.ReadInt16();
-            Int16 gain = reader.ReadInt16();
+            UInt16 rate = reader.ReadUInt16();
+            UInt16 gain = reader.ReadUInt16();
             
             //for(int i = 0;i < len - 12;i += 2)//每次处理2个字节   len - 12 = 1200
             //{
@@ -540,7 +537,7 @@ namespace ConsoleServer
             byte[] bufferdata = reader.ReadBytes(len - 12);
             if (_MySqlConnector != null)
             {
-                _MySqlConnector.InsertSensor(ip, timestamps, timestampms,bufferdata);
+                _MySqlConnector.InsertSensor(ip, timestamps, timestampms,rate,gain,bufferdata);
 
             }
 
@@ -586,13 +583,13 @@ namespace ConsoleServer
             {
 
                 Console.WriteLine("ReceiveSyncRsp OK");
-                MainEntry.SendToWeb(SendCmdJson("syncrsp", pkg._ReceiveFrom.Address.ToString(), "ok"));
+                MainEntry.SendCBParse("SendY", "");
             }
             else if (pkg._StringContent == "Y>e")
             {
 
                 Console.WriteLine("ReceiveSyncRsp Failed");
-                MainEntry.SendToWeb(SendCmdJson("syncrsp", pkg._ReceiveFrom.Address.ToString(), "failed"));
+                MainEntry.SendCBParse("SendY", "error");
             }
         }
 

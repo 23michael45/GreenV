@@ -3,8 +3,13 @@
 $(function () {
     $("#btnAdd").click(function () { add(); });
     $("#btnSave").click(function () { save(); });
-    $("#btnDelete").click(function () { deleteMulti(); });
-    $("#checkAll").click(function () { checkAll(this) });
+	$("#btnDelete").click(function () { deleteMulti(); });
+	$("#checkAll").click(function () { checkAll(this) });
+	$("#btnCheckAll").click(function () { sendcheckall() });
+
+	$("#btnStartAll").click(function () { sendstartall() });
+	$("#btnStopAll").click(function () { sendstopall() });
+	$("#btnUpdateSetupAll").click(function () { sendupdatesetupall() });
     initTree();
 });
 //全选
@@ -63,7 +68,8 @@ function loadTables(startPage, pageSize) {
 				tr += "<td>" + (item.ip == null ? "" : item.ip) + "</td>";
 				tr += "<td>" + (item.positionX) + "</td>";
 				tr += "<td>" + (item.positionY) + "</td>";
-                tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+				tr += "<td>" + (item.desc) + "</td>";
+				tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> <button class='btn btn-info btn-xs' href='javascript:;' onclick='checkSingle(\"" + item.id + "\")'>检查终端 </button>  </td>"
                 tr += "</tr>";
 				$("#tableBody").append(tr);
 
@@ -82,7 +88,6 @@ function loadTables(startPage, pageSize) {
                 }
                 elment.bootstrapPaginator(options); //分页插件初始化
             }
-            loadRoles(data);
         }
     })
 };
@@ -104,15 +109,135 @@ function edit(id) {
         url: "/Terminal/Get?id=" + id + "&_t=" + new Date().getTime(),
         success: function (data) {
             $("#Id").val(data.id);
-            $("#ip").val(data.userName);
-            $("#PositionX").val(data.password);
-			$("#PositionY").val(data.name);
-            $("#desc").val(data.eMail);
+			$("#ip").val(data.ip);
+			$("#PositionX").val(data.positionX);
+			$("#PositionY").val(data.positionY);
+            $("#desc").val(data.desc);
             $("#Title").text("编辑")
             $("#editModal").modal("show");
         }
     })
 };
+
+
+function checkresult(data) {
+	$("#tableconnectedBody").empty();
+	$.each(data.ips, function (i, item) {
+		var tr = "<tr>";
+		tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.mId + "'/></td>";
+		tr += "<td>" + (item.mId == null ? "" : item.mId) + "</td>";
+
+		var reg = new RegExp("\\.", "g");
+		var replacedId = item.mId.replace(reg , "_");
+
+
+		tr += "<td><input type='text' id='rate_input_" + replacedId+ "'/>" + "</td>";
+		tr += "<td><input type='text' id='gain_input_" + replacedId + "'/>" + "</td>";
+
+		$('#rate_input_' + replacedId).val(item.mRate);
+		$('#gain_input_' + replacedId).val(item.mGain);
+
+
+		if (item.mIsStart) {
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='updatesetup(\"" + item.mId +  "\")'> 更新设置 </button> <button class='btn btn-info btn-xs' href='javascript:;' onclick='stopterminal(\"" + item.mId + "\")'>停止 </button>  </td>"
+
+		}
+		else {
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='updatesetup(\"" + item.mId  + "\")'> 更新设置 </button> <button class='btn btn-info btn-xs' href='javascript:;' onclick='startterminal(\"" + item.mId + "\")'>  开始 </button> </td>"
+
+		}
+
+		tr += "</tr>";
+		$("#tableconnectedBody").append(tr);
+
+	})
+	var elment = $("#grid_paging_part"); //分页插件的容器id
+	if (data.rowCount > 0) {
+		var options = { //分页插件配置项
+			bootstrapMajorVersion: 3,
+			currentPage: startPage, //当前页
+			numberOfPages: data.rowsCount, //总数
+			totalPages: data.pageCount, //总页数
+			onPageChanged: function (event, oldPage, newPage) { //页面切换事件
+				loadTables(newPage, pageSize);
+			}
+		}
+		elment.bootstrapPaginator(options); //分页插件初始化
+	}
+}
+
+function updatesetup(ip) {
+
+
+	var reg = new RegExp("\\.", "g");
+	var replacedId =  ip.replace(reg, "_");
+	var rate = $('#rate_input_' + replacedId).val();
+	var gain = $('#gain_input_' + replacedId).val();
+	
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/UpdateSetup?ip=" + ip + "&m=" + rate + "&n=" + gain + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+function startterminal(ip) {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/StartTerminal?ip=" + ip + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+function stopterminal(ip) {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/StopTerminal?ip=" + ip + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+function sendupdatesetupall() {
+
+
+	var rate = $('#rate_input').val();
+	var gain = $('#gain_input').val();
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/UpdateSetupAll?departmentId=" + selectedId + "&m=" + rate + "&n=" + gain + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+function sendstartall() {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/StartAll?departmentId=" + selectedId + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+function sendstopall() {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/StopAll?departmentId=" + selectedId + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+
+
+function checkSingle(id) {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/Check?id=" + id + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+
+
+function sendcheckall() {
+	$.ajax({
+		type: "Get",
+		url: "/Terminal/CheckAll?departmentId=" + selectedId + "&_t=" + new Date().getTime(),
+		success: checkresult
+	})
+}
+
 //保存
 function save() {
     var roles = "";

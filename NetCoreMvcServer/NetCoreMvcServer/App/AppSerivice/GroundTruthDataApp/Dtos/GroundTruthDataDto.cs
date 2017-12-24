@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace NetCoreMvcServer.Models
+{
+    public class App_GroundTruthDataDto
+    {
+        public string device { get; set; }
+        public Int32 timestamp { get; set; }
+        public int leftright { get; set; }
+
+    }
+}

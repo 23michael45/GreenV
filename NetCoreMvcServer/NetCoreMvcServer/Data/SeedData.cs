@@ -26,12 +26,19 @@ namespace NetCoreMvcServer.Models
                }
             );
             //增加一个超级管理员用户
-            context.Users.Add(
+            context.Users.AddRange(
                  new User
                  {
                      UserName = "admin",
                      Password = "admin", //暂不进行加密
                          Name = "super admin",
+                     DepartmentId = departmentId
+                 }, 
+                 new User
+                 {
+                     UserName = "michael",
+                     Password = "123456", //暂不进行加密
+                     Name = "super admin",
                      DepartmentId = departmentId
                  }
             );
@@ -84,6 +91,22 @@ namespace NetCoreMvcServer.Models
                }
             );
 
+
+            Terminal[] ts = new Terminal[30];
+            for(int i = 0; i< 30; i++)
+            {
+                Terminal t = new Terminal
+                {
+                    DepartmentId = departmentId,
+                    ip = "192.168.1." + (i + 140).ToString(),
+                    PositionX = i,
+                    PositionY = i,
+                    desc = i.ToString(),
+                };
+                ts[i] = t;
+            }
+
+            context.Terminals.AddRange(ts);
 
             
             context.SaveChanges();

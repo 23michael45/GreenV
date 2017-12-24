@@ -15,7 +15,7 @@ namespace NetCoreMvcServer.Models
         [Column(Order = 3)]
         public int PositionX { get; set; }
         [Column(Order = 4)]
-        public int Positiony { get; set; }
+        public int PositionY { get; set; }
         [Column(Order = 5)]
         public string desc { get; set; }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fonour.MVC.Models
+namespace NetCoreMvcServer.Models
 {
     public class TreeModel
     {
