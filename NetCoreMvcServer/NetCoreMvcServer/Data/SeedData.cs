@@ -38,11 +38,20 @@ namespace NetCoreMvcServer.Models
             );
             //增加四个基本功能菜单
             context.Menus.AddRange(
+                 new Menu
+                 {
+                     Name = "首页",
+                     Code = "Home",
+                     SerialNumber = 0,
+                     ParentId = Guid.Empty,
+                     Icon = "fa fa-link",
+                     Url = "Home/Index",
+                 },
                new Menu
                {
                    Name = "控制传感器终端",
                    Code = "Terminal",
-                   SerialNumber = 0,
+                   SerialNumber = 1,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "Terminal/Index",
@@ -51,7 +60,7 @@ namespace NetCoreMvcServer.Models
                {
                    Name = "GroundTruth管理",
                    Code = "GroundTruth",
-                   SerialNumber = 1,
+                   SerialNumber = 2,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "GroundTruth/Index",
@@ -60,7 +69,7 @@ namespace NetCoreMvcServer.Models
                {
                    Name = "传感器数据",
                    Code = "App_SensorData",
-                   SerialNumber = 2,
+                   SerialNumber = 3,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "App_SensorData/Index",
@@ -69,7 +78,7 @@ namespace NetCoreMvcServer.Models
                {
                    Name = "GroundTruth数据",
                    Code = "App_GroundTruthData",
-                   SerialNumber = 3,
+                   SerialNumber = 4,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "App_GroundTruthData/Index",
@@ -78,7 +87,7 @@ namespace NetCoreMvcServer.Models
                {
                    Name = "设备地图",
                    Code = "Map",
-                   SerialNumber = 4,
+                   SerialNumber = 5,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "Map/Index",
@@ -87,7 +96,7 @@ namespace NetCoreMvcServer.Models
                {
                    Name = "用户管理",
                    Code = "User",
-                   SerialNumber = 5,
+                   SerialNumber = 6,
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "User/Index",

@@ -95,6 +95,10 @@ namespace NetCoreMvcServer.Models
                         {
                             menus.Add(m);
                         }
+                        else if (m.Code == "Home")
+                        {
+                            menus.Add(m);
+                        }
                     }
 
                     result = Mapper.Map<List<MenuDto>>(menus);
