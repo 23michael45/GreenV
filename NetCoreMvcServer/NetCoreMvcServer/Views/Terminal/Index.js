@@ -1,6 +1,7 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
 
 $(function () {
+	
     $("#btnAdd").click(function () { add(); });
     $("#btnSave").click(function () { save(); });
 	$("#btnDelete").click(function () { deleteMulti(); });
@@ -26,11 +27,19 @@ function checkAll(obj) {
 };
 //加载组织机构树
 function initTree() {
-    $.jstree.destroy();
+    //$.jstree.destroy();
     $.ajax({
         type: "Get",
         url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
-        success: function (data) {
+		success: function (data) {
+
+			$.each(data, function (index, item) {
+				selectedId = item.id;
+		
+			});
+
+			loadTables(1, 10);
+			/*
             $('#treeDiv').jstree({       //创建JsTtree
                 'core': {
                     'data': data,        //绑定JsTree数据
@@ -48,6 +57,7 @@ function initTree() {
 					loadTables(1, 10);
                 };
             });
+			*/
         }
     });
 

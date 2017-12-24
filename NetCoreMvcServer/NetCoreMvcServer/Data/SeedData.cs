@@ -31,15 +31,9 @@ namespace NetCoreMvcServer.Models
                  {
                      UserName = "admin",
                      Password = "admin", //暂不进行加密
-                         Name = "super admin",
-                     DepartmentId = departmentId
-                 }, 
-                 new User
-                 {
-                     UserName = "michael",
-                     Password = "123456", //暂不进行加密
                      Name = "super admin",
-                     DepartmentId = departmentId
+                     DepartmentId = departmentId,
+                                     
                  }
             );
             //增加四个基本功能菜单
@@ -88,8 +82,37 @@ namespace NetCoreMvcServer.Models
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "Map/Index",
+               },
+               new Menu
+               {
+                   Name = "用户管理",
+                   Code = "User",
+                   SerialNumber = 5,
+                   ParentId = Guid.Empty,
+                   Icon = "fa fa-link",
+                   Url = "User/Index",
                }
             );
+
+
+            
+            context.Roles.AddRange(
+
+               new Role
+               {
+                   Name = "管理员",
+                   Code = "管理员",
+                   Remarks = "管理员",
+               }, 
+               new Role
+               {
+                   Name = "一般用户",
+                   Code = "一般用户",
+                   Remarks = "一般用户",
+               }
+            );
+
+
 
 
             Terminal[] ts = new Terminal[30];

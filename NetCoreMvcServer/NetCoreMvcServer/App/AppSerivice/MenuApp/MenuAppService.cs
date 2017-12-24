@@ -61,20 +61,50 @@ namespace NetCoreMvcServer.Models
             List<MenuDto> result = new List<MenuDto>();
             var allMenus = _menuRepository.GetAllList(it=>it.Type == 0).OrderBy(it => it.SerialNumber);
 
-
-            if (userId != Guid.Empty) //超级管理员
-                return Mapper.Map<List<MenuDto>>(allMenus);
-            var user = _userRepository.GetWithRoles(userId);
-            if (user == null)
-                return result;
-            var userRoles = user.UserRoles;
-            List<Guid> menuIds = new List<Guid>();
-            foreach (var role in userRoles)
+            User curUser = _userRepository.GetWithRoles(userId);
+            
+            if (curUser.UserRoles == null || curUser.UserRoles.Count == 0)
             {
-                menuIds = menuIds.Union(_roleRepository.GetAllMenuListByRole(role.RoleId)).ToList();
+
+                result = Mapper.Map<List<MenuDto>>(allMenus);
             }
-            allMenus = allMenus.Where(it => menuIds.Contains(it.Id)).OrderBy(it => it.SerialNumber);
-            return Mapper.Map<List<MenuDto>>(allMenus);
+            else
+            {
+                UserRole ur = curUser.UserRoles.First<UserRole>();
+                Role r = _roleRepository.Get(ur.RoleId);
+
+                string rolename = r.Name;
+                if (rolename == "管理员")
+                {
+                    result = Mapper.Map<List<MenuDto>>(allMenus);
+                }
+                else if (rolename == "一般用户")
+                {
+                    List<Menu> menus = new List<Menu>();
+                    foreach (Menu m in allMenus)
+                    {
+                        if (m.Code == "App_SensorData")
+                        {
+                            menus.Add(m);
+                        }
+                        else if (m.Code == "App_GroundTruthData")
+                        {
+                            menus.Add(m);
+                        }
+                        else if (m.Code == "Map")
+                        {
+                            menus.Add(m);
+                        }
+                    }
+
+                    result = Mapper.Map<List<MenuDto>>(menus);
+                }
+            }
+
+           
+            return result;
+
+            
         }
     }
 }

@@ -112,14 +112,15 @@ namespace NetCoreMvcServer
                 cfg.CreateMap<DepartmentDto, Department>();
                 cfg.CreateMap<RoleDto, Role>();
                 cfg.CreateMap<Role, RoleDto>();
-                cfg.CreateMap<RoleMenuDto, RoleMenu>();
-                cfg.CreateMap<RoleMenu, RoleMenuDto>();
-                cfg.CreateMap<App_SensorDataDto, User>();
-                cfg.CreateMap<User, App_SensorDataDto>();
+
+                cfg.CreateMap<UserDto, User>();
+                cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<UserRoleDto, UserRole>();
                 cfg.CreateMap<UserRole, UserRoleDto>();
 
 
+                cfg.CreateMap<App_SensorData, App_SensorDataDto>();
+                cfg.CreateMap<App_SensorDataDto, App_SensorData>();
                 cfg.CreateMap<TerminalDto, Terminal>();
                 cfg.CreateMap<Terminal, TerminalDto>();
             });

@@ -24,7 +24,15 @@ function initTree() {
     $.ajax({
         type: "Get",
         url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
-        success: function (data) {
+		success: function (data) {
+
+			$.each(data, function (index, item) {
+				selectedId = item.id;
+
+			});
+
+			loadTables(1, 10);
+			/*
             $('#treeDiv').jstree({       //创建JsTtree
                 'core': {
                     'data': data,        //绑定JsTree数据
@@ -42,6 +50,7 @@ function initTree() {
                     loadTables(1, 10);
                 };
             });
+			*/
         }
     });
 

@@ -17,7 +17,6 @@ namespace NetCoreMvcServer.Models
         public DateTime? CreateTime { get; set; }
 
         public string Remarks { get; set; }
-
-        public virtual ICollection<RoleMenu> RoleMenus { get; set; }
+        
     }
 }

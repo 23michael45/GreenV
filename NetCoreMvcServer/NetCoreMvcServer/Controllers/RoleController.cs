@@ -108,24 +108,6 @@ namespace NetCoreMvcServer.Controllers
             var dto = _service.Get(id);
             return Json(dto);
         }
-
-        /// <summary>
-        /// 根据角色获取权限
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult GetMenusByRole(Guid roleId)
-        {
-            var dtos = _service.GetAllMenuListByRole(roleId);
-            return Json(dtos);
-        }
-
-        public IActionResult SavePermission(Guid roleId, List<RoleMenuDto> roleMenus)
-        {
-            if (_service.UpdateRoleMenu(roleId, roleMenus))
-            {
-                return Json(new { Result = "Success" });
-            }
-            return Json(new { Result = "Faild" });
-        }
+        
     }
 }

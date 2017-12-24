@@ -132,23 +132,6 @@ namespace NetCoreMvcServer.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("NetCoreMvcServer.Models.RoleMenu", b =>
-                {
-                    b.Property<Guid>("RoleId");
-
-                    b.Property<Guid>("MenuId");
-
-                    b.Property<Guid?>("MenuId1");
-
-                    b.HasKey("RoleId", "MenuId");
-
-                    b.HasIndex("MenuId");
-
-                    b.HasIndex("MenuId1");
-
-                    b.ToTable("RoleMenus");
-                });
-
             modelBuilder.Entity("NetCoreMvcServer.Models.Terminal", b =>
                 {
                     b.Property<Guid>("Id")
@@ -216,18 +199,6 @@ namespace NetCoreMvcServer.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("NetCoreMvcServer.Models.RoleMenu", b =>
-                {
-                    b.HasOne("NetCoreMvcServer.Models.Role", "Role")
-                        .WithMany("RoleMenus")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("NetCoreMvcServer.Models.Menu", "Menu")
-                        .WithMany()
-                        .HasForeignKey("MenuId1");
                 });
 
             modelBuilder.Entity("NetCoreMvcServer.Models.User", b =>
