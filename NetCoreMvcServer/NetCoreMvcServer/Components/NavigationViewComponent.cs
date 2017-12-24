@@ -22,8 +22,18 @@ namespace NetCoreMvcServer.Components
         public IViewComponentResult Invoke()
         {
             var userId = HttpContext.Session.GetString("CurrentUserId");
-            var menus = _menuAppService.GetMenusByUser(Guid.Parse(userId));
-            return View(menus);
+
+            if(userId == null || userId == "")
+            {
+                //跳转到系统首页
+                return Content("登录超时，请重新登录！");
+            }
+            else
+            {
+                var menus = _menuAppService.GetMenusByUser(Guid.Parse(userId));
+                return View(menus);
+
+            }
         }
     }
 }

@@ -51,6 +51,9 @@ namespace NetCoreMvcServer
             services.AddScoped<ITerminalAppService, TerminalAppService>();
             services.AddScoped<ITerminalRepository, TerminalRepository>();
 
+
+            services.AddScoped<IApp_SensorDataRepository, App_SensorDataRepository>();
+
             services.AddMvc();
             //Session服务
             services.AddSession();
