@@ -133,14 +133,31 @@ namespace NetCoreMvcServer.Models
                     ip = "192.168.1." + (i + 140).ToString(),
                     PositionX = i,
                     PositionY = i,
-                    desc = i.ToString(),
+                    desc = "Terminal:" + i.ToString(),
                 };
                 ts[i] = t;
             }
 
             context.Terminals.AddRange(ts);
 
-            
+
+
+
+            GroundTruth[] gts = new GroundTruth[1];
+            for (int i = 0; i < 1; i++)
+            {
+                GroundTruth gt = new GroundTruth
+                {
+                    DepartmentId = departmentId,
+                    ip = "192.168.1." + (i + 100).ToString(),
+                    desc = "GroundTruth:" + i.ToString(),
+                };
+                gts[i] = gt;
+            }
+
+            context.GroundTruths.AddRange(gts);
+
+
             context.SaveChanges();
         }
 

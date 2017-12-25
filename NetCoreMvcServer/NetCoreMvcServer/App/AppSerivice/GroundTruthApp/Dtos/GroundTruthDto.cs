@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public class GroundTruth : Entity
+    public class GroundTruthDto
     {
-        [Column(Order = 1)]
+        public Guid Id { get; set; }
+
         public Guid DepartmentId { get; set; }
-        [Column(Order = 2)]
+        /// <summary>
+        /// IP
+        /// </summary>
         public string ip { get; set; }
-        [Column(Order = 3)]
+        
         public string desc { get; set; }
+
+
     }
 }

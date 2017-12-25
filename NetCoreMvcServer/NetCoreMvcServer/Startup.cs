@@ -49,8 +49,9 @@ namespace NetCoreMvcServer
 
 
             services.AddScoped<ITerminalAppService, TerminalAppService>();
+            services.AddScoped<IGroundTruthAppService, GroundTruthAppService>();
             services.AddScoped<ITerminalRepository, TerminalRepository>();
-
+            services.AddScoped<IGroundTruthRepository, GroundTruthRepository>();
 
             services.AddScoped<IApp_SensorDataRepository, App_SensorDataRepository>();
 
@@ -126,6 +127,9 @@ namespace NetCoreMvcServer
                 cfg.CreateMap<App_SensorDataDto, App_SensorData>();
                 cfg.CreateMap<TerminalDto, Terminal>();
                 cfg.CreateMap<Terminal, TerminalDto>();
+
+                cfg.CreateMap<GroundTruthDto, GroundTruth>();
+                cfg.CreateMap<GroundTruth, GroundTruthDto>();
             });
         }
     }

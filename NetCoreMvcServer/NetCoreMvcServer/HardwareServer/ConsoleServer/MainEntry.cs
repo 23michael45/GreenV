@@ -303,6 +303,11 @@ namespace ConsoleServer
             _SendCheckCallBackDic["SendC"][ip] = cb;
             SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip),m,n));
         }
+        public static void SendY(string ip,Action<object> cb)
+        {
+            _SendCheckCallBackDic["SendY"][ip] = cb;
+            SendToTerminal(_CmdParser.SendSync(MainEntry.GetTerminalIPEndPoint(ip)));
+        }
 
         public static void SendCBParse(string name,string ip)
         {

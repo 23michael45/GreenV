@@ -86,6 +86,22 @@ namespace NetCoreMvcServer.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("NetCoreMvcServer.Models.GroundTruth", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("DepartmentId");
+
+                    b.Property<string>("desc");
+
+                    b.Property<string>("ip");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GroundTruths");
+                });
+
             modelBuilder.Entity("NetCoreMvcServer.Models.Menu", b =>
                 {
                     b.Property<Guid>("Id")

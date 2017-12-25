@@ -6,15 +6,29 @@ using System.Threading.Tasks;
 using ConsoleServer;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreMvcServer.Models;
+using NetCoreMvcServer.Utility;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetCoreMvcServer.Controllers
 {
-    public class App_GroundTruthDataController : FonourControllerBase
+    public class GroundTruthController : FonourControllerBase
     {
+
+        public class ConnectedGroundTruthState : ListContainObjectBase
+        {
+            public ConnectedGroundTruthState(string id) : base(id)
+            {
+            }
+            public bool mIsStart = false;
+            public short mRate = 0;
+            public short mGain = 0;
+
+        }
+
+        List<ConnectedGroundTruthState> _ConnectedGroundTruths = new List<ConnectedGroundTruthState>();
         private readonly IGroundTruthAppService _service;
-        public App_GroundTruthDataController(IGroundTruthAppService service)
+        public GroundTruthController(IGroundTruthAppService service)
         {
             _service = service;
         }
@@ -109,22 +123,28 @@ namespace NetCoreMvcServer.Controllers
             return Json(dto);
         }
 
-        public IActionResult Check(Guid id)
+
+        #region Check Connection
+
+        public IActionResult Sync(Guid id)
         {
             var dto = _service.Get(id);
-            return TaskCheck(dto.ip).Result;
+            return TaskSync(dto.ip).Result;
         }
-        Task<JsonResult> TaskCheck(string ip)
+        Task<JsonResult> TaskSync(string ip)
         {
             return Task.Run(() =>
             {
                 bool received = false;
                 string receiveip = "";
-                MainEntry.SendT(ip, (obj) => {
+                MainEntry.SendY(ip, (obj) => {
 
                     receiveip = (string)obj;
                     received = true;
-
+                    if(!_ConnectedGroundTruths.ContainsStringKey(receiveip))
+                    {
+                        _ConnectedGroundTruths.AddIfNotExistStringKey(receiveip);
+                    }
 
                 });
 
@@ -137,7 +157,7 @@ namespace NetCoreMvcServer.Controllers
                     if (received)
                     {
                         return Json(
-                            new { ip = receiveip ,state = "ok"});
+                            new { ips = _ConnectedGroundTruths});
                     }
                     if(timeout < 0)
                     {
@@ -145,44 +165,52 @@ namespace NetCoreMvcServer.Controllers
                     }
                 }
 
+                if (_ConnectedGroundTruths.ContainsStringKey(receiveip))
+                {
+                    _ConnectedGroundTruths.RemoveIfExistStringKey(receiveip);
+                }
 
-
-                return Json(new { state = "failed" });
+                return Json(new { ips = _ConnectedGroundTruths });
             });
             
         }
-        async void DoCheck(string ip)
+        async void DoSync(string ip)
         {
-            JsonResult jr = await TaskCheck(ip);
+            JsonResult jr = await TaskSync(ip);
         }
 
 
-        public JsonResult CheckAll(Guid departmentId, int startPage, int pageSize)
+        public JsonResult SyncAll(Guid departmentId)
         {
             int rowCount = 0;
-            var result = _service.GetGroundTruthByDepartment(departmentId, startPage, pageSize, out rowCount);
+            var result = _service.GetGroundTruthByDepartment(departmentId, 1, 256, out rowCount);
 
-            return TaskCheckAll(result).Result;
+            return TaskSyncAll(result).Result;
         }
 
-        Task<JsonResult> TaskCheckAll(List<GroundTruthDto> ts)
+        Task<JsonResult> TaskSyncAll(List<GroundTruthDto> ts)
         {
             return Task.Run(() =>
             {
-                List<string> connectedip = new List<string>();
+                _ConnectedGroundTruths.Clear();
                 foreach (GroundTruthDto t in ts)
                 {
                     string receiveip = "";
-                    MainEntry.SendT(t.ip, (obj) =>
+                    MainEntry.SendY(t.ip, (obj) =>
                     {
 
                         receiveip = (string)obj;
-
-                        if (!connectedip.Contains(receiveip))
+                        if (receiveip == "error")
                         {
-                            connectedip.Add(receiveip);
-                        }
 
+                        }
+                        else
+                        {
+                            if (!_ConnectedGroundTruths.ContainsStringKey(receiveip))
+                            {
+                                _ConnectedGroundTruths.AddIfNotExistStringKey(receiveip);
+                            }
+                        }
                     });
                 }
 
@@ -191,10 +219,12 @@ namespace NetCoreMvcServer.Controllers
                 Thread.Sleep(timeout);
 
 
-                return Json(new { connectedip = "" });
+                return Json(new { ips = _ConnectedGroundTruths,state = "ok" });
             });
         }
-            
+        #endregion
+
         
+
     }
 }

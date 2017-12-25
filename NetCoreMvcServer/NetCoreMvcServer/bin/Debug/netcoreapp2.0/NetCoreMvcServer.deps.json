@@ -5103,7 +5103,7 @@
     "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-QHVQ+T1rl7pAe84xNGNiT7JoNldP8Pe6xICAb3vM78tuno95rIBQkbOOUmImUSczsyS6D3GalsajN7OMvvvbJw==",
+      "sha512": "sha512-yFH2IXIOej/977ax6+hhPFJoKyiHHD0hFjN9HHbmSffsVLO42fApZ/BtoNZvmvcHCjvuMU6mrA12x8IUpe7pxw==",
       "path": "microsoft.codeanalysis.analyzers/1.1.0",
       "hashPath": "microsoft.codeanalysis.analyzers.1.1.0.nupkg.sha512"
     },
@@ -5726,7 +5726,7 @@
     "Remotion.Linq/2.1.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-j1mumDZGWAanmON3oOVPduAO1yJx1Qw72Rpv5dqM5UcxKw5jiOQbkXTNmKmUZnLBB1GeAViZTf/GY2mE7//qIw==",
+      "sha512": "sha512-Xrfst8eqH4m/utrkf6OCEs9beYKV6LExeCqnrqNkaMQ6oXqpcuTbvkqxxFRu9j3t6zCXiVejCSZ9XTuzqy4CJw==",
       "path": "remotion.linq/2.1.1",
       "hashPath": "remotion.linq.2.1.1.nupkg.sha512"
     },
@@ -6223,7 +6223,7 @@
     "System.Linq.Queryable/4.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-JwFyxUIhEauCD7XTgHuetbDfmYanqMd7QrcvIDMJlwaLjZ240K2twcdqVsKdoI2SRsKYtWIVDE31WZRbRcaAPg==",
+      "sha512": "sha512-H0dLcPkZxC4k4w4A/0l0vhEh5jUQaJinV5qYUhAbqzkWLmhw3PHB/DjIMkDWjPhy0WnqMumnpQ59XkRsj9zV9Q==",
       "path": "system.linq.queryable/4.0.1",
       "hashPath": "system.linq.queryable.4.0.1.nupkg.sha512"
     },
@@ -6419,7 +6419,7 @@
     "System.Runtime.Serialization.Formatters/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-L0ZXjjbZMyuJ472pWf1xw6UPZttwhQvTTDJhdZh0TuyxTS+wmMM+H8yFHEDQ93skOoOsgpXuHAR3Ult3K/o0Rw==",
+      "sha512": "sha512-KT591AkTNFOTbhZlaeMVvfax3RqhH1EJlcwF50Wm7sfnBLuHiOeZRRKrr1ns3NESkM20KPZ5Ol/ueMq5vg4QoQ==",
       "path": "system.runtime.serialization.formatters/4.3.0",
       "hashPath": "system.runtime.serialization.formatters.4.3.0.nupkg.sha512"
     },

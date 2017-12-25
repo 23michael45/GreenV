@@ -60,6 +60,20 @@ namespace NetCoreMvcServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GroundTruths",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    DepartmentId = table.Column<Guid>(nullable: false),
+                    desc = table.Column<string>(nullable: true),
+                    ip = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroundTruths", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Menus",
                 columns: table => new
                 {
@@ -181,6 +195,9 @@ namespace NetCoreMvcServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "App_SensorData");
+
+            migrationBuilder.DropTable(
+                name: "GroundTruths");
 
             migrationBuilder.DropTable(
                 name: "Menus");

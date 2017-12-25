@@ -11,7 +11,7 @@ using System;
 namespace NetCoreMvcServer.Migrations
 {
     [DbContext(typeof(GVContext))]
-    [Migration("20171224112110_gv")]
+    [Migration("20171225011222_gv")]
     partial class gv
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,22 @@ namespace NetCoreMvcServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("NetCoreMvcServer.Models.GroundTruth", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("DepartmentId");
+
+                    b.Property<string>("desc");
+
+                    b.Property<string>("ip");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GroundTruths");
                 });
 
             modelBuilder.Entity("NetCoreMvcServer.Models.Menu", b =>

@@ -9,3 +9,14 @@ G:\DevelopProj\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcore
 G:\DevelopProj\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.AssemblyInfo.cs
 G:\DevelopProj\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.dll
 G:\DevelopProj\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.pdb
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\bin\Debug\netcoreapp2.0\NetCoreMvcServer.deps.json
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\bin\Debug\netcoreapp2.0\NetCoreMvcServer.runtimeconfig.json
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\bin\Debug\netcoreapp2.0\NetCoreMvcServer.runtimeconfig.dev.json
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\bin\Debug\netcoreapp2.0\NetCoreMvcServer.dll
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\bin\Debug\netcoreapp2.0\NetCoreMvcServer.pdb
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.csprojResolveAssemblyReference.cache
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.csproj.CoreCompileInputs.cache
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.AssemblyInfoInputs.cache
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.AssemblyInfo.cs
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.dll
+G:\GreenV\GreenV\NetCoreMvcServer\NetCoreMvcServer\obj\Debug\netcoreapp2.0\NetCoreMvcServer.pdb
