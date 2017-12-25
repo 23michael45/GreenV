@@ -13,6 +13,7 @@ namespace NetCoreMvcServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    createtime = table.Column<DateTime>(nullable: false),
                     device = table.Column<string>(nullable: true),
                     leftright = table.Column<int>(nullable: false),
                     timestamp = table.Column<long>(nullable: false)
@@ -27,6 +28,7 @@ namespace NetCoreMvcServer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    createtime = table.Column<DateTime>(nullable: false),
                     device = table.Column<string>(nullable: true),
                     gain = table.Column<short>(nullable: false),
                     rate = table.Column<short>(nullable: false),

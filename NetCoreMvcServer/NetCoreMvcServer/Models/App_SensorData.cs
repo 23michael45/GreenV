@@ -18,8 +18,10 @@ namespace NetCoreMvcServer.Models
         public Int16 rate { get; set; }
         [Column(Order = 5)]
         public Int16 gain { get; set; }
-
         [Column(Order = 6)]
+        public DateTime createtime { get; set; }
+
+        [Column(Order = 7)]
         public byte[] sendsorvalue { get; set; }
     }
 }

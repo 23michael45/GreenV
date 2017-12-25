@@ -38,6 +38,7 @@
 	<!-- bootstrap wysihtml5 - text editor -->
 	<link rel="stylesheet" href="~/AdminLTE-2.3.6/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
+
 	@*
 		<!-- Bootstrap 3.3.6 -->
 		<link rel="stylesheet" href="~/AdminLTE-2.3.6/bootstrap/css/bootstrap.min.css">
@@ -103,7 +104,7 @@
 		<aside class="main-sidebar">
 			<!-- sidebar: style can be found in sidebar.less -->
 			<section class="sidebar">
-				
+
 				<!-- /.search form -->
 				<!-- Sidebar Menu -->
 				<ul class="sidebar-menu">
@@ -227,16 +228,15 @@
 		<div class="control-sidebar-bg"></div>
 	</div>
 	<!-- ./wrapper -->
-	
+
 	<script src="~/lib/jquery/dist/jquery.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+	<!--<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 	<script src="~/js/app.js"></script>
 	<script src="~/js/bootstrap-paginator.js"></script>
 	<script src="~/lib/layer/layer.js"></script>
 	<script src="~/lib/jstree/dist/jstree.js"></script>
 	<script src="~/lib/select2/select2.js"></script>
-	<script src="~/lib/select2/select2_locale_zh-CN.js"></script>
-	
+	<script src="~/lib/select2/select2_locale_zh-CN.js"></script> -->
 
 
 	<!-- jQuery 2.2.3 -->
@@ -254,8 +254,13 @@
 	<!-- jQuery Knob Chart -->
 	<script src="~/AdminLTE-2.3.6/plugins/knob/jquery.knob.js"></script>
 	<!-- daterangepicker -->
+
+	<script src="~/AdminLTE-2.3.6/plugins/datepicker/bootstrap-datepicker.js"></script>
+
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
 	<script src="~/AdminLTE-2.3.6/plugins/daterangepicker/daterangepicker.js"></script>
+	<script src="~/AdminLTE-2.3.6/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 	<!-- datepicker -->
 	<script src="~/AdminLTE-2.3.6/plugins/datepicker/bootstrap-datepicker.js"></script>
 	<!-- Bootstrap WYSIHTML5 -->
@@ -270,7 +275,7 @@
 	<script src="~/AdminLTE-2.3.6/dist/js/pages/dashboard.js"></script>
 	<!-- AdminLTE for demo purposes -->
 	<script src="~/AdminLTE-2.3.6/dist/js/demo.js"></script>
-
+	<script src="~/AdminLTE-2.3.6/plugins/iCheck/icheck.min.js"></script>
 
 	<!-- Select2 -->
 	<script src="~/AdminLTE-2.3.6/plugins/select2/select2.full.min.js"></script>
@@ -296,7 +301,35 @@
 			//Date range picker
 			$('#reservation').daterangepicker();
 			//Date range picker with time picker
-			$('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A' });
+			$('#reservationtime').daterangepicker({
+				timePicker: true,
+				timePicker12Hour: false, //24小时 老版本
+				timePicker24Hour: true, //24小时 新版本
+				timePickerSeconds: true,
+				timePickerIncrement: 1,
+				format: 'YYYY-MM-DD HH:mm:ss', //控件中from和to 显示的日期格式
+				opens: 'right', //日期选择框的弹出位置
+				time: {
+					enabled: true
+				},
+				locale: {
+					applyLabel: '确定',
+					cancelLabel: '取消',
+					fromLabel: '起始时间',
+					toLabel: '结束时间',
+					customRangeLabel: '自定义',
+					daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+					monthNames: ['一月', '二月', '三月', '四月', '五月', '六月',
+						'七月', '八月', '九月', '十月', '十一月', '十二月'],
+					firstDay: 1,
+					format: 'MM/DD/YYYY h:mm A'
+				},
+				startDate: moment().hours(0).minutes(0).seconds(0), //startDate和endDate 的值如果跟 ranges 的两个相同则自动选择ranges中的行. 这里选中了清空行
+				endDate: moment().endOf('day')
+
+				
+
+			});
 			//Date range as a button
 			$('#daterange-btn').daterangepicker(
 				{
@@ -348,7 +381,7 @@
 			});
 		});
 	</script>
-		
+
 	@RenderSection("scripts", false)
 </body>
 </html>

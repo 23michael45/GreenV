@@ -148,5 +148,21 @@ namespace NetCoreMvcServer.Controllers
         {
             return _context.App_SensorData.Any(e => e.Id == id);
         }
+        
+        public IActionResult GetDataByDepartment( int startPage, int pageSize, Guid departmentId)
+        {
+            return Content(departmentId.ToString());
+        }
+        public IActionResult Query(int startPage, int pageSize,string dt,string ip)
+        {
+            //12/25/2017 4:00 AM - 12/25/2017 11:59 PM
+            string[] times = dt.Split('-');
+
+            DateTime starttime = DateTime.Parse(times[0]);
+            DateTime endtime = DateTime.Parse(times[1]);
+
+            
+            return Content(dt + ip);
+        }
     }
 }

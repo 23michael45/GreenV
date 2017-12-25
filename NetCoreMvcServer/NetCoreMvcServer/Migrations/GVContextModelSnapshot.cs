@@ -25,6 +25,8 @@ namespace NetCoreMvcServer.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("createtime");
+
                     b.Property<string>("device");
 
                     b.Property<int>("leftright");
@@ -40,6 +42,8 @@ namespace NetCoreMvcServer.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("createtime");
 
                     b.Property<string>("device");
 

@@ -68,7 +68,8 @@ namespace ConsoleServer
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,rate,gain,sensorvalue) VALUES ('{0}',{1},{2},{3},{4},(@blobData))", dv, timestamps,timestampms, rate,gain,data);
+                DateTime dt = DateTime.Now;
+                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,rate,gain,sensorvalue) VALUES ('{0}',{1},{2},{3},{4},{5},(@blobData))", dv, timestamps,timestampms, rate,gain,dt,data);
 
 
 
@@ -78,7 +79,9 @@ namespace ConsoleServer
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
                 cmd.Parameters.Add(par);
                 cmd.ExecuteNonQuery();
-                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} {3} {4}", dv, timestamps,timestampms,rate,gain));
+
+
+                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} {3} {4} {5}", dv, timestamps,timestampms,rate,gain,dt));
 
 
             }
@@ -92,13 +95,14 @@ namespace ConsoleServer
         {
             try
             {
-                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright) VALUES ('{0}','{1}',{2})", dv, timestamp, lr);
+                DateTime dt = DateTime.Now;
+                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright,createtime) VALUES ('{0}','{1}',{2},{3})", dv, timestamp, lr,dt);
 
 
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
                 cmd.ExecuteNonQuery();
                 
-                Console.WriteLine(string.Format("Insert app_groundtruthdata : {0} {1} {2} ", dv, timestamp, lr));
+                Console.WriteLine(string.Format("Insert app_groundtruthdata : {0} {1} {2} {3} ", dv, timestamp, lr,dt));
 
             }
             catch (Exception ex)

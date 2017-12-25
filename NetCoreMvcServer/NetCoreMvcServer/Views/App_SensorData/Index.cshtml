@@ -24,16 +24,16 @@
 							<div class="input-group-addon">
 								时间范围
 								<i class="fa fa-clock-o"></i>
-								<input type="text" id="reservationtime">
+								<input type="text" width ="500" id="reservationtime">
 								IP地址
 								<i class="fa fa-laptop"></i>
-								<input type="text" data-inputmask="'alias': 'ip'" data-mask="">
+								<input type="text" id="inputip" data-inputmask="'alias': 'ip'" data-mask="">
 							</div>
+
 							<div class="pull-right box-tools">
 								<button id="btnQuery" class="btn btn-primary" type="button">
 									查询
 								</button>
-
 							</div>
 						</div>
 						
@@ -75,7 +75,6 @@
 			</div>
 		</div>
 	</div>
-	@Html.Partial("_Edit")
 	@section scripts{
 		<script src="~/Views/App_SensorData/Index.js"></script>
 	}

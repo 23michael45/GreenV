@@ -16,6 +16,8 @@ namespace NetCoreMvcServer.Models
         public long timestamp { get; set; }
         [Column(Order = 3)]
         public int leftright { get; set; }
-        
+        [Column(Order = 4)]
+        public DateTime createtime { get; set; }
+
     }
 }
