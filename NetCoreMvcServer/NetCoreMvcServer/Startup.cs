@@ -100,7 +100,8 @@ namespace NetCoreMvcServer
             });
 
 
-            SeedData.Initialize(gvcontext); //初始化数据
+            //ConsoleServer.MySqlConnector.TransferDB();
+            //SeedData.Initialize(gvcontext); //初始化数据
 
 
         }

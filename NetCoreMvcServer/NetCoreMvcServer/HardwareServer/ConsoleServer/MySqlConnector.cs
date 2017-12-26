@@ -69,20 +69,21 @@ namespace ConsoleServer
             try
             {
                 DateTime dt = DateTime.Now;
-                string sql = string.Format("INSERT INTO app_sensordata (device,timestamps,timestampms,rate,gain,sensorvalue) VALUES ('{0}',{1},{2},{3},{4},{5},(@blobData))", dv, timestamps,timestampms, rate,gain,dt,data);
+                Guid Id = Guid.NewGuid();
 
+                string sql = string.Format("INSERT INTO app_sensordata (Id,device,timestamps,timestampms,rate,gain,createtime,sensorvalue) VALUES ('{0}','{1}',{2},{3},{4},{5},(@createtime),(@blobData))", Id, dv, timestamps, timestampms, rate, gain);
+                
+                MySqlParameter blobData = new MySqlParameter("@blobData", MySqlDbType.Blob);
+                blobData.Value = data;
 
+                MySqlParameter createtime = new MySqlParameter("@createtime", MySqlDbType.DateTime);
+                createtime.Value = dt;
 
-
-                MySqlParameter par = new MySqlParameter("@blobData", MySqlDbType.Blob);
-                par.Value = data;
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
-                cmd.Parameters.Add(par);
+                cmd.Parameters.Add(blobData);
+                cmd.Parameters.Add(createtime);
+                //cmd.Parameters.AddWithValue("@createtime", createtime);
                 cmd.ExecuteNonQuery();
-
-
-                Console.WriteLine(string.Format("Insert app_sensordata : {0} {1} {2} {3} {4} {5}", dv, timestamps,timestampms,rate,gain,dt));
-
 
             }
             catch (Exception ex)
@@ -96,13 +97,16 @@ namespace ConsoleServer
             try
             {
                 DateTime dt = DateTime.Now;
-                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright,createtime) VALUES ('{0}','{1}',{2},{3})", dv, timestamp, lr,dt);
+                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright,createtime) VALUES ('{0}','{1}',{2},(@createtime))", dv, timestamp, lr);
+
+                MySqlParameter createtime = new MySqlParameter("@createtime", MySqlDbType.DateTime);
+                createtime.Value = dt;
 
 
                 MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+
+                cmd.Parameters.Add(createtime);
                 cmd.ExecuteNonQuery();
-                
-                Console.WriteLine(string.Format("Insert app_groundtruthdata : {0} {1} {2} {3} ", dv, timestamp, lr,dt));
 
             }
             catch (Exception ex)
@@ -202,5 +206,152 @@ namespace ConsoleServer
             file.Flush();
             fs.Close();
         }
+
+
+
+
+        public class InputSensorData
+        {
+            public int _id;
+            public string _device;
+            public int _timestamps;
+            public int _timestampms;
+            public byte[] _data;
+        }
+
+        static List<InputSensorData> datalist = new List<InputSensorData>();
+        public static void TransferReadDB()
+        {
+            FileStream fs = new FileStream("dbconfig.txt", FileMode.Open);
+            var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+
+            List<string> cmdlist = new List<string>();
+            string connStr = file.ReadLine();
+            fs.Close();
+
+            MySqlConnection conn = new MySqlConnection(connStr);
+            try
+            {
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+
+
+                string sql = string.Format("select * from app_sensordata");
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    int id = rdr.GetInt32(0);
+                    string device = rdr.GetString(1);
+                    int timestamps = rdr.GetInt32(2);
+                    int timestampms = rdr.GetInt32(3);
+                    //int rate = rdr.GetInt32(3);
+                    //int gain = rdr.GetInt32(2);
+
+
+
+                    byte[] data = new byte[1200];
+                    long len = rdr.GetBytes(4, 0, data, 0, 1200);
+
+
+                    InputSensorData isd = new InputSensorData();
+                    isd._device = device;
+                    isd._timestamps = timestamps;
+                    isd._timestampms = timestampms;
+                    isd._data = data;
+
+                    datalist.Add(isd);
+
+                    
+                }
+
+                rdr.Close();
+                fs.Close();
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                conn = null;
+            }
+        }
+        public static void TransferWriteDB()
+        {
+            FileStream fs = new FileStream("dbconfig2.txt", FileMode.Open);
+            var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+
+            List<string> cmdlist = new List<string>();
+            string connStr = file.ReadLine();
+            fs.Close();
+
+            MySqlConnection conn = new MySqlConnection(connStr);
+            try
+            {
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+
+
+
+                int count = 0;
+                foreach(InputSensorData isd in datalist)
+                {
+                    Guid Id = Guid.NewGuid();
+                    string dv = isd._device;
+                    int timestamps = isd._timestamps;
+                    int timestampms = isd._timestampms;
+
+                    int rate = count / 30;
+                    int gain = count / 15;
+
+                    byte[] data = isd._data;
+
+
+                    DateTime dt = DateTime.Now;
+                    dt.AddHours(count / 10);
+
+                    string sql = string.Format("INSERT INTO app_sensordata (Id,device,timestamps,timestampms,rate,gain,createtime,sensorvalue) VALUES ('{0}','{1}',{2},{3},{4},{5},(@createtime),(@blobData))", Id,dv, timestamps, timestampms, rate, gain);
+
+
+
+
+                    MySqlParameter blobData = new MySqlParameter("@blobData", MySqlDbType.Blob);
+                    blobData.Value = data;
+
+                    MySqlParameter createtime = new MySqlParameter("@createtime", MySqlDbType.DateTime);
+                    createtime.Value = dt;
+
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.Add(blobData);
+                    cmd.Parameters.Add(createtime);
+                    //cmd.Parameters.AddWithValue("@createtime", createtime);
+                    cmd.ExecuteNonQuery();
+
+                    
+                    count++;
+                }
+
+              
+                fs.Close();
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                conn = null;
+            }
+        }
+        public static void TransferDB()
+        {
+            TransferReadDB();
+            TransferWriteDB();
+       
+        }
     }
+
+
+
+   
 }

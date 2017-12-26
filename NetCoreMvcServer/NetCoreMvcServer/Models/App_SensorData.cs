@@ -22,6 +22,6 @@ namespace NetCoreMvcServer.Models
         public DateTime createtime { get; set; }
 
         [Column(Order = 7)]
-        public byte[] sendsorvalue { get; set; }
+        public byte[] sensorvalue { get; set; }
     }
 }

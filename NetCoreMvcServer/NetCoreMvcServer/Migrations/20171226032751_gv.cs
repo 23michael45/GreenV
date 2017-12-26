@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,8 @@ namespace NetCoreMvcServer.Migrations
                 name: "App_GroundTruthData",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     createtime = table.Column<DateTime>(nullable: false),
                     device = table.Column<string>(nullable: true),
                     leftright = table.Column<int>(nullable: false),
@@ -32,7 +34,7 @@ namespace NetCoreMvcServer.Migrations
                     device = table.Column<string>(nullable: true),
                     gain = table.Column<short>(nullable: false),
                     rate = table.Column<short>(nullable: false),
-                    sendsorvalue = table.Column<byte[]>(nullable: true),
+                    sensorvalue = table.Column<byte[]>(nullable: true),
                     timestampms = table.Column<int>(nullable: false),
                     timestamps = table.Column<int>(nullable: false)
                 },

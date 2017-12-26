@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public class App_GroundTruthData : Entity
+    public class App_GroundTruthData : Entity<int>
     {
 
         [Column(Order = 1)]
