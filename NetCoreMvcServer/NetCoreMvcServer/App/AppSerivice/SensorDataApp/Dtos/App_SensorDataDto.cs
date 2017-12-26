@@ -14,7 +14,7 @@ namespace NetCoreMvcServer.Models
         public Int16 rate { get; set; }
         public Int16 gain { get; set; }
         public DateTime createtime { get; set; }
-        public List<Int16> sensorvalue { get; set; }
+        public UInt16 sensorvalue { get; set; }
 
 
     }

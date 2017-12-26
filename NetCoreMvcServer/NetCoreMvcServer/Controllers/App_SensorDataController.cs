@@ -146,13 +146,63 @@ namespace NetCoreMvcServer.Controllers
         {
 
             IQueryable<App_SensorData> rt = DoQuery(dt, ip);
-            rt = rt.Skip((startPage - 1) * pageSize).Take(pageSize);
-            int totalCount = rt.Count();
+
+
+            List<App_SensorDataDto> rtd = new List<App_SensorDataDto>();
+            foreach (App_SensorData asd in rt)
+            {
+                Guid id = asd.Id;
+                string device = asd.device;
+                int timestamps = asd.timestamps;
+                int timestampms = asd.timestampms;
+                int rate = asd.rate;
+                int gain = asd.gain;
+                DateTime createtime = asd.createtime;
+
+
+
+                byte[] data = new byte[1200];
+                long len = asd.sensorvalue.Length;
+                MemoryStream ms = new MemoryStream(asd.sensorvalue);
+                BinaryReader reader = new BinaryReader(ms);
+
+
+
+                for (int i = 0; i < len / 2; i++)
+                {
+                    UInt16 d = reader.ReadUInt16();
+
+                    App_SensorDataDto dto = new App_SensorDataDto();
+                    dto.device = asd.device;
+                    dto.timestamps = asd.timestamps;
+                    dto. timestampms = asd.timestampms;
+                    dto. rate = asd.rate;
+                    dto. gain = asd.gain;
+                    dto. createtime = asd.createtime;
+                    dto.sensorvalue = d;
+
+                    rtd.Add(dto);
+                }
+            }
+
+
+            List<App_SensorDataDto> pagert = new List<App_SensorDataDto>();
+
+            //rt = rt.Skip((startPage - 1) * pageSize).Take(pageSize);
+
+            for(int i = (startPage - 1) * pageSize; i< (startPage - 1) * pageSize + pageSize; i++)
+            {
+                pagert.Add(rtd[i]);
+            }
+
+
+
+            int totalCount = rtd.Count;
             return Json(new
             {
                 rowCount = totalCount,
                 pageCount = Math.Ceiling(Convert.ToDecimal(totalCount) / pageSize),
-                rows = rt
+                rows = pagert
             });
 
 

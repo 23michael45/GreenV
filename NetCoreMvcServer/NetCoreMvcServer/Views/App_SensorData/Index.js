@@ -60,7 +60,7 @@ function query(startPage,pageSize) {
 				var tr = "<tr>";
 				tr += "<td>" + (item.device == null ? "" : item.device) + "</td>";
 				tr += "<td>" + (item.createtime == null ? "" : item.createtime) + "</td>";
-				tr += "<td>" + (item.rate == null ? "" : item.rate) + "</td>";
+				tr += "<td>" + (item.sensorvalue == null ? "" : item.sensorvalue) + "</td>";
 				tr += "<td>" + (item.rate == null ? "" : item.rate) + "</td>";
 				tr += "<td>" + (item.gain == null ? "" : item.gain) + "</td>";
 				tr += "<td> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
