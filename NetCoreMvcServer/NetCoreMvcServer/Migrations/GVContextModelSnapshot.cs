@@ -22,7 +22,7 @@ namespace NetCoreMvcServer.Migrations
 
             modelBuilder.Entity("NetCoreMvcServer.Models.App_GroundTruthData", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("createtime");

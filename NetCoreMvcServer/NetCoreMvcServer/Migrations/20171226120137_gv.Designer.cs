@@ -11,7 +11,7 @@ using System;
 namespace NetCoreMvcServer.Migrations
 {
     [DbContext(typeof(GVContext))]
-    [Migration("20171226032751_gv")]
+    [Migration("20171226120137_gv")]
     partial class gv
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,7 +23,7 @@ namespace NetCoreMvcServer.Migrations
 
             modelBuilder.Entity("NetCoreMvcServer.Models.App_GroundTruthData", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("createtime");

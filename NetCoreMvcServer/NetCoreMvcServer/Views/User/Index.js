@@ -20,12 +20,12 @@ function checkAll(obj) {
 };
 //加载组织机构树
 function initTree() {
-    $.jstree.destroy();
+	$.jstree.destroy();
     $.ajax({
         type: "Get",
         url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
-
+			
 			$.each(data, function (index, item) {
 				selectedId = item.id;
 
@@ -197,7 +197,7 @@ function deleteMulti() {
 function deleteSingle(id) {
     layer.confirm("您确认删除选定的记录吗？", {
         btn: ["确定", "取消"]
-    }, function () {
+	}, function () {
         $.ajax({
             type: "POST",
             url: "/User/Delete",

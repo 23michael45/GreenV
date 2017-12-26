@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 using System.Collections.Generic;
 
@@ -13,8 +12,7 @@ namespace NetCoreMvcServer.Migrations
                 name: "App_GroundTruthData",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<Guid>(nullable: false),
                     createtime = table.Column<DateTime>(nullable: false),
                     device = table.Column<string>(nullable: true),
                     leftright = table.Column<int>(nullable: false),

@@ -50,8 +50,7 @@ namespace NetCoreMvcServer.Controllers
                 pageCount = Math.Ceiling(Convert.ToDecimal(rowCount) / pageSize),
                 rows = result,
             });
-
-            string s = jr.ToString();
+            
             return jr;
         }
 

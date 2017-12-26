@@ -54,6 +54,7 @@ namespace NetCoreMvcServer
             services.AddScoped<IGroundTruthRepository, GroundTruthRepository>();
 
             services.AddScoped<IApp_SensorDataRepository, App_SensorDataRepository>();
+            services.AddScoped<IApp_GroundTruthDataRepository, App_GroundTruthDataRepository>();
 
             services.AddMvc();
             //Session服务
@@ -100,8 +101,8 @@ namespace NetCoreMvcServer
             });
 
 
-            //ConsoleServer.MySqlConnector.TransferDB();
-            //SeedData.Initialize(gvcontext); //初始化数据
+            ConsoleServer.MySqlConnector.TransferDB();
+            SeedData.Initialize(gvcontext); //初始化数据
 
 
         }
