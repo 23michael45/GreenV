@@ -1,4 +1,6 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
+var cstartPage = 1;
+var cpageSize = 10;
 $(function () {
     $("#btnAddRoot").click(function () { add(0); });
     $("#btnAdd").click(function () { add(1); });
@@ -6,7 +8,7 @@ $(function () {
     $("#btnDelete").click(function () { deleteMulti(); });
     $("#btnLoadRoot").click(function () {
         selectedId = "00000000-0000-0000-0000-000000000000";
-        loadTables(1, 10);
+		loadrootTables(1, 10);
     });
     $("#checkAll").click(function () { checkAll(this) });
     initTree();
@@ -16,8 +18,10 @@ function initTree() {
     $.jstree.destroy();
     $.ajax({
         type: "Get",
-        url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
-        success: function (data) {
+		url: "/Department/GetAllRoot?startPage=1&pageSize=10&_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+		success: function (data) {
+
+			/*
             $('#treeDiv').jstree({       //创建JsTtree
                 'core': {
                     'data': data,        //绑定JsTree数据
@@ -32,48 +36,107 @@ function initTree() {
                 var node = data.instance.get_node(data.selected[0]);  //获取选中的节点
                 if (node) {
                     selectedId = node.id;
-                    loadTables(1, 10);
+					loadTables(1, 10);
                 };
-            });
+			});*/
+			
+			selectedId = data.rows[0].id;
+			//setCookie('select_deparmentid', selectedId);
+			loadrootTables(1, 10);
         }
     });
 
 }
+
+
+function ajaxresult(data) {
+	$("#tableBody").html("");
+	$.each(data.rows, function (i, item) {
+		var tr = "<tr>";
+		tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.id + "'/></td>";
+		tr += "<td>" + item.name + "</td>";
+		tr += "<td>" + (item.code == null ? "" : item.code) + "</td>";
+		tr += "<td>" + (item.manager == null ? "" : item.manager) + "</td>";
+		tr += "<td>" + (item.contactNumber == null ? "" : item.contactNumber) + "</td>";
+		tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
+		if (selectedId == item.id) {
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+
+		}
+		else {
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button><button class='btn btn-info btn-xs' href='javascript:;' onclick='select(\"" + item.id + "\")'><i class='fa fa-edit'></i> 设为选中 </button></td>"
+
+		}
+
+		tr += "</tr>";
+		$("#tableBody").append(tr);
+	})
+	var elment = $("#grid_paging_part"); //分页插件的容器id
+	if (data.rowCount > 0) {
+		var options = { //分页插件配置项
+			bootstrapMajorVersion: 3,
+			currentPage: startPage, //当前页
+			numberOfPages: data.rowsCount, //总数
+			totalPages: data.pageCount, //总页数
+			onPageChanged: function (event, oldPage, newPage) { //页面切换事件
+				loadrootTables(newPage, pageSize);
+			}
+		}
+		elment.bootstrapPaginator(options); //分页插件初始化
+	}
+	
+}
+
 //加载功能列表数据
 function loadTables(startPage, pageSize) {
     $("#tableBody").html("");
     $("#checkAll").prop("checked", false);
-    $.ajax({
-        type: "GET",
-        url: "/Department/GetChildrenByParent?startPage=" + startPage + "&pageSize=" + pageSize + "&parentId=" + selectedId + "&_t=" + new Date().getTime(),
-        success: function (data) {
-            $.each(data.rows, function (i, item) {
-                var tr = "<tr>";
-                tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.id + "'/></td>";
-                tr += "<td>" + item.name + "</td>";
-                tr += "<td>" + (item.code == null ? "" : item.code) + "</td>";
-                tr += "<td>" + (item.manager == null ? "" : item.manager) + "</td>";
-                tr += "<td>" + (item.contactNumber == null ? "" : item.contactNumber) + "</td>";
-                tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
-                tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
-                tr += "</tr>";
-                $("#tableBody").append(tr);
-            })
-            var elment = $("#grid_paging_part"); //分页插件的容器id
-            if (data.rowCount > 0) {
-                var options = { //分页插件配置项
-                    bootstrapMajorVersion: 3,
-                    currentPage: startPage, //当前页
-                    numberOfPages: data.rowsCount, //总数
-                    totalPages: data.pageCount, //总页数
-                    onPageChanged: function (event, oldPage, newPage) { //页面切换事件
-                        loadTables(newPage, pageSize);
-                    }
-                }
-                elment.bootstrapPaginator(options); //分页插件初始化
-            }
-        }
-    })
+	$.ajax({
+		type: "GET",
+		url: "/Department/GetChildrenByParent?startPage=" + startPage + "&pageSize=" + pageSize + "&parentId=" + selectedId + "&_t=" + new Date().getTime(),
+		success: function (data) {
+			$.each(data.rows, function (i, item) {
+				var tr = "<tr>";
+				tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.id + "'/></td>";
+				tr += "<td>" + item.name + "</td>";
+				tr += "<td>" + (item.code == null ? "" : item.code) + "</td>";
+				tr += "<td>" + (item.manager == null ? "" : item.manager) + "</td>";
+				tr += "<td>" + (item.contactNumber == null ? "" : item.contactNumber) + "</td>";
+				tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
+				tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+				tr += "</tr>";
+				$("#tableBody").append(tr);
+			})
+			var elment = $("#grid_paging_part"); //分页插件的容器id
+			if (data.rowCount > 0) {
+				var options = { //分页插件配置项
+					bootstrapMajorVersion: 3,
+					currentPage: startPage, //当前页
+					numberOfPages: data.rowsCount, //总数
+					totalPages: data.pageCount, //总页数
+					onPageChanged: function (event, oldPage, newPage) { //页面切换事件
+						loadTables(newPage, pageSize);
+					}
+				}
+				elment.bootstrapPaginator(options); //分页插件初始化
+			}
+		}
+    });
+}
+
+
+
+function loadrootTables(startPage, pageSize) {
+
+	cstartPage = startPage;
+	cpageSize = pageSize;
+	$("#tableBody").html("");
+	$("#checkAll").prop("checked", false);
+	$.ajax({
+		type: "GET",
+		url: "/Department/GetAllRoot?startPage=" + startPage + "&pageSize=" + pageSize + "&_t=" + new Date().getTime(),
+		success: ajaxresult
+	})
 }
 //全选
 function checkAll(obj) {
@@ -202,4 +265,24 @@ function deleteSingle(id) {
     });
 };
 
+function select(id) {
+	selectedId = id;
+	//setCookie('select_deparmentid', selectedId,7);
+	layer.confirm("您确认选中当前楼层吗？", {
+		btn: ["确定", "取消"]
+	}, function () {
+		$.ajax({
+			type: "POST",
+			url: "/Department/GetAllRoot?startPage=" + cstartPage + "&pageSize=" + cpageSize + "&_t=" + new Date().getTime(),
+			success: function (data) {
+
+				//var x = getCookie('select_deparmentid');
+				//alert(x);
+
+				layer.closeAll();
+				ajaxresult(data);
+			}
+		})
+	});
+}
 

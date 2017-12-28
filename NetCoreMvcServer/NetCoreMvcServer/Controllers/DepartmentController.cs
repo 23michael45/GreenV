@@ -12,10 +12,14 @@ namespace NetCoreMvcServer.Controllers
     public class DepartmentController : FonourControllerBase
     {
         private readonly IDepartmentAppService _service;
+        
         public DepartmentController(IDepartmentAppService service)
         {
             _service = service;
+            
         }
+
+
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -37,6 +41,8 @@ namespace NetCoreMvcServer.Controllers
             }
             return Json(treeModels);
         }
+        
+
         /// <summary>
         /// 获取子级列表
         /// </summary>
@@ -45,6 +51,18 @@ namespace NetCoreMvcServer.Controllers
         {
             int rowCount = 0;
             var result = _service.GetChildrenByParent(parentId, startPage, pageSize, out rowCount);
+            return Json(new
+            {
+                rowCount = rowCount,
+                pageCount = Math.Ceiling(Convert.ToDecimal(rowCount) / pageSize),
+                rows = result,
+            });
+        }
+        public IActionResult GetAllRoot(int startPage, int pageSize)
+        {
+            int rowCount = 0;
+
+            var result = _service.GetAllRoot(startPage, pageSize, out rowCount);
             return Json(new
             {
                 rowCount = rowCount,

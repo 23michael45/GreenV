@@ -61,7 +61,7 @@ namespace NetCoreMvcServer.Models
         /// <summary>
         /// 部门ID
         /// </summary>
-        public Guid DepartmentId { get; set; }
+        //public Guid DepartmentId { get; set; }
 
         /// <summary>
         /// 是否已删除
@@ -71,7 +71,7 @@ namespace NetCoreMvcServer.Models
         /// <summary>
         /// 所属部门实体
         /// </summary>
-        public virtual Department Department { get; set; }
+        //public virtual Department Department { get; set; }
 
         /// <summary>
         /// 角色集合

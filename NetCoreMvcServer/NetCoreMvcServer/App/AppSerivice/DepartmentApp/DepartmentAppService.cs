@@ -22,7 +22,10 @@ namespace NetCoreMvcServer.Models
         {
             return Mapper.Map<List<DepartmentDto>>(_repository.GetAllList(it => it.Id != Guid.Empty).OrderBy(it => it.Code));
         }
-
+        public List<DepartmentDto> GetAllRoot(int startPage, int pageSize, out int rowCount)
+        {
+            return Mapper.Map<List<DepartmentDto>>(_repository.LoadPageList(startPage, pageSize, out rowCount,null,null));
+        }
         /// <summary>
         /// 根据父级Id获取子级列表
         /// </summary>

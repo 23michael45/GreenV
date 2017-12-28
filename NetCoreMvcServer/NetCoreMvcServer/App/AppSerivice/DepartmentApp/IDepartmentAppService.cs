@@ -12,6 +12,7 @@ namespace NetCoreMvcServer.Models
         /// </summary>
         /// <returns></returns>
         List<DepartmentDto> GetAllList();
+        List<DepartmentDto> GetAllRoot(int startPage, int pageSize, out int rowCount);
 
         /// <summary>
         /// 根据父级Id获取子级列表

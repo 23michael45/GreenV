@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace NetCoreMvcServer.Migrations
 {
-    public partial class gv : Migration
+    public partial class dbcontext : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -133,7 +133,6 @@ namespace NetCoreMvcServer.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     CreateTime = table.Column<DateTime>(nullable: true),
                     CreateUserId = table.Column<Guid>(nullable: false),
-                    DepartmentId = table.Column<Guid>(nullable: false),
                     EMail = table.Column<string>(nullable: true),
                     IsDeleted = table.Column<int>(nullable: false),
                     LastLoginTime = table.Column<DateTime>(nullable: false),
@@ -147,12 +146,6 @@ namespace NetCoreMvcServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Departments_DepartmentId",
-                        column: x => x.DepartmentId,
-                        principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,11 +176,6 @@ namespace NetCoreMvcServer.Migrations
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_DepartmentId",
-                table: "Users",
-                column: "DepartmentId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -197,6 +185,9 @@ namespace NetCoreMvcServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "App_SensorData");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
 
             migrationBuilder.DropTable(
                 name: "GroundTruths");
@@ -215,9 +206,6 @@ namespace NetCoreMvcServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Departments");
         }
     }
 }

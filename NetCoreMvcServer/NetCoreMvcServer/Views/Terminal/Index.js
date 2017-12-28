@@ -25,12 +25,12 @@ function checkAll(obj) {
         }
     });
 };
-//加载组织机构树
+//加载楼层树
 function initTree() {
     //$.jstree.destroy();
     $.ajax({
         type: "Get",
-        url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+		url: "/Department/GetSelectDepartment?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
 
 			$.each(data, function (index, item) {

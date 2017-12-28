@@ -15,15 +15,29 @@ namespace NetCoreMvcServer.Models
             {
                 return;   // 已经初始化过数据，直接返回
             }
-            Guid departmentId = Guid.NewGuid();
+            Guid departmentId1 = Guid.NewGuid();
+            Guid departmentId2 = Guid.NewGuid();
+            Guid departmentId3 = Guid.NewGuid();
             //增加一个部门
-            context.Departments.Add(
-               new Department
-               {
-                   Id = departmentId,
-                   Name = "集团总部",
-                   ParentId = Guid.Empty
-               }
+            context.Departments.AddRange(
+                new Department
+                {
+                    Id = departmentId1,
+                    Name = "C215F1",
+                    ParentId = Guid.Empty
+                },
+                new Department
+                {
+                    Id = departmentId2,
+                    Name = "C320F1",
+                    ParentId = Guid.Empty
+                },
+                 new Department
+                 {
+                     Id = departmentId3,
+                     Name = "C321F1",
+                     ParentId = Guid.Empty
+                 }
             );
             //增加一个超级管理员用户
             context.Users.AddRange(
@@ -32,7 +46,7 @@ namespace NetCoreMvcServer.Models
                      UserName = "admin",
                      Password = "admin", //暂不进行加密
                      Name = "super admin",
-                     DepartmentId = departmentId,
+                     //DepartmentId = Guid.Empty,
                                      
                  }
             );
@@ -100,6 +114,15 @@ namespace NetCoreMvcServer.Models
                    ParentId = Guid.Empty,
                    Icon = "fa fa-link",
                    Url = "User/Index",
+               }, 
+               new Menu
+               {
+                   Name = "楼层管理",
+                   Code = "Department",
+                   SerialNumber = 7,
+                   ParentId = Guid.Empty,
+                   Icon = "fa fa-link",
+                   Url = "Department/Index",
                }
             );
 
@@ -127,13 +150,19 @@ namespace NetCoreMvcServer.Models
             Terminal[] ts = new Terminal[30];
             for(int i = 0; i< 30; i++)
             {
+                Guid departmentId = Guid.Empty;
+                if (i > 18)
+                {
+                    departmentId = departmentId1;
+                }
                 Terminal t = new Terminal
                 {
+                  
                     DepartmentId = departmentId,
                     ip = "192.168.1." + (i + 140).ToString(),
                     PositionX = i,
                     PositionY = i,
-                    desc = "Terminal:" + i.ToString(),
+                    desc = "Terminal:" + i.ToString() + " in Department:" + departmentId,
                 };
                 ts[i] = t;
             }
@@ -148,7 +177,7 @@ namespace NetCoreMvcServer.Models
             {
                 GroundTruth gt = new GroundTruth
                 {
-                    DepartmentId = departmentId,
+                    DepartmentId = departmentId1,
                     ip = "192.168.1." + (i + 100).ToString(),
                     desc = "GroundTruth:" + i.ToString(),
                 };

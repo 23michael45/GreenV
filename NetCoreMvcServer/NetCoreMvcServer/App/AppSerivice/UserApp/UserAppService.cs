@@ -30,7 +30,7 @@ namespace NetCoreMvcServer.Models
         }
         public List<UserDto> GetUserByDepartment(Guid departmentId, int startPage, int pageSize, out int rowCount)
         {
-            return Mapper.Map<List<UserDto>>(_repository.LoadPageList(startPage, pageSize, out rowCount, it => it.DepartmentId == departmentId, it => it.CreateTime));
+            return Mapper.Map<List<UserDto>>(_repository.LoadPageList(startPage, pageSize, out rowCount, null/*it => (it.DepartmentId == departmentId || it.DepartmentId == Guid.Empty)*/, it => it.CreateTime));
         }
 
         /// <summary>

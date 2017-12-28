@@ -59,7 +59,7 @@ namespace NetCoreMvcServer.Models
         /// <summary>
         /// 包含用户
         /// </summary>
-        public virtual ICollection<User> Users { get; set; }
+        //public virtual ICollection<User> Users { get; set; }
 
     }
 }

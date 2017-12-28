@@ -11,8 +11,8 @@ using System;
 namespace NetCoreMvcServer.Migrations
 {
     [DbContext(typeof(GVContext))]
-    [Migration("20171226120137_gv")]
-    partial class gv
+    [Migration("20171228095803_dbcontext")]
+    partial class dbcontext
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -182,8 +182,6 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<Guid>("CreateUserId");
 
-                    b.Property<Guid>("DepartmentId");
-
                     b.Property<string>("EMail");
 
                     b.Property<int>("IsDeleted");
@@ -204,8 +202,6 @@ namespace NetCoreMvcServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
-
                     b.ToTable("Users");
                 });
 
@@ -220,14 +216,6 @@ namespace NetCoreMvcServer.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("NetCoreMvcServer.Models.User", b =>
-                {
-                    b.HasOne("NetCoreMvcServer.Models.Department", "Department")
-                        .WithMany("Users")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("NetCoreMvcServer.Models.UserRole", b =>
