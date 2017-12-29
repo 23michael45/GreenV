@@ -60,7 +60,10 @@ namespace NetCoreMvcServer
             //Session服务
             services.AddSession();
 
-            
+            services.Configure<IISOptions>(options =>
+            {
+            });
+
             //services.AddDbContext<MovieContext>(options =>
             //        options.UseSqlServer(Configuration.GetConnectionString("MovieContext")));
         }
@@ -85,6 +88,7 @@ namespace NetCoreMvcServer
             });
 
 
+            
             //Session
             app.UseSession();            
 

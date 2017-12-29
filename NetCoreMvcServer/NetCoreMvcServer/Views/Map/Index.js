@@ -91,29 +91,57 @@ function drawcanvas(dname) {
 	var cxt = c.getContext("2d");
 
 	
-	cxt.fillStyle = "#FF0000";
-	cxt.fillRect(0, 0, 150, 75);
+	//cxt.fillStyle = "#FF0000";
+	//cxt.fillRect(0, 0, 150, 75);
 
-	cxt.moveTo(10, 10);
-	cxt.lineTo(150, 50);
-	cxt.lineTo(10, 50);
-	cxt.stroke();
-	
-	
+	//cxt.moveTo(10, 10);
+	//cxt.lineTo(150, 50);
+	//cxt.lineTo(10, 50);
+	//cxt.stroke();
 
+	var path = "../wwwroot/" + dname + ".png";
+	
+	preImage(path, function () {
+		cxt.drawImage(this, 0,0);
+	});  
 
-	var img = new Image();
-	img.src = "../wwwroot/" + dname + ".png";
+	//var img = new Image();
 	
-	var GP = new Image();
-	GP.src = "../wwwroot/GreenPoint.png";
-	
+	//var GP = new Image();
+	//GP.src = "../wwwroot/GreenPoint.png";
+
+	//alert(img.src);
 	//cxt.drawImage(C321F1, 0, 0);
+	//img.onload = function () {
+	//	//draw background image
+	//	ctx.drawimage(img, 0, 0);
+	//	cxt.drawImage(GP, 500, 500, 32, 32);
 
-	cxt.drawImage(img, 0, 0);
-	cxt.drawImage(GP, 500, 500, 32, 32);
+	//	//ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+	//	//ctx.fillRect(0, 0, 500, 500);
+
+	//};
+
+	//img.src = ;
+	//cxt.drawImage(img, 0, 0);
+	//cxt.drawImage(GP, 500, 500, 32, 32);
 	//cxt.drawImage(GP, 500, 500, 32, 32);
 	//cxt.drawImage(GP, 500, 200, 32, 32);
 	//cxt.drawImage(GP, 500, 700, 32, 32);
 
 }
+
+
+function preImage(url, callback) {
+	var img = new Image(); //创建一个Image对象，实现图片的预下载  
+	img.src = url;
+
+	if (img.complete) { // 如果图片已经存在于浏览器缓存，直接调用回调函数  
+		callback.call(img);
+		return; // 直接返回，不用再处理onload事件  
+	}
+
+	img.onload = function () { //图片下载完毕时异步调用callback函数。  
+		callback.call(img);//将回调函数的this替换为Image对象  
+	};
+}  
