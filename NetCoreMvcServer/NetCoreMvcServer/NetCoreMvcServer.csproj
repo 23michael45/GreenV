@@ -21,6 +21,14 @@
     <Compile Remove="Migrations\20171228095133_gv.Designer.cs" />
     <Compile Remove="Migrations\20171228095407_gv.cs" />
     <Compile Remove="Migrations\20171228095407_gv.Designer.cs" />
+    <Compile Remove="Migrations\20171228095803_dbcontext.cs" />
+    <Compile Remove="Migrations\20171228095803_dbcontext.Designer.cs" />
+    <Compile Remove="Migrations\20171229121950_Initial.cs" />
+    <Compile Remove="Migrations\20171229121950_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\PublishProfiles\CustomProfile.pubxml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +36,7 @@
     <PackageReference Include="AutoMapper" Version="5.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.0" />
@@ -46,6 +54,7 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Terminal\" />
   </ItemGroup>
 

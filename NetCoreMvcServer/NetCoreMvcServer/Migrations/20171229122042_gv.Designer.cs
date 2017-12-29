@@ -11,8 +11,8 @@ using System;
 namespace NetCoreMvcServer.Migrations
 {
     [DbContext(typeof(GVContext))]
-    [Migration("20171228095803_dbcontext")]
-    partial class dbcontext
+    [Migration("20171229122042_gv")]
+    partial class gv
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

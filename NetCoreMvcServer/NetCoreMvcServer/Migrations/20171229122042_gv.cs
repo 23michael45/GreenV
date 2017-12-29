@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace NetCoreMvcServer.Migrations
 {
-    public partial class dbcontext : Migration
+    public partial class gv : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
