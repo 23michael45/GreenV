@@ -27,14 +27,14 @@ function initTree() {
     //$.jstree.destroy();
     $.ajax({
         type: "Get",
-		url: "/Department/GetSelectDepartment?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+		url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
 
-			$.each(data, function (index, item) {
-				selectedId = item.id;
-		
-			});
+			selectedId = $.session.get('select_deparmentid')
+			if (selectedId == undefined) {
 
+				selectedId = data[0].id;
+			}
 			loadTables(1, 10);
 			/*
             $('#treeDiv').jstree({       //创建JsTtree

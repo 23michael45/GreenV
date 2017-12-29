@@ -4,40 +4,13 @@
 }
 
 <div>
-
-	<img class="direct-chat-img" src="~/wwwroot/C215F1.png" alt="message user image"><!-- /.direct-chat-img -->
+	<!--
+	<img class="direct-chat-img" src="~/wwwroot/C215F1.png" alt="message user image">
+	-->
 	<canvas id="myCanvas" width="1300" height="1000"></canvas>
 </div>
 
 
-<script type="text/javascript">
-	var c=document.getElementById("myCanvas");
-	var cxt=c.getContext("2d");
-	cxt.fillStyle = "#FF0000";
-	cxt.fillRect(0, 0, 150, 75);
-
-	cxt.moveTo(10, 10);
-	cxt.lineTo(150, 50);
-	cxt.lineTo(10, 50);
-	cxt.stroke();
-
-
-	var C215F1 = new Image();
-	C215F1.src = "../wwwroot/C215F1.png";
-	var C320F1 = new Image();
-	C320F1.src = "../wwwroot/C320F1.png";
-	var C321F1 = new Image();
-	C321F1.src = "../wwwroot/C321F1.png";
-	var TP = new Image();
-	TP.src = "../wwwroot/TerminalPoint.png";
-	var GP = new Image();
-	GP.src = "../wwwroot/GreenPoint.png";
-	
-	//cxt.drawImage(C321F1, 0, 0);
-
-	cxt.drawImage(C320F1, 0, 0);
-	cxt.drawImage(GP, 500, 500, 32, 32);
-	cxt.drawImage(GP, 500, 200, 32, 32);
-	cxt.drawImage(GP, 500, 700, 32, 32);
-
-</script>
+@section scripts{
+	<script src="~/Views/Map/Index.js"></script>
+	}

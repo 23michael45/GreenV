@@ -10,14 +10,14 @@ function initTree() {
 	$.jstree.destroy();
 	$.ajax({
 		type: "Get",
-		url: "/Department/GetSelectDepartment?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+		url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
 
+			selectedId = $.session.get('select_deparmentid')
+			if (selectedId == undefined) {
 
-			$.each(data, function (index, item) {
-				selectedId = item.id;
-
-			});
+				selectedId = data[0].id;
+			}
 
 			//query(1, 10);
 

@@ -146,15 +146,24 @@ namespace NetCoreMvcServer.Models
 
 
 
-
-            Terminal[] ts = new Terminal[30];
-            for(int i = 0; i< 30; i++)
+            int totalcount = 60;
+            Terminal[] ts = new Terminal[totalcount];
+            for(int i = 0; i< totalcount; i++)
             {
                 Guid departmentId = Guid.Empty;
-                if (i > 18)
+                if (i < totalcount / 3)
                 {
                     departmentId = departmentId1;
                 }
+                else if (i >=  totalcount / 3 && i < totalcount / 3 * 2)
+                {
+                    departmentId = departmentId2;
+                }
+                else
+                {
+                    departmentId = departmentId3;
+                }
+
                 Terminal t = new Terminal
                 {
                   

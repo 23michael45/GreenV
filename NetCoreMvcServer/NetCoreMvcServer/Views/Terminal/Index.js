@@ -11,6 +11,7 @@ $(function () {
 	$("#btnStartAll").click(function () { sendstartall() });
 	$("#btnStopAll").click(function () { sendstopall() });
 	$("#btnUpdateSetupAll").click(function () { sendupdatesetupall() });
+	
     initTree();
 });
 //全选
@@ -28,15 +29,17 @@ function checkAll(obj) {
 //加载楼层树
 function initTree() {
     //$.jstree.destroy();
-    $.ajax({
-        type: "Get",
-		url: "/Department/GetSelectDepartment?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+	$.ajax({
+		type: "Get",
+		url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
-
-			$.each(data, function (index, item) {
-				selectedId = item.id;
-		
-			});
+			
+			selectedId = $.session.get('select_deparmentid')
+			if (selectedId == undefined) {
+			
+				selectedId = data[0].id;
+			}
+						
 
 			loadTables(1, 10);
 			/*

@@ -138,8 +138,17 @@ namespace NetCoreMvcServer.Controllers
         }
         public IActionResult Get(Guid id)
         {
-            var dto = _service.Get(id);
-            return Json(dto);
+            if(id == Guid.Empty)
+            {
+               return Json( _service.GetAllList()[0]);
+            }
+            else
+            {
+                var dto = _service.Get(id);
+                return Json(dto);
+
+            }
+
         }
     }
 }

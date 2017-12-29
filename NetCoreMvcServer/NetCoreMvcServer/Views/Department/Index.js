@@ -18,7 +18,7 @@ function initTree() {
     $.jstree.destroy();
     $.ajax({
         type: "Get",
-		url: "/Department/GetAllRoot?startPage=1&pageSize=10&_t=" + new Date().getTime(),    //获取数据的ajax请求地址
+		url: "/Department/GetTreeData?_t=" + new Date().getTime(),    //获取数据的ajax请求地址
 		success: function (data) {
 
 			/*
@@ -40,7 +40,13 @@ function initTree() {
                 };
 			});*/
 			
-			selectedId = data.rows[0].id;
+			selectedId = $.session.get('select_deparmentid')
+			if (selectedId == undefined) {
+
+				selectedId = data[0].id;
+			}
+
+
 			//setCookie('select_deparmentid', selectedId);
 			loadrootTables(1, 10);
         }
@@ -267,7 +273,8 @@ function deleteSingle(id) {
 
 function select(id) {
 	selectedId = id;
-	//setCookie('select_deparmentid', selectedId,7);
+	$.session.set('select_deparmentid', selectedId);
+
 	layer.confirm("您确认选中当前楼层吗？", {
 		btn: ["确定", "取消"]
 	}, function () {
