@@ -90,7 +90,7 @@ function drawcanvas(dname) {
 	var c = document.getElementById("myCanvas");
 	var cxt = c.getContext("2d");
 
-	/*
+	
 	cxt.fillStyle = "#FF0000";
 	cxt.fillRect(0, 0, 150, 75);
 
@@ -98,7 +98,7 @@ function drawcanvas(dname) {
 	cxt.lineTo(150, 50);
 	cxt.lineTo(10, 50);
 	cxt.stroke();
-	*/
+	
 	
 
 
@@ -107,9 +107,7 @@ function drawcanvas(dname) {
 	
 	var GP = new Image();
 	GP.src = "../wwwroot/GreenPoint.png";
-
-	alert(img.src);
-
+	
 	//cxt.drawImage(C321F1, 0, 0);
 
 	cxt.drawImage(img, 0, 0);
