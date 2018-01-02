@@ -1,6 +1,18 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
 var cstartPage = 1;
 var cpageSize = 10;
+var dname = "";
+var hotspots = [];
+
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var cw = canvas.width;
+var ch = canvas.height;
+var offsetX, offsetY;
+
+
 $(function () {
 	$("#btnAddRoot").click(function () { add(0); });
 	$("#btnAdd").click(function () { add(1); });
@@ -18,13 +30,29 @@ function initTree() {
 
 	selectedId = $.session.get('select_deparmentid')
 
-
 	$.jstree.destroy();
 	$.ajax({
 		type: "Get",
-		url: "/Department/Get?id=" + selectedId,    //获取数据的ajax请求地址
+		url: "/Department/GetAllTerminalByDepartment?departmentId=" + selectedId,    //获取数据的ajax请求地址
 		success: function (data) {
-			drawcanvas(data.name);
+			
+			dname = data.departmentname;
+			
+			
+			reOffset(canvas);
+			window.onscroll = function (e) { reOffsetcanvas(); }
+			window.onresize = function (e) { reOffset(canvas); }
+			
+			hotspots = [];
+			$.each(data.rows, function (i, item) {
+				hotspots.push({ x: item.positionX, y: item.positionY, radius: 20, tip: item.ip });
+			})
+
+			$("#myCanvas").mousemove(function (e) { handleMouseMove(e); });
+			
+			drawcanvas();
+
+		
 		}
 	});
 
@@ -86,36 +114,39 @@ function loadrootTables(startPage, pageSize) {
 }
 
 
-function drawcanvas(dname) {
-	var c = document.getElementById("myCanvas");
-	var cxt = c.getContext("2d");
-
+function drawcanvas() {
 	
-	//cxt.fillStyle = "#FF0000";
-	//cxt.fillRect(0, 0, 150, 75);
-
-	//cxt.moveTo(10, 10);
-	//cxt.lineTo(150, 50);
-	//cxt.lineTo(10, 50);
-	//cxt.stroke();
-
 	var path = "../wwwroot/" + dname + ".png";
-	
-	preImage(path, function () {
-		cxt.drawImage(this, 0,0);
-	});  
 
+
+	var GP = new Image();
+	GP.src = "../wwwroot/GreenPoint.png";
+
+	preImage(path, function () {
+		ctx.drawImage(this, 0, 0);
+
+		for (var i = 0; i < hotspots.length; i++) {
+
+			var h = hotspots[i];
+			ctx.beginPath();
+			ctx.arc(h.x, h.y, h.radius, 0, Math.PI * 2);
+			ctx.closePath();
+			ctx.stroke();
+
+			ctx.drawImage(GP, h.x - 16, h.y - 16,32,32);
+		}
+		
+	}); 
+	
 	//var img = new Image();
 	
-	//var GP = new Image();
-	//GP.src = "../wwwroot/GreenPoint.png";
 
 	//alert(img.src);
-	//cxt.drawImage(C321F1, 0, 0);
+	//ctx.drawImage(C321F1, 0, 0);
 	//img.onload = function () {
 	//	//draw background image
 	//	ctx.drawimage(img, 0, 0);
-	//	cxt.drawImage(GP, 500, 500, 32, 32);
+	//	ctx.drawImage(GP, 500, 500, 32, 32);
 
 	//	//ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
 	//	//ctx.fillRect(0, 0, 500, 500);
@@ -123,11 +154,13 @@ function drawcanvas(dname) {
 	//};
 
 	//img.src = ;
-	//cxt.drawImage(img, 0, 0);
-	//cxt.drawImage(GP, 500, 500, 32, 32);
-	//cxt.drawImage(GP, 500, 500, 32, 32);
-	//cxt.drawImage(GP, 500, 200, 32, 32);
-	//cxt.drawImage(GP, 500, 700, 32, 32);
+	//ctx.drawImage(img, 0, 0);
+	//ctx.drawImage(GP, 500, 500, 32, 32);
+	//ctx.drawImage(GP, 500, 500, 32, 32);
+	//ctx.drawImage(GP, 500, 200, 32, 32);
+	//ctx.drawImage(GP, 500, 700, 32, 32);
+
+
 
 }
 
@@ -145,3 +178,38 @@ function preImage(url, callback) {
 		callback.call(img);//将回调函数的this替换为Image对象  
 	};
 }  
+
+
+
+
+function reOffset(canvas) {
+	var BB = canvas.getBoundingClientRect();
+	
+	offsetX = BB.left;
+	offsetY = BB.top;
+}
+
+
+function handleMouseMove(e) {
+	// tell the browser we're handling this event
+
+	e.preventDefault();
+	e.stopPropagation();
+
+	mouseX = parseInt(e.clientX - offsetX);
+	mouseY = parseInt(e.clientY - offsetY);
+
+
+	ctx.clearRect(0, 0, cw, ch);
+	drawcanvas();
+
+
+	for (var i = 0; i < hotspots.length; i++) {
+		var h = hotspots[i];
+		var dx = mouseX - h.x;
+		var dy = mouseY - h.y;
+		if (dx * dx + dy * dy < h.radius * h.radius) {
+			ctx.fillText(h.tip, h.x, h.y);
+		}
+	}
+}

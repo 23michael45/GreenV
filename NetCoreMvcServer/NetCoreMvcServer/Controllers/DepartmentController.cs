@@ -12,11 +12,14 @@ namespace NetCoreMvcServer.Controllers
     public class DepartmentController : FonourControllerBase
     {
         private readonly IDepartmentAppService _service;
-        
-        public DepartmentController(IDepartmentAppService service)
+        private readonly ITerminalAppService _terminalservice;
+
+        public DepartmentController(IDepartmentAppService service, ITerminalAppService terminalservice)
         {
             _service = service;
-            
+            _terminalservice = terminalservice;
+
+
         }
 
 
@@ -149,6 +152,34 @@ namespace NetCoreMvcServer.Controllers
 
             }
 
+        }
+
+        public IActionResult GetAllTerminalByDepartment(Guid departmentId)
+        {
+            if (departmentId == Guid.Empty)
+            {
+                departmentId = _service.GetAllList()[0].Id;
+            }
+
+
+            int rowCount = 0;
+            var result = _terminalservice.GetTerminalByDepartment(departmentId, 1, 1000, out rowCount);
+
+            var dto = _service.Get(departmentId);
+
+            if(dto != null)
+            {
+                JsonResult jr = Json(new
+                {
+                    departmentname = dto.Name,
+                    rowCount = rowCount,
+                    rows = result,
+                });
+
+                return jr;
+
+            }
+            return Content(departmentId.ToString());
         }
     }
 }

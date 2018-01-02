@@ -164,13 +164,15 @@ namespace NetCoreMvcServer.Models
                     departmentId = departmentId3;
                 }
 
+                Random rx = new Random(i);
+                Random ry = new Random(i*i);
                 Terminal t = new Terminal
                 {
                   
                     DepartmentId = departmentId,
                     ip = "192.168.1." + (i + 140).ToString(),
-                    PositionX = i,
-                    PositionY = i,
+                    PositionX = rx.Next(100,800),
+                    PositionY = ry.Next(100,800),
                     desc = "Terminal:" + i.ToString() + " in Department:" + departmentId,
                 };
                 ts[i] = t;
