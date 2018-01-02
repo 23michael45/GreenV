@@ -63,9 +63,7 @@ namespace NetCoreMvcServer
             services.Configure<IISOptions>(options =>
             {
             });
-
-            //services.AddDbContext<MovieContext>(options =>
-            //        options.UseSqlServer(Configuration.GetConnectionString("MovieContext")));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,8 +103,9 @@ namespace NetCoreMvcServer
             });
 
 
-            ConsoleServer.MySqlConnector.TransferDB();
-            SeedData.Initialize(gvcontext); //初始化数据
+
+            //ConsoleServer.MySqlConnector.TransferDB();
+            //SeedData.Initialize(gvcontext); //初始化数据
 
 
         }

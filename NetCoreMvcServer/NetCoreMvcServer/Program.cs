@@ -20,7 +20,7 @@ namespace NetCoreMvcServer
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .CaptureStartupErrors(true)
-                .UseContentRoot("G:/GreenV/Publish")
+                .UseContentRoot("c:/wwwroot/Publish")
                 .UseSetting(WebHostDefaults.DetailedErrorsKey, "true")
                 .UseStartup<Startup>()
                 .Build();
