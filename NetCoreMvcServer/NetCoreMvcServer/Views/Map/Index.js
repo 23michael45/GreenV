@@ -40,7 +40,7 @@ function initTree() {
 			
 			
 			reOffset(canvas);
-			window.onscroll = function (e) { reOffsetcanvas(); }
+			window.onscroll = function (e) { reOffset(canvas); }
 			window.onresize = function (e) { reOffset(canvas); }
 			
 			hotspots = [];
