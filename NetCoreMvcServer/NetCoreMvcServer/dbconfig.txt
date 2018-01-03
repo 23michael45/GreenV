@@ -1,1 +1,1 @@
-server=localhost;user=root;database=greenv;port=3307;password=12345678;
+server=localhost;user=root;database=netcoreserver;port=3307;password=12345678;

@@ -26,7 +26,7 @@ namespace NetCoreMvcServer.Controllers
 
         }
 
-        List<ConnectedTerminalState> _ConnectedTerminals = new List<ConnectedTerminalState>();
+        static List<ConnectedTerminalState> _ConnectedTerminals = new List<ConnectedTerminalState>();
 
         private readonly ITerminalAppService _service;
         public TerminalController(ITerminalAppService service)

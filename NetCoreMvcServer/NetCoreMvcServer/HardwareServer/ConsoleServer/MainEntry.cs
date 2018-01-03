@@ -48,7 +48,7 @@ namespace ConsoleServer
             {
                 _SendCheckCallBackDic[name] = new Dictionary<string, Action<object>>();
             }
-
+            _CmdParser.ConnectMySql();
             StartUdpServer();
         }
         public static void SendToWeb(byte[] data)
