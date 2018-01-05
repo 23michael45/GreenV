@@ -10,7 +10,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <DestinationConnectionStrings Include="GVContext">
-      <Value>server=localhost;port=3307;user=root;pwd=12345678;database=netcoreserver;</Value>
+      <Value>server=localhost;port=3306;user=root;pwd=12345678;database=netcoreserver;</Value>
     </DestinationConnectionStrings>
   </ItemGroup>
 </Project>
