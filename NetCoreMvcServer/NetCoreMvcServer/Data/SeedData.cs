@@ -201,5 +201,38 @@ namespace NetCoreMvcServer.Models
             context.SaveChanges();
         }
 
+
+        public static void CopySensorData(GVContext context)
+        {
+            int copycount = 1;
+
+            for(int i =0;i< copycount;i++)
+            {
+                IQueryable<App_SensorData> list = context.App_SensorData.OrderBy(it => it.createtime);
+
+                App_SensorData[] asds = new App_SensorData[list.Count<App_SensorData>()];
+
+                int j = 0;
+                foreach (App_SensorData data in list)
+                {
+                    App_SensorData nasd = new App_SensorData();
+                    nasd.Id = new Guid();
+                    nasd.createtime = DateTime.Now;
+                    nasd.sensorvalue = data.sensorvalue;
+                    nasd.timestampms = data.timestampms;
+                    nasd.timestamps = data.timestamps;
+                    nasd.device = data.device;
+                    nasd.rate = data.rate;
+                    nasd.gain = data.gain;
+
+                    asds[j] = nasd;
+                    j++;
+                }
+                context.App_SensorData.AddRange(asds);
+            }
+
+
+            context.SaveChanges();
+        }
     }
 }

@@ -10,7 +10,7 @@ using NetCoreMvcServer.Models;
 
 namespace NetCoreMvcServer.Controllers
 {
-    public class App_SensorDataController : Controller
+    public class App_SensorDataController : FonourControllerBase
     {
         private readonly GVContext _context;
         private readonly IApp_SensorDataRepository _repository;
@@ -26,7 +26,7 @@ namespace NetCoreMvcServer.Controllers
         // GET: App_SensorData
         public async Task<IActionResult> Index()
         {
-            return View(await _context.App_SensorData.ToListAsync());
+            return View();
         }
 
         // GET: App_SensorData/Details/5
