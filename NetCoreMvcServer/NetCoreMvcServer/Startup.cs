@@ -12,6 +12,11 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using System.Threading;
 using ConsoleServer;
+using Microsoft.AspNetCore.Mvc.Razor;
+using System.Globalization;
+using Microsoft.Extensions.Options;
+using NetCoreMvcServer.Components;
+using Microsoft.AspNetCore.Localization;
 
 namespace NetCoreMvcServer
 {
@@ -56,13 +61,40 @@ namespace NetCoreMvcServer
             services.AddScoped<IApp_SensorDataRepository, App_SensorDataRepository>();
             services.AddScoped<IApp_GroundTruthDataRepository, App_GroundTruthDataRepository>();
 
-            services.AddMvc();
+
+
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+
+            services.AddMvc()
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();
+
+
+            services.Configure<RequestLocalizationOptions>(
+                opts =>
+                {
+                    var supportedCultures = new List<CultureInfo>
+                    {
+                                    new CultureInfo("en-US"),
+                                    new CultureInfo("zh-CN"),
+                    };
+
+                    //opts.DefaultRequestCulture = new RequestCulture("en-US");
+                    opts.DefaultRequestCulture = new RequestCulture("en-US");
+                    // Formatting numbers, dates, etc.
+                    opts.SupportedCultures = supportedCultures;
+                    // UI strings that we have localized.
+                    opts.SupportedUICultures = supportedCultures;
+                });
             //Session服务
             services.AddSession();
 
             services.Configure<IISOptions>(options =>
             {
             });
+
+
             
         }
 
@@ -86,9 +118,9 @@ namespace NetCoreMvcServer
             });
 
 
-            
+
             //Session
-            app.UseSession();            
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
@@ -98,14 +130,17 @@ namespace NetCoreMvcServer
 
 
                 routes.MapRoute(
-                    name: "default", 
+                    name: "default",
                     template: "{controller=Login}/{action=Index}/{id?}");
             });
 
 
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
+
 
             //ConsoleServer.MySqlConnector.TransferDB();
-            //SeedData.Initialize(gvcontext); //初始化数据
+            SeedData.Initialize(gvcontext); //初始化数据
 
             //SeedData.CopySensorData(gvcontext);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,7 +13,7 @@ namespace NetCoreMvcServer.Controllers
     public class RoleController : FonourControllerBase
     {
         private readonly IRoleAppService _service;
-        public RoleController(IRoleAppService service)
+        public RoleController(IRoleAppService service, IStringLocalizer<SharedResource> localizer):base(localizer)
         {
             _service = service;
         }

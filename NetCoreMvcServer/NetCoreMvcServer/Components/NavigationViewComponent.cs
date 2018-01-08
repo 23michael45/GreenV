@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,14 @@ namespace NetCoreMvcServer.Components
     {
         private readonly IMenuAppService _menuAppService;
         private readonly IUserAppService _userAppService;
-        public NavigationViewComponent(IMenuAppService menuAppService, IUserAppService userAppService)
+
+        IStringLocalizer<SharedResource> _localizer;
+
+        public NavigationViewComponent(IMenuAppService menuAppService, IUserAppService userAppService, IStringLocalizer<SharedResource> localizer)
         {
             _menuAppService = menuAppService;
             _userAppService = userAppService;
+            _localizer = localizer;
         }
 
         public IViewComponentResult Invoke()
@@ -25,12 +30,18 @@ namespace NetCoreMvcServer.Components
 
             if(userId == null || userId == "")
             {
-                //跳转到系统首页
-                return Content("登录超时，请重新登录！");
+                RedirectResult rt = new RedirectResult("/Login/Index");
+                return View();
             }
             else
             {
                 var menus = _menuAppService.GetMenusByUser(Guid.Parse(userId));
+
+                foreach(MenuDto menu in menus)
+                {
+                    menu.Name = _localizer[menu.Name];
+                }
+
                 return View(menus);
 
             }

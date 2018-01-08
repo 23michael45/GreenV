@@ -5,11 +5,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using NetCoreMvcServer.Models;
+using Microsoft.Extensions.Localization;
 
 namespace NetCoreMvcServer.Controllers
 {
     public abstract class FonourControllerBase : Controller
     {
+        public enum ELanguage
+        {
+            en_US,
+            zh_CN
+        }
+        public readonly IStringLocalizer<SharedResource> _SharedLocalizer;
+
+        public FonourControllerBase(IStringLocalizer<SharedResource> localizer)
+        {
+            _SharedLocalizer = localizer;
+
+        }
+
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             byte[] result; 
@@ -36,6 +50,11 @@ namespace NetCoreMvcServer.Controllers
                 }
             }
             return "";
+        }
+
+        public IActionResult SwitchLanguage()
+        {
+            return View();
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 
 namespace NetCoreMvcServer.Controllers
@@ -17,7 +18,7 @@ namespace NetCoreMvcServer.Controllers
 
         static  Dictionary<string, byte[]> _TempDataDic = new Dictionary<string, byte[]>();
                 
-        public App_SensorDataController(GVContext context,IApp_SensorDataRepository repository)
+        public App_SensorDataController(GVContext context,IApp_SensorDataRepository repository, IStringLocalizer<SharedResource> localizer) : base(localizer)
         {
             _context = context;
             _repository = repository;

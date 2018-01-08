@@ -1,6 +1,8 @@
 ﻿@{
 	ViewBag.CurrentMenu = "Home";
 }
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 <div class="login-logo">
-	 <b>欢迎来到绿威智能数据采集系统</b>
+	<b>@SharedLocalizer["Home_Welcome"]</b>
 </div>

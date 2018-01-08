@@ -1,6 +1,8 @@
 ﻿@{
-    ViewBag.CurrentMenu = "Terminal";
+	ViewBag.CurrentMenu = "Terminal";
 }
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 <div class="row">
 	<!--
 	<div class="col-md-3">
@@ -18,16 +20,19 @@
 	<div class="col-md-12">
 		<div class="box box-primary">
 			<div class="box-header with-border">
-				<h3 class="box-title">控制传感器终端管理</h3>
+				<h3 class="box-title">@SharedLocalizer["Share_TerminalControl"]</h3>
 				<div class="pull-right box-tools">
-					<button id="btnAdd" class="btn btn-primary" type="button" data-original-title="新增终端" data-toggle="tooltip" data-widget="">
-						<i class="fa fa-plus-square"></i>&nbsp;&nbsp;新增
+					<button id="btnAdd" class="btn btn-primary" type="button" data-original-title=@SharedLocalizer["Terminal_Add_Terminal"] data-toggle="tooltip" data-widget="">
+						<i class="fa fa-plus-square"></i>&nbsp;&nbsp;@SharedLocalizer["Control_Add"]
+
 					</button>
-					<button id="btnDelete" title="" class="btn btn-danger" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
-						<i class="fa fa-times"></i>&nbsp;&nbsp;删除
+					<button id="btnDelete" title="" class="btn btn-danger" type="button" data-original-title=@SharedLocalizer["Terminal_Delete_Terminal"] data-toggle="tooltip" data-widget="">
+						<i class="fa fa-times"></i>&nbsp;&nbsp;@SharedLocalizer["Control_Delete"]
+
 					</button>
-					<button id="btnCheckAll" title="" class="btn btn-primary" type="button" data-original-title="检查全部" data-toggle="tooltip" data-widget="">
-						检查全部
+					<button id="btnCheckAll" title="" class="btn btn-primary" type="button" data-original-title=@SharedLocalizer["Control_CheckAll"] data-toggle="tooltip" data-widget="">
+						@SharedLocalizer["Control_CheckAll"]
+
 					</button>
 				</div>
 			</div>
@@ -38,19 +43,24 @@
 							<tr role="row">
 								<th class="table-checkbox" style="width:40px;text-align:center;"><input id="checkAll" class="group-checkable" type="checkbox"></th>
 								<th tabindex="0" aria-label="">
-									IP地址
+									@SharedLocalizer["Terminal_IP"]
+
 								</th>
 								<th tabindex="0" aria-label="">
-									坐标X
+									@SharedLocalizer["Terminal_Coord_X"]
+
 								</th>
 								<th tabindex="0" aria-label="">
-									坐标Y
+									@SharedLocalizer["Terminal_Coord_Y"]
+
 								</th>
 								<th tabindex="0" aria-label="">
-									描述
+									@SharedLocalizer["Terminal_Desc"]
+
 								</th>
 								<th tabindex="0" style="width: 230px;" aria-label="">
-									操作
+									@SharedLocalizer["Control_Operation"]
+
 								</th>
 							</tr>
 						</thead>
@@ -67,22 +77,23 @@
 	<div class="col-md-12">
 		<div class="box box-primary">
 			<div class="box-header with-border">
-				<h3 class="box-title">已经连接的传感器终端</h3>
+				<h3 class="box-title">@SharedLocalizer["Terminal_Connected_Terminals"]</h3>
+
 				<div class="pull-right box-tools">
-					采集速率
+					@SharedLocalizer["Terminal_Rate"]
 					<input type="text" id="rate_input">
-					放大倍数
+					@SharedLocalizer["Terminal_Gain"]
 					<input type="text" id="gain_input">
-					<button id="btnUpdateSetupAll" title="" class="btn btn-primary" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
-						 全部更新设置
+					<button id="btnUpdateSetupAll" title="" class="btn btn-primary" type="button" data-original-title=@SharedLocalizer["Control_UpdateAll"] data-toggle="tooltip" data-widget="">
+						@SharedLocalizer["Control_UpdateAll"]
 					</button>
 
-					<button id="btnStartAll" class="btn btn-primary" type="button" data-original-title="新增终端" data-toggle="tooltip" data-widget="">
-					  全部开始
+					<button id="btnStartAll" class="btn btn-primary" type="button" data-original-title=@SharedLocalizer["Terminal_Add_Terminal"] data-toggle="tooltip" data-widget="">
+						@SharedLocalizer["Control_StartAll"]
 					</button>
 
-					<button id="btnStopAll" title="" class="btn btn-primary" type="button" data-original-title="删除终端" data-toggle="tooltip" data-widget="">
-						全部停止
+					<button id="btnStopAll" title="" class="btn btn-primary" type="button" data-original-title=@SharedLocalizer["Terminal_Delete_Terminal"] data-toggle="tooltip" data-widget="">
+						@SharedLocalizer["Control_StopAll"]
 					</button>
 				</div>
 			</div>
@@ -93,16 +104,16 @@
 							<tr role="row">
 								<th class="table-checkbox" style="width:40px;text-align:center;"><input id="checkAll" class="group-checkable" type="checkbox"></th>
 								<th tabindex="0" aria-label="">
-									IP地址
+									@SharedLocalizer["Terminal_IP"]
 								</th>
 								<th tabindex="0" aria-label="">
-									采集速率
+									@SharedLocalizer["Terminal_Rate"]
 								</th>
 								<th tabindex="0" aria-label="">
-									放大倍数
+									@SharedLocalizer["Terminal_Gain"]
 								</th>
 								<th tabindex="0" aria-label="">
-									操作
+									@SharedLocalizer["Control_Operation"]
 								</th>
 							</tr>
 						</thead>
@@ -117,7 +128,22 @@
 	</div>
 </div>
 
-	@Html.Partial("_Edit")
-	@section scripts{
-		<script src="~/Views/Terminal/Index.js"></script>
-	}
+<p id="editone" hidden>@SharedLocalizer["Control_Edit"] </p>
+<p id="addone" hidden>@SharedLocalizer["Control_Add"] </p>
+<p id="deleteone" hidden>@SharedLocalizer["Control_Delete"] </p>
+<p id="checkone" hidden>@SharedLocalizer["Control_CheckOne"] </p>
+<p id="updateone" hidden>@SharedLocalizer["Control_UpdateOne"] </p>
+<p id="startone" hidden>@SharedLocalizer["Control_StartOne"] </p>
+<p id="stopone" hidden>@SharedLocalizer["Control_StopOne"] </p>
+
+
+<p id="deletewaring" hidden>@SharedLocalizer["Control_DeleteSelected_Warning"] </p>
+<p id="deleteok" hidden>@SharedLocalizer["Control_Warning_OK"] </p>
+<p id="deletecancel" hidden>@SharedLocalizer["Control_Warning_Cancel"] </p>
+<p id="selecttodelete" hidden>@SharedLocalizer["Control_Delete_NoSelected"] </p>
+<p id="deletefailed" hidden>@SharedLocalizer["Control_DeleteFailed_Warning"] </p>
+
+@Html.Partial("_Edit")
+@section scripts{
+	<script src="~/Views/Terminal/Index.js"></script>
+}

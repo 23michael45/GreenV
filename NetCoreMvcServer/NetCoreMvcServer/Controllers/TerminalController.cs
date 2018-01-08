@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ConsoleServer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Utility;
 
@@ -29,7 +30,7 @@ namespace NetCoreMvcServer.Controllers
         static List<ConnectedTerminalState> _ConnectedTerminals = new List<ConnectedTerminalState>();
 
         private readonly ITerminalAppService _service;
-        public TerminalController(ITerminalAppService service)
+        public TerminalController(ITerminalAppService service, IStringLocalizer<SharedResource> localizer) : base(localizer)
         {
             _service = service;
         }

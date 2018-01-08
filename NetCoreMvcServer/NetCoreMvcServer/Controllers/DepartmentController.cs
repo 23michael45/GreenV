@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,7 +15,7 @@ namespace NetCoreMvcServer.Controllers
         private readonly IDepartmentAppService _service;
         private readonly ITerminalAppService _terminalservice;
 
-        public DepartmentController(IDepartmentAppService service, ITerminalAppService terminalservice)
+        public DepartmentController(IDepartmentAppService service, ITerminalAppService terminalservice, IStringLocalizer<SharedResource> localizer) : base(localizer)
         {
             _service = service;
             _terminalservice = terminalservice;

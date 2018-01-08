@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ConsoleServer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Utility;
 
@@ -28,7 +29,7 @@ namespace NetCoreMvcServer.Controllers
 
         List<ConnectedGroundTruthState> _ConnectedGroundTruths = new List<ConnectedGroundTruthState>();
         private readonly IGroundTruthAppService _service;
-        public GroundTruthController(IGroundTruthAppService service)
+        public GroundTruthController(IGroundTruthAppService service, IStringLocalizer<SharedResource> localizer) : base(localizer)
         {
             _service = service;
         }

@@ -7,8 +7,11 @@ using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NetCoreMvcServer.Models;
-using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Utility;
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
+using NetCoreMvcServer.Components;
+using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,9 +20,14 @@ namespace NetCoreMvcServer.Controllers
     public class LoginController : Controller
     {
         private IUserAppService _userAppService;
-        public LoginController(IUserAppService userAppService)
+
+        private readonly IStringLocalizer<SharedResource> _SharedLocalizer;
+
+        public LoginController(IUserAppService userAppService, IStringLocalizer<SharedResource> localizer)
         {
             _userAppService = userAppService;
+            _SharedLocalizer = localizer;
+
         }
         // GET: /<controller>/
         public IActionResult Index()
@@ -42,7 +50,7 @@ namespace NetCoreMvcServer.Controllers
                     //跳转到系统首页
                     return RedirectToAction("Index", "Home");
                 }
-                ViewBag.ErrorInfo = "用户名或密码错误。";
+                ViewBag.ErrorInfo = _SharedLocalizer["Login_UserName_Pwd_NotCorrect"];
                 return View();
             }
             foreach (var item in ModelState.Values)

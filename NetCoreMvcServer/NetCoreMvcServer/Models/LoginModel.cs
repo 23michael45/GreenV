@@ -8,10 +8,10 @@ namespace NetCoreMvcServer.Models
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "用户名不能为空。")]
+        [Required(ErrorMessage = "Login_User_Cannot_Empty")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "密码不能为空。")]
+        [Required(ErrorMessage = "Login_Passwork_Cannot_Empty")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

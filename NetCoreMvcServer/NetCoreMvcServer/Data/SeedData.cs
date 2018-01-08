@@ -54,7 +54,7 @@ namespace NetCoreMvcServer.Models
             context.Menus.AddRange(
                  new Menu
                  {
-                     Name = "首页",
+                     Name = "Share_HomePage",
                      Code = "Home",
                      SerialNumber = 0,
                      ParentId = Guid.Empty,
@@ -63,7 +63,7 @@ namespace NetCoreMvcServer.Models
                  },
                new Menu
                {
-                   Name = "控制传感器终端",
+                   Name = "Share_TerminalControl",
                    Code = "Terminal",
                    SerialNumber = 1,
                    ParentId = Guid.Empty,
@@ -72,7 +72,7 @@ namespace NetCoreMvcServer.Models
                },
                new Menu
                {
-                   Name = "GroundTruth管理",
+                   Name = "Share_GroundTruthControl",
                    Code = "GroundTruth",
                    SerialNumber = 2,
                    ParentId = Guid.Empty,
@@ -81,7 +81,7 @@ namespace NetCoreMvcServer.Models
                },
                new Menu
                {
-                   Name = "传感器数据",
+                   Name = "Share_SensorData",
                    Code = "App_SensorData",
                    SerialNumber = 3,
                    ParentId = Guid.Empty,
@@ -90,7 +90,7 @@ namespace NetCoreMvcServer.Models
                },
                new Menu
                {
-                   Name = "GroundTruth数据",
+                   Name = "Share_GroundTruthData",
                    Code = "App_GroundTruthData",
                    SerialNumber = 4,
                    ParentId = Guid.Empty,
@@ -99,7 +99,7 @@ namespace NetCoreMvcServer.Models
                },
                new Menu
                {
-                   Name = "设备地图",
+                   Name = "Share_Map",
                    Code = "Map",
                    SerialNumber = 5,
                    ParentId = Guid.Empty,
@@ -108,7 +108,7 @@ namespace NetCoreMvcServer.Models
                },
                new Menu
                {
-                   Name = "用户管理",
+                   Name = "Share_User_Manage",
                    Code = "User",
                    SerialNumber = 6,
                    ParentId = Guid.Empty,
@@ -117,7 +117,7 @@ namespace NetCoreMvcServer.Models
                }, 
                new Menu
                {
-                   Name = "楼层管理",
+                   Name = "Share_Department_Manage",
                    Code = "Department",
                    SerialNumber = 7,
                    ParentId = Guid.Empty,
@@ -132,15 +132,15 @@ namespace NetCoreMvcServer.Models
 
                new Role
                {
-                   Name = "管理员",
-                   Code = "管理员",
-                   Remarks = "管理员",
+                   Name = "Share_Administrator",
+                   Code = "Share_Administrator",
+                   Remarks = "Share_Administrator",
                }, 
                new Role
                {
-                   Name = "一般用户",
-                   Code = "一般用户",
-                   Remarks = "一般用户",
+                   Name = "Share_CommonUser",
+                   Code = "Share_CommonUser",
+                   Remarks = "Share_CommonUser",
                }
             );
 

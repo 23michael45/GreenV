@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreMvcServer.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,7 +17,7 @@ namespace NetCoreMvcServer.Controllers
     public class MenuController : FonourControllerBase
     {
         private readonly IMenuAppService _menuAppService;
-        public MenuController(IMenuAppService menuAppService, IUserAppService userAppService)
+        public MenuController(IMenuAppService menuAppService, IUserAppService userAppService, IStringLocalizer<SharedResource> localizer):base(localizer)
         {
             _menuAppService = menuAppService;
         }
