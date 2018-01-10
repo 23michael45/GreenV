@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 using NetCoreMvcServer.Components;
 using System.Reflection;
+using NetCoreMvcServer;
+using System.Globalization;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,6 +34,7 @@ namespace NetCoreMvcServer.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
+            CultureInfo c = System.Threading.Thread.CurrentThread.CurrentUICulture;
             return View();
         }
 

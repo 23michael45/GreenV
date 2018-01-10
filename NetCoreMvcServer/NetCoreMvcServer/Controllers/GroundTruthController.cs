@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ConsoleServer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using NetCoreMvcServer;
 using NetCoreMvcServer.Models;
 using NetCoreMvcServer.Utility;
 

@@ -267,4 +267,7 @@
   <data name="Control_Warning_OK" xml:space="preserve">
     <value>确定</value>
   </data>
+  <data name="Share_Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
 </root>

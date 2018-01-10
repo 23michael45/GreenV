@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using NetCoreMvcServer.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
+using NetCoreMvcServer;
+using System.Globalization;
+using System.Threading;
 
 namespace NetCoreMvcServer.Controllers
 {
@@ -14,18 +19,26 @@ namespace NetCoreMvcServer.Controllers
         public enum ELanguage
         {
             en_US,
-            zh_CN
+            zh_CN,
         }
-        public readonly IStringLocalizer<SharedResource> _SharedLocalizer;
+        protected readonly IStringLocalizer<SharedResource> _localizer;
+        public IStringLocalizer<SharedResource> SharedLocalizer
+        {
+            get
+            {
+                return _localizer;
+            }
+        }
 
         public FonourControllerBase(IStringLocalizer<SharedResource> localizer)
         {
-            _SharedLocalizer = localizer;
-
+            _localizer = localizer;
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+
+
             byte[] result; 
             filterContext.HttpContext.Session.TryGetValue("CurrentUser",out result);
             if (result == null)
@@ -33,6 +46,9 @@ namespace NetCoreMvcServer.Controllers
                 filterContext.Result = new RedirectResult("/Login/Index");
                 return;
             }
+
+            Response.Cookies.Append("CurrentController",this.GetType().ToString());
+
             base.OnActionExecuting(filterContext);
         }
 
@@ -52,9 +68,6 @@ namespace NetCoreMvcServer.Controllers
             return "";
         }
 
-        public IActionResult SwitchLanguage()
-        {
-            return View();
-        }
+      
     }
 }

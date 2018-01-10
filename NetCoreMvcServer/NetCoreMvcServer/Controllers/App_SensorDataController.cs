@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using NetCoreMvcServer;
 using NetCoreMvcServer.Models;
 
 namespace NetCoreMvcServer.Controllers
@@ -17,7 +19,9 @@ namespace NetCoreMvcServer.Controllers
         private readonly IApp_SensorDataRepository _repository;
 
         static  Dictionary<string, byte[]> _TempDataDic = new Dictionary<string, byte[]>();
-                
+
+        static float _Progress = 0;
+
         public App_SensorDataController(GVContext context,IApp_SensorDataRepository repository, IStringLocalizer<SharedResource> localizer) : base(localizer)
         {
             _context = context;
@@ -233,6 +237,37 @@ namespace NetCoreMvcServer.Controllers
         }
 
 
+        public IActionResult QueryAndExport(string dt, string ip)
+        {
+
+            IQueryable<App_SensorData> rt = DoQuery(dt, ip);
+            byte[] content = SaveSensor(rt.OrderBy(it => it.createtime),ref _Progress);
+
+            Guid id = Guid.NewGuid();
+            string handle = id.ToString();
+            _TempDataDic[handle] = content;
+
+            return Json(new
+            {
+                IsEmpty = rt.Count<App_SensorData>() == 0,
+                Count = rt.Count<App_SensorData>(),
+                fileGuid = handle,
+                fileName = "sensor.txt",
+            });
+        }
+
+
+        public IActionResult QueryProgress()
+        {
+
+            return Json(new
+            {
+                PercentComplete = _Progress
+
+            });
+        }
+
+
 
         public IActionResult Delete(Guid id)
         {
@@ -257,7 +292,7 @@ namespace NetCoreMvcServer.Controllers
         public IActionResult DownloadFile(string dt, string ip)
         {
             IQueryable<App_SensorData> rt = DoQuery(dt, ip);
-            byte[] content = SaveSensor(rt.OrderBy(it => it.createtime));
+            byte[] content = SaveSensor(rt.OrderBy(it => it.createtime),ref _Progress);
 
             Guid id = Guid.NewGuid();
             string handle = id.ToString();
@@ -270,8 +305,13 @@ namespace NetCoreMvcServer.Controllers
             });
         }
 
-        byte[] SaveSensor(IQueryable<App_SensorData> list)
+        byte[] SaveSensor(IQueryable<App_SensorData> list,ref float progress)
         {
+            if(System.IO.File.Exists("sensor.txt") == true)
+            {
+                System.IO.File.Delete("sensor.txt");
+            }
+            
             if(list == null)
             {
                 return null;
@@ -279,6 +319,9 @@ namespace NetCoreMvcServer.Controllers
 
             FileStream fs = new FileStream("sensor.txt", FileMode.OpenOrCreate);
             var file = new System.IO.StreamWriter(fs);
+
+            int totalCount = list.Count<App_SensorData>();
+            int curCount = 0;
             foreach (App_SensorData asd in list)
             {
 
@@ -309,9 +352,10 @@ namespace NetCoreMvcServer.Controllers
                 file.WriteLine(s);
 
 
+                curCount++;
 
-
-
+                progress = (float)curCount * 100 / totalCount;
+                
             }
 
             file.Flush();

@@ -62,6 +62,7 @@ namespace NetCoreMvcServer
             services.AddScoped<IApp_GroundTruthDataRepository, App_GroundTruthDataRepository>();
 
 
+            services.AddScoped<SharedResource>();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -71,22 +72,27 @@ namespace NetCoreMvcServer
                 .AddDataAnnotationsLocalization();
 
 
-            services.Configure<RequestLocalizationOptions>(
-                opts =>
-                {
-                    var supportedCultures = new List<CultureInfo>
-                    {
-                                    new CultureInfo("en-US"),
-                                    new CultureInfo("zh-CN"),
-                    };
 
-                    //opts.DefaultRequestCulture = new RequestCulture("en-US");
-                    opts.DefaultRequestCulture = new RequestCulture("en-US");
-                    // Formatting numbers, dates, etc.
-                    opts.SupportedCultures = supportedCultures;
-                    // UI strings that we have localized.
-                    opts.SupportedUICultures = supportedCultures;
-                });
+            //services.Configure<RequestLocalizationOptions>(
+            //  options =>
+            //  {
+            //      var supportedCultures = new List<CultureInfo>
+            //          {
+            //                new CultureInfo("en-US"),
+            //                new CultureInfo("zh-CN"),
+            //          };
+
+                  
+            //      //options.DefaultRequestCulture = new RequestCulture("zh-CN");
+            //      options.DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"));
+            //      options.SupportedCultures = supportedCultures;
+            //      options.SupportedUICultures = supportedCultures;
+                  
+
+                  
+            //  });
+
+          
             //Session服务
             services.AddSession();
 
@@ -101,6 +107,57 @@ namespace NetCoreMvcServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, GVContext gvcontext)
         {
+            var supportedCultures = new CultureInfo[]
+                      {
+                            new CultureInfo("en-US"),
+                            new CultureInfo("zh-CN"),
+                      };
+            var options = new RequestLocalizationOptions
+            {
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures,
+                //DefaultRequestCulture = new RequestCulture(new CultureInfo("zh-CN")),
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US")),
+
+            };
+
+            options.RequestCultureProviders = new List<IRequestCultureProvider>
+                {
+                    //new QueryStringRequestCultureProvider { Options = options },
+                    new CookieRequestCultureProvider(),
+                    //new AcceptLanguageHeaderRequestCultureProvider { Options = options }
+                };
+
+            //options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider { CookieName = CookieRequestCultureProvider.DefaultCookieName });
+            //options.RequestCultureProviders.Insert(1, new CustomRequestCultureProvider(async httpContext =>
+            // {
+            //     return new ProviderCultureResult("zh-CN");
+            // }));
+
+            //services.Configure<RequestLocalizationOptions>(
+            //  options =>
+            //  {
+            //      var supportedCultures = new List<CultureInfo>
+            //          {
+            //                new CultureInfo("en-US"),
+            //                new CultureInfo("zh-CN"),
+            //          };
+
+
+            //      //options.DefaultRequestCulture = new RequestCulture("zh-CN");
+            //      options.DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"));
+            //      options.SupportedCultures = supportedCultures;
+            //      options.SupportedUICultures = supportedCultures;
+
+
+
+            //  });
+
+            //var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            //app.UseRequestLocalization(options.Value);
+            app.UseRequestLocalization(options);
+
+            
 
             if (env.IsDevelopment())
             {
@@ -117,7 +174,7 @@ namespace NetCoreMvcServer
                 FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
             });
 
-
+         
 
             //Session
             app.UseSession();
@@ -135,8 +192,7 @@ namespace NetCoreMvcServer
             });
 
 
-            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
-            app.UseRequestLocalization(options.Value);
+           
 
 
             //ConsoleServer.MySqlConnector.TransferDB();

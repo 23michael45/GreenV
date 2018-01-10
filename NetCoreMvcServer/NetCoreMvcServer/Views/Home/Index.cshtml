@@ -2,7 +2,18 @@
 	ViewBag.CurrentMenu = "Home";
 }
 @using Microsoft.Extensions.Localization;
+@using NetCoreMvcServer;
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Http.Features
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
 @inject IStringLocalizer<SharedResource> SharedLocalizer
+
+
 <div class="login-logo">
+
 	<b>@SharedLocalizer["Home_Welcome"]</b>
+
 </div>

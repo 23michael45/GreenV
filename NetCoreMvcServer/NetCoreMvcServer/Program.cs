@@ -15,6 +15,7 @@ namespace NetCoreMvcServer
         public static void Main(string[] args)
         {
             BuildWebHost(args).Run();
+
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -24,5 +25,7 @@ namespace NetCoreMvcServer
                 .UseSetting(WebHostDefaults.DetailedErrorsKey, "true")
                 .UseStartup<Startup>()
                 .Build();
+
+
     }
 }

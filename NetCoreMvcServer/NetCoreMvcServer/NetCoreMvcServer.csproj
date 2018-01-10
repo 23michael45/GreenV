@@ -32,14 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="1" Version="1.0.0" />
     <PackageReference Include="AutoMapper" Version="5.1.1" />
+    <PackageReference Include="Localization.AspNetCore.TagHelpers" Version="0.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
-    <PackageReference Include="RazorJS" Version="0.4.3" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.0" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.0" />
@@ -62,18 +60,13 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\Models\LoginModel.en-US.resx">
-      <LastGenOutput>LoginModel.zh-CN.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Models\LoginModel.zh-CN.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LoginModel.zh-CN.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\SharedResource.zh-CN.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\SharedResource.en-US.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
   </ItemGroup>
 

@@ -1,8 +1,11 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
+var intervalId;
 $(function () {
-	$("#btnQuery").click(function () { query(1, 10); });
-	$("#btnExportData").click(function () { exportdata(); });
-
+	
+	$("#btnQueryExport").click(function () { queryandexport(); });
+	//$("#btnQuery").click(function () { query(1, 10); });
+	//$("#btnExportData").click(function () { exportdata(); });
+	$("#exportprogresscontainer").hide();
     initTree();
 });
 //加载楼层树
@@ -43,6 +46,72 @@ function initTree() {
     });
 
 }
+function queryandexport() {
+	var dt = $('#reservationtime').val();
+	var ip = $('#inputip').val();
+
+	startExportProgressIndicator();
+	$.ajax({
+		type: "GET",
+		url: "/App_SensorData/QueryAndExport?dt=" + dt + "&ip=" + ip,
+		success: function (data) {
+			stopExportProgressIndicator();
+			if (data.isEmpty) {
+				$("#ExportMsg").html("查询结果为空！请确定时间段与IP是否正确！");
+
+
+			}
+			else {
+				$("#exportprogresscontainer").hide();
+				//var progress = data.percentComplete;
+				$("#exportprogress").css({ width: "100%" });
+				$("#exportlabel").html("100%");
+				$("#ExportMsg").html("查询到" + data.count + "条结果！");
+
+
+				window.location = '/App_SensorData/Download?fileGuid=' + data.fileGuid + '&filename=' + data.fileName;
+			}
+			
+
+		
+
+		}
+	})
+
+}
+
+function startExportProgressIndicator() {
+	$("#exportprogresscontainer").show();
+	$("#exportprogress").css({ width: "0%" });
+	$("#exportlabel").html("0%");
+
+
+	intervalId = setInterval(
+		function () {
+
+			$.ajax({
+				type: "GET",
+				url: "/App_SensorData/QueryProgress",
+				success: function (data) {
+
+
+					var progress = data.percentComplete;
+					$("#exportprogress").css({ width: progress + "%" });
+					$("#exportlabel").html(progress + "%");
+				}
+			});
+		},
+		
+		10
+	);
+}
+
+function stopExportProgressIndicator() {
+
+	clearInterval(intervalId);
+}
+
+
 
 
 function query(startPage,pageSize) {

@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using NetCoreMvcServer;
 //using UserService;
 
 
@@ -11,14 +17,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NetCoreMvcServer.Controllers
 {
-    public class HomeController : Controller
+
+    public class HomeController : FonourControllerBase
     {
+
+        public HomeController(IStringLocalizer<SharedResource> localizer) : 
+            base(localizer)
+        {
+        }
         // GET: /<controller>/
         public ActionResult Index()
         {
-            //Task<string> task = GetUserCallName();
-            //return Content(task.Result);
-
             return View();
         }
 
@@ -31,11 +40,12 @@ namespace NetCoreMvcServer.Controllers
         //    //await client.StartServiceAsync();
         //    return await client.ShowNameAsync("Client Call");
         //}
-        
+
 
         //void OnSendCheckCB(object sender,OnSendCheckCBReceivedEventArgs args)
         //{
 
-        //}
+        //} 
+       
     }
 }

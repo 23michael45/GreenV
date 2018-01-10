@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetCoreMvcServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
+using NetCoreMvcServer;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 

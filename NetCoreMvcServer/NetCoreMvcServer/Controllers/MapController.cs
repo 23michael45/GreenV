@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using NetCoreMvcServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

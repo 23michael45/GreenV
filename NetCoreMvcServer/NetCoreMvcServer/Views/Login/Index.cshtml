@@ -4,6 +4,7 @@
 @model LoginModel
 
 @using Microsoft.Extensions.Localization;
+@using NetCoreMvcServer;
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 <!DOCTYPE html>
 <html>
@@ -15,8 +16,10 @@
 	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css">
 	<link rel="stylesheet" href="~/css/AdminLTE.css">
 	<link rel="stylesheet" href="~/lib/iCheck/skins/square/blue.css">
+
 </head>
 <body class="hold-transition login-page">
+
 	<div class="login-box">
 		<div class="login-logo">
 			<a href="" target="_blank"><b>@SharedLocalizer["Login_AppName"]</b></a>
@@ -52,6 +55,7 @@
 		</div>
 		<!-- /.login-box-body -->
 	</div>
+
 	<!-- /.login-box -->
 	<script src="~/lib/jquery/dist/jquery.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
@@ -95,5 +99,8 @@
 			}
 		};
 	</script>
+
+
 </body>
+
 </html>

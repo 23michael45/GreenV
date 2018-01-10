@@ -1,8 +1,9 @@
 ﻿
 @using Microsoft.Extensions.Localization;
-@using NetCoreMvcServer.Controllers
+@using NetCoreMvcServer.Controllers;
+@using NetCoreMvcServer;
 @inject IStringLocalizer<SharedResource> SharedLocalizer
-
+@inject SharedResource SharedResource
 <!DOCTYPE html>
 
 
@@ -160,30 +161,33 @@
 		<footer class="main-footer">
 			<!-- To the right -->
 			<div class="pull-right hidden-xs">
-				<form asp-controller="FonourControllerBase" asp-action="SwitchLanguage">
-					Language
-					<select id="Select_Language" runat=server style="width: 70px">
-						<option selected="selected" value="zh-cn">ZH</option>
-						<option value="en-us">EN</option>
+
+				<form asp-controller="Shared" asp-action="SwitchLanguage" id="languageform">
+					@SharedLocalizer["Share_Language"]
+					<select name="Language" id="Select_Language" runat=server style="width: 70px" onchange="selectlanguage()" form="languageform">
+
+						@if (SharedResource.GetCurrentLanguge() == "zh-CN")
+						{
+								<option selected="selected" value="zh-cn">中文</option>
+								<option value="en-us">English</option>
+						}
+						else if (SharedResource.GetCurrentLanguge() == "en-US")
+						{
+										<option value="zh-cn">中文</option>
+										<option selected="selected" value="en-us">English</option>
+						}
+
+
 					</select>
+
+					<input id ='LanguageSubmit' type='hidden' display ='false' value='Submit' />
 				</form>
-
-				@using (Html.BeginForm("SwitchLanguage", "FonourControllerBase", FormMethod.Get, new { id = "TheForm" }))
-				{
-						@Html.DropDownList("Language",
-						new SelectList(Enum.GetValues(typeof(FonourControllerBase.ELanguage))),
-						"--Select One--",
-						new { onchange = "document.getElementById('TheForm').submit();" }
-						)
-
-						<input type='submit' value='Submit' />
-				}
-
+				
 			</div>
-			<!-- Default to the left -->
+		<!-- Default to the left -->
 
-			<strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
-		</footer>
+				<strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+</footer>
 		<!-- Control Sidebar -->
 		<aside class="control-sidebar control-sidebar-dark">
 			<!-- Create the tabs -->
@@ -409,6 +413,15 @@
 				showInputs: false
 			});
 		});
+
+		function selectlanguage() {
+			//var ele = document.getElementById('LanguageSubmit');
+			
+			//ele.submit(); 
+
+			var ele = $("#languageform");
+			ele.submit();
+		}
 
 	</script>
 
