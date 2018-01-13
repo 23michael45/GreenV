@@ -21,10 +21,45 @@ namespace NetCoreMvcServer.Controllers
         {
             public ConnectedTerminalState(string id) :base(id)
             {
+                StartTimer();
             }
             public bool mIsStart = false;
             public short mRate = 0;
             public short mGain = 0;
+
+            System.Timers.Timer _Timer;
+            void StartTimer()
+            {
+                _Timer = new System.Timers.Timer();
+
+                _Timer.Interval = 2000;
+                _Timer.Elapsed -= HandleTimer;
+                _Timer.Elapsed += HandleTimer;
+
+                _Timer.AutoReset = false;
+                _Timer.Start();
+            }
+            public void ResetTimer()
+            {
+                if(_Timer != null)
+                {
+                    _Timer.Stop();
+                    _Timer.Close();
+                }
+
+                StartTimer();
+                
+
+            }
+
+            void HandleTimer(object sender, System.Timers.ElapsedEventArgs e)
+            {
+                if (_Timer != null)
+                {
+                    _Timer.Stop();
+                }
+                TerminalController._ConnectedTerminals.RemoveIfExistStringKey(mId);
+            }
 
         }
 

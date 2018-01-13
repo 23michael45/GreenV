@@ -517,7 +517,7 @@ namespace ConsoleServer
 
         void ReceiveSensorData(int len, BinaryReader reader,string ip )
         {
-            MainEntry.SendToTerminal(SendSensorDataRsp(MainEntry.GetTerminalIPEndPoint(ip)));
+            MainEntry.SendToTerminal(SendSensorDataRsp(MainEntry.GetTerminalIPEndPoint(ip)),false);
 
             UInt32 timestamps = reader.ReadUInt32();
             UInt32 timestampms = reader.ReadUInt32();
@@ -540,6 +540,7 @@ namespace ConsoleServer
             {
 
                 TerminalController._ConnectedTerminals.GetStringKey(ip).mIsStart = true;
+                TerminalController._ConnectedTerminals.GetStringKey(ip).ResetTimer();
             }
             else
             {
