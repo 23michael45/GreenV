@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Runtime;
 using LitJson;
 using System.Net;
+using NetCoreMvcServer.Controllers;
+using NetCoreMvcServer.Utility;
 
 namespace ConsoleServer
 {
@@ -521,7 +523,7 @@ namespace ConsoleServer
             UInt32 timestampms = reader.ReadUInt32();
             UInt16 rate = reader.ReadUInt16();
             UInt16 gain = reader.ReadUInt16();
-            
+
             //for(int i = 0;i < len - 12;i += 2)//每次处理2个字节   len - 12 = 1200
             //{
             //    Int16 advalue = reader.ReadInt16();
@@ -533,6 +535,18 @@ namespace ConsoleServer
 
             //    }
             //}
+
+            if(TerminalController._ConnectedTerminals.ContainsStringKey(ip))
+            {
+
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mIsStart = true;
+            }
+            else
+            {
+                TerminalController._ConnectedTerminals.AddIfNotExistStringKey(ip);
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mIsStart = true;
+            }
+
 
             byte[] bufferdata = reader.ReadBytes(len - 12);
             if (_MySqlConnector != null)

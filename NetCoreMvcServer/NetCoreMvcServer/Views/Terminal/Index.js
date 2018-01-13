@@ -1,5 +1,5 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
-
+var intervalId;
 
 var editone = $("#editone").text();
 var addone = $("#addone").text();
@@ -27,7 +27,7 @@ $(function () {
 	$("#btnStartAll").click(function () { sendstartall() });
 	$("#btnStopAll").click(function () { sendstopall() });
 	$("#btnUpdateSetupAll").click(function () { sendupdatesetupall() });
-	
+	startCheckingTimer();
     initTree();
 });
 //全选
@@ -152,9 +152,7 @@ function edit(id) {
 
 function checkresult(data) {
 	$("#tableconnectedBody").empty();
-
-
-
+	
 	$.each(data.ips, function (i, item) {
 		var tr = "<tr>";
 		tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.mId + "'/></td>";
@@ -350,3 +348,29 @@ function deleteSingle(id) {
         })
     });
 };
+
+
+
+
+function startCheckingTimer() {
+	
+	intervalId = setInterval(
+		function () {
+
+			$.ajax({
+				type: "GET",
+				url: "/Terminal/GetOnLineTerminals",
+				success: function (data) {
+					checkresult(data);
+				}
+			});
+		},
+
+		10
+	);
+}
+
+function stopCheckingTimer() {
+
+	clearInterval(intervalId);
+}

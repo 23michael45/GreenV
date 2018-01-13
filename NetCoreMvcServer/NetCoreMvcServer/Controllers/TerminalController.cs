@@ -28,7 +28,7 @@ namespace NetCoreMvcServer.Controllers
 
         }
 
-        static List<ConnectedTerminalState> _ConnectedTerminals = new List<ConnectedTerminalState>();
+        public static List<ConnectedTerminalState> _ConnectedTerminals = new List<ConnectedTerminalState>();
 
         private readonly ITerminalAppService _service;
         public TerminalController(ITerminalAppService service, IStringLocalizer<SharedResource> localizer) : base(localizer)
@@ -223,6 +223,12 @@ namespace NetCoreMvcServer.Controllers
 
                 return Json(new { ips = _ConnectedTerminals,state = "ok" });
             });
+        }
+
+        public IActionResult GetOnLineTerminals()
+        {
+
+            return Json(new { ips = _ConnectedTerminals, state = "ok" });
         }
         #endregion
 

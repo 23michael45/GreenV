@@ -22,13 +22,14 @@ namespace NetCoreMvcServer
 {
     public class Startup
     {
+
+        public static GVContext _GVContext;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            Thread t = new Thread(MainEntry.Entry);
-            t.Start();
-
+           
             InitMapper();
         }
 
@@ -40,6 +41,12 @@ namespace NetCoreMvcServer
             string connectstring = Configuration.GetConnectionString("GVContext");
             services.AddDbContext<GVContext>(options =>
             options.UseMySql(connectstring));
+
+            DbContextOptionsBuilder<GVContext> builder = new DbContextOptionsBuilder<GVContext>();
+            builder.UseMySql(connectstring);
+            _GVContext = new GVContext(builder.Options);
+            Thread t = new Thread(MainEntry.Entry);
+            t.Start();
 
 
             //依赖注入
@@ -107,6 +114,9 @@ namespace NetCoreMvcServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, GVContext gvcontext)
         {
+        
+
+
             var supportedCultures = new CultureInfo[]
                       {
                             new CultureInfo("en-US"),

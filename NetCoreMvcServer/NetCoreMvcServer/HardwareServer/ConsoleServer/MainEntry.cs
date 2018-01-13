@@ -1,4 +1,6 @@
 ﻿using LitJson;
+using NetCoreMvcServer;
+using NetCoreMvcServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleServer
@@ -50,6 +53,7 @@ namespace ConsoleServer
             }
             _CmdParser.ConnectMySql();
             StartUdpServer();
+            StartAutoExportTxt();
         }
         public static void SendToWeb(byte[] data)
         {
@@ -99,16 +103,89 @@ namespace ConsoleServer
         }
 
 
+        static DateTime _LastExportDt = DateTime.MinValue;
+        static DateTime GetLastExportDt()
+        {
+            if(_LastExportDt == DateTime.MinValue)
+            {
+                FileStream fs = new FileStream("LastExportDt.txt", FileMode.OpenOrCreate);
+                var file = new System.IO.StreamReader(fs);
+                string s = file.ReadLine();
+                fs.Close();
+
+                if(string.IsNullOrEmpty(s))
+                {
+
+                    App_SensorData first = Startup._GVContext.App_SensorData.First<App_SensorData>();
+                    if(first != null)
+                    {
+
+                        _LastExportDt = first.createtime;
+                    }
+                }
+                else
+                {
+                    _LastExportDt = DateTime.Parse(s);
+                }
+
+            }
+
+
+
+            return _LastExportDt;
+        }
+        static void SaveLastExportDt()
+        {
+            FileStream fs = new FileStream("LastExportDt.txt", FileMode.OpenOrCreate);
+            var file = new System.IO.StreamWriter(fs);
+            file.WriteLine(_LastExportDt.ToString());
+            file.Flush();
+            fs.Close();
+        }
+
+
         static void StartAutoExportTxt()
         {
             Console.WriteLine("StartAutoExportTxt");
-            Task.Factory.StartNew(async () =>
+
+            IQueryable<Terminal> terminals = null;
+            terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
+
+
+            Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
-                   
+                    DateTime last = GetLastExportDt();
+
+                    DateTime startdt = new DateTime(
+                     last.Year,
+                     last.Month,
+                     last.Day,
+                     last.Hour,
+                     last.Minute,
+                     0,
+                     0);
+
+                    DateTime enddt = startdt.AddMinutes(1);
+
+                    if (DateTime.Now > enddt)
+                    {
 
 
+                        terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
+                        foreach (Terminal terminal in terminals)
+                        {
+                            ExportTxt(Startup._GVContext, terminal.ip, startdt, enddt);
+                        }
+
+                        _LastExportDt = enddt;
+                        SaveLastExportDt();
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                    }
 
                 }
             });
@@ -336,6 +413,117 @@ namespace ConsoleServer
         }
 
 
-      
+
+
+
+
+        public static void ExportTxt(GVContext context, string ip, DateTime startdt, DateTime enddt)
+        {
+            try
+            {
+                IQueryable<App_SensorData> rt = null;
+                if (ip == null || ip == "" || ip == "undefined")
+                {
+
+                    return;
+                }
+                else
+                {
+                    rt = context.App_SensorData.Where(item => (item.device == ip) && (item.createtime > startdt && item.createtime < enddt)).OrderBy(it => it.createtime);
+
+                }
+
+                string rootdir = "Export";
+                if (!Directory.Exists(rootdir))
+                {
+                    Directory.CreateDirectory(rootdir);
+                }
+
+                string ipstring = rootdir + "/" + ip;
+                if (!Directory.Exists(ipstring))
+                {
+                    Directory.CreateDirectory(ipstring);
+                }
+
+                string daystring = startdt.ToString("yyyy-MM-dd");
+                daystring = daystring.Replace("/", "-");
+                daystring = rootdir + "/" + ip + "/" + daystring;
+                if (!Directory.Exists(daystring))
+                {
+                    Directory.CreateDirectory(daystring);
+                }
+
+
+                string minitestring = startdt.ToString("HH-mm");
+                string filename = daystring + "/" + minitestring + ".txt";
+
+
+                if (System.IO.File.Exists(filename) == true)
+                {
+                    System.IO.File.Delete(filename);
+                }
+
+                if (rt == null)
+                {
+                    return;
+                }
+
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
+                var file = new System.IO.StreamWriter(fs);
+
+                int totalCount = rt.Count<App_SensorData>();
+                int curCount = 0;
+                foreach (App_SensorData asd in rt)
+                {
+
+
+                    Guid id = asd.Id;
+                    string device = asd.device;
+                    int timestamps = asd.timestamps;
+                    int timestampms = asd.timestampms;
+                    int rate = asd.rate;
+                    int gain = asd.gain;
+                    DateTime createtime = asd.createtime;
+
+
+
+                    byte[] data = new byte[1200];
+                    long len = asd.sensorvalue.Length;
+                    MemoryStream ms = new MemoryStream(asd.sensorvalue);
+                    BinaryReader reader = new BinaryReader(ms);
+
+
+                    string s = string.Format(" createtime:{0} device:{1} timestamp:{2} : {3}  rate: {4}  gain:{5} data: ", createtime, device, timestamps, timestampms, rate, gain);
+                    for (int i = 0; i < len / 2; i++)
+                    {
+                        UInt16 d = reader.ReadUInt16();
+                        s += " " + d.ToString();
+                    }
+                    file.WriteLine(s);
+
+
+                    curCount++;
+
+
+                }
+
+                file.Flush();
+
+
+                fs.Close();
+
+                return;
+            }
+            catch(Exception ex)
+            {
+                return;
+            }
+           
+        }
+            
+        
+
+
+
     }
 }

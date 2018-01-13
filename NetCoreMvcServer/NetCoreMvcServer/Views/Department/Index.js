@@ -304,7 +304,8 @@ function select(id) {
 	$.session.set('select_deparmentid', selectedId);
 
 	layer.confirm(sureselect, {
-		btn: [depok, delcancel]
+		btn: [depok, depcancel],
+		title:false
 	}, function () {
 		$.ajax({
 			type: "POST",
