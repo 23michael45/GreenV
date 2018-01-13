@@ -180,6 +180,84 @@
   <data name="Control_Warning_OK" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="Department_Admin" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="Department_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Department_Code" xml:space="preserve">
+    <value>Department Code</value>
+  </data>
+  <data name="Department_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Department_Name" xml:space="preserve">
+    <value>Department Name</value>
+  </data>
+  <data name="Department_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Department_Operation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="Department_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Department_Please_Select" xml:space="preserve">
+    <value>Please Select One Department</value>
+  </data>
+  <data name="Department_Set_Select" xml:space="preserve">
+    <value>Set Active</value>
+  </data>
+  <data name="Department_Sure_Select" xml:space="preserve">
+    <value>Are you sure to Active This Department</value>
+  </data>
+  <data name="Department_Title" xml:space="preserve">
+    <value>Department Management</value>
+  </data>
+  <data name="GroundTruthControl_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="GroundTruthControl_IP" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="GroundTruthControl_Operation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="GroundTruthControl_Sync" xml:space="preserve">
+    <value>Sync</value>
+  </data>
+  <data name="GroundTruthControl_Sync_All" xml:space="preserve">
+    <value>Sync All</value>
+  </data>
+  <data name="GroundTruthControl_Title" xml:space="preserve">
+    <value>GroundTruth Management</value>
+  </data>
+  <data name="GroundTruth_Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="GroundTruth_IP" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="GroundTruth_LR" xml:space="preserve">
+    <value>L/R</value>
+  </data>
+  <data name="GroundTruth_Operation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="GroundTruth_Query" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="GroundTruth_Time" xml:space="preserve">
+    <value>Create Time</value>
+  </data>
+  <data name="GroundTruth_TimeRange" xml:space="preserve">
+    <value>Time Range</value>
+  </data>
+  <data name="GroundTruth_Title" xml:space="preserve">
+    <value>GroundTruth Data Query</value>
+  </data>
   <data name="Home_Welcome" xml:space="preserve">
     <value>Welcome to GreenV Data System</value>
   </data>
@@ -206,6 +284,27 @@
   </data>
   <data name="Login_Window_Title" xml:space="preserve">
     <value>Login</value>
+  </data>
+  <data name="SensorData_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="SensorData_IP_Address" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="SensorData_Null_Result" xml:space="preserve">
+    <value>No Data Found!Be Sure Your Time Range or IP is Correct!</value>
+  </data>
+  <data name="SensorData_Query_Export" xml:space="preserve">
+    <value>Query And Export</value>
+  </data>
+  <data name="SensorData_Query_Result" xml:space="preserve">
+    <value>Query Found {0} Results!If Download is not Lauched,Please Click Download Button!</value>
+  </data>
+  <data name="SensorData_Query_Title" xml:space="preserve">
+    <value>Sensor Data Query</value>
+  </data>
+  <data name="SensorData_Time_Range" xml:space="preserve">
+    <value>Time Range</value>
   </data>
   <data name="Share_Administrator" xml:space="preserve">
     <value>Administrator</value>
@@ -269,5 +368,44 @@
   </data>
   <data name="Terminal_Rate" xml:space="preserve">
     <value>Rate</value>
+  </data>
+  <data name="User_Add" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="User_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="User_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="User_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="User_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="User_FullName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="User_Management" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="User_Operation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="User_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="User_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="User_Remark" xml:space="preserve">
+    <value>Remark</value>
+  </data>
+  <data name="User_Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="User_UserName" xml:space="preserve">
+    <value>UserName</value>
   </data>
 </root>

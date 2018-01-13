@@ -47,7 +47,6 @@ namespace NetCoreMvcServer.Controllers
                 return;
             }
 
-            Response.Cookies.Append("CurrentController",this.GetType().ToString());
 
             base.OnActionExecuting(filterContext);
         }

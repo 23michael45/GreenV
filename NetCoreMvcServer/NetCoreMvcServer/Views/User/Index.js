@@ -1,4 +1,22 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
+
+
+var editone = $("#editone").text();
+var addone = $("#addone").text();
+var deleteone = $("#deleteone").text();
+var checkeone = $("#checkone").text();
+var updateone = $("#updateone").text();
+var startone = $("#startone").text();
+var stopone = $("#stopone").text();
+
+
+var deletewaring = $("#deletewaring").text();
+var deleteok = $("#deleteok").text();
+var deletecancel = $("#deletecancel").text();
+var selecttodelete = $("#selecttodelete").text();
+var deletefailed = $("#deletefailed").text();
+
+
 $(function () {
     $("#btnAdd").click(function () { add(); });
     $("#btnSave").click(function () { save(); });
@@ -71,7 +89,7 @@ function loadTables(startPage, pageSize) {
                 tr += "<td>" + (item.email == null ? "" : item.email) + "</td>";
                 tr += "<td>" + (item.mobileNumber == null ? "" : item.mobileNumber) + "</td>";
                 tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
-                tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+				tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> " + editone + " </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> " + deleteone + " </button> </td>"
                 tr += "</tr>";
                 $("#tableBody").append(tr);
             })
@@ -110,7 +128,7 @@ function add() {
     $("#MobileNumber").val("");
     $("#Remarks").val("");
     $("#Role").select2("val", "");
-    $("#Title").text("新增用户");
+    $("#Title").text(addone);
     //弹出新增窗体
     $("#editModal").modal("show");
 };
@@ -134,7 +152,7 @@ function edit(id) {
                 });
                 $("#Role").select2("val", roleIds);
             }
-            $("#Title").text("编辑用户")
+            $("#Title").text(editone)
             $("#editModal").modal("show");
         }
     })
@@ -168,13 +186,14 @@ function deleteMulti() {
         }
     });
     ids = ids.substring(0, ids.length - 1);
-    if (ids.length == 0) {
-        layer.alert("请选择要删除的记录。");
+	if (ids.length == 0) {
+		layer.alert(selecttodelete);
         return;
     };
     //询问框
-    layer.confirm("您确认删除选定的记录吗？", {
-        btn: ["确定", "取消"]
+	layer.confirm(deletewaring, {
+		btn: [deleteok, deletecancel],
+		title: false
     }, function () {
         var sendData = { "ids": ids };
         $.ajax({
@@ -187,7 +206,7 @@ function deleteMulti() {
                     layer.closeAll();
                 }
                 else {
-                    layer.alert("删除失败！");
+					layer.alert(deletefailed);
                 }
             }
         });
@@ -195,8 +214,9 @@ function deleteMulti() {
 };
 //删除单条数据
 function deleteSingle(id) {
-    layer.confirm("您确认删除选定的记录吗？", {
-        btn: ["确定", "取消"]
+	layer.confirm(deletewaring, {
+		btn: [deleteok, deletecancel],
+		title: deleteone
 	}, function () {
         $.ajax({
             type: "POST",
@@ -207,8 +227,8 @@ function deleteSingle(id) {
                     loadTables(1, 10)
                     layer.closeAll();
                 }
-                else {
-                    layer.alert("删除失败！");
+				else {
+					layer.alert(deletefailed);
                 }
             }
         })

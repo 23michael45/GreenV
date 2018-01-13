@@ -214,6 +214,24 @@ namespace NetCoreMvcServer.Controllers
 
 
         }
+
+
+        IQueryable<App_SensorData> DoQuery(string ip,DateTime startdt,DateTime enddt)
+        {
+            IQueryable<App_SensorData> rt = null;
+            if (ip == null || ip == "" || ip == "undefined")
+            {
+                rt = _context.App_SensorData.Where(item => (item.createtime > startdt && item.createtime < enddt)).OrderBy(it => it.createtime);
+
+            }
+            else
+            {
+                rt = _context.App_SensorData.Where(item => (item.device == ip) && (item.createtime > startdt && item.createtime < enddt)).OrderBy(it => it.createtime);
+
+            }
+            return rt;
+        }
+
         IQueryable<App_SensorData> DoQuery(string dt, string ip)
         {
             //12/25/2017 4:00 AM - 12/25/2017 11:59 PM
@@ -221,37 +239,43 @@ namespace NetCoreMvcServer.Controllers
 
             DateTime starttime = DateTime.Parse(times[0]);
             DateTime endtime = DateTime.Parse(times[1]);
-            IQueryable<App_SensorData> rt = null;
 
-            if (ip == null || ip == "" || ip == "undefined")
-            {
-                rt = _context.App_SensorData.Where(item => (item.createtime > starttime && item.createtime < endtime)).OrderBy(it => it.createtime);
-
-            }
-            else
-            {
-                rt = _context.App_SensorData.Where(item => (item.device == ip) && (item.createtime > starttime && item.createtime < endtime)).OrderBy(it => it.createtime);
-
-            }
-            return rt;
+            return DoQuery(ip, starttime, endtime);
         }
 
 
         public IActionResult QueryAndExport(string dt, string ip)
         {
-
+            _Progress = 0;
             IQueryable<App_SensorData> rt = DoQuery(dt, ip);
-            byte[] content = SaveSensor(rt.OrderBy(it => it.createtime),ref _Progress);
+            SaveSensor(rt.OrderBy(it => it.createtime),ref _Progress);
 
-            Guid id = Guid.NewGuid();
-            string handle = id.ToString();
-            _TempDataDic[handle] = content;
+
+            FileStream fs = new FileStream("sensor.txt", FileMode.OpenOrCreate);
+            byte[] content = ReadFile(fs);
+            fs.Close();
+
+            
+
+            string msg = "";
+            bool isempty = false;
+            if(rt.Count<App_SensorData>() == 0)
+            {
+                isempty = true;
+                msg = SharedLocalizer["SensorData_Null_Result"];
+            }
+            else
+            {
+                isempty = false;
+                msg = string.Format(SharedLocalizer["SensorData_Query_Result"], rt.Count<App_SensorData>());
+
+
+            }
 
             return Json(new
             {
-                IsEmpty = rt.Count<App_SensorData>() == 0,
-                Count = rt.Count<App_SensorData>(),
-                fileGuid = handle,
+                IsEmpty = isempty,
+                Msg = msg,
                 fileName = "sensor.txt",
             });
         }
@@ -291,16 +315,8 @@ namespace NetCoreMvcServer.Controllers
 
         public IActionResult DownloadFile(string dt, string ip)
         {
-            IQueryable<App_SensorData> rt = DoQuery(dt, ip);
-            byte[] content = SaveSensor(rt.OrderBy(it => it.createtime),ref _Progress);
-
-            Guid id = Guid.NewGuid();
-            string handle = id.ToString();
-            _TempDataDic[handle] = content;
-
             return Json(new 
             {
-                fileGuid = handle,
                 fileName = "sensor.txt" ,
             });
         }
@@ -360,26 +376,27 @@ namespace NetCoreMvcServer.Controllers
 
             file.Flush();
 
-            byte[] filecontent = ReadFile(fs);
 
             fs.Close();
 
-            return filecontent;
+            return null;
         }
         [HttpGet]
-        public virtual ActionResult Download(string fileGuid, string fileName)
+        public virtual ActionResult Download(string fileName)
         {
-
-            if (_TempDataDic[fileGuid] != null)
+            if(System.IO.File.Exists("sensor.txt"))
             {
-                byte[] data = _TempDataDic[fileGuid] as byte[];
-                return File(data, "application/vnd.ms-excel", fileName);
+
+                FileStream fs = new FileStream("sensor.txt", FileMode.OpenOrCreate);
+                byte[] content = ReadFile(fs);
+                fs.Close();
+
+
+                return File(content, "text/plain", fileName);
             }
             else
             {
-                // Problem - Log the error, generate a blank file,
-                //           redirect to another controller action - whatever fits with your application
-                return new EmptyResult();
+                return Content("File Not Exist");
             }
         }
 

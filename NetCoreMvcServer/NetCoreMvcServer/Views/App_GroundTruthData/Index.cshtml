@@ -1,6 +1,10 @@
 ﻿@{
 	ViewBag.CurrentMenu = "App_GroundTruthData";
 }
+@using Microsoft.Extensions.Localization;
+@using NetCoreMvcServer;
+
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 <div class="row">
 	<!--
 	<div class="col-md-3">
@@ -18,23 +22,23 @@
 	<div class="col-md-12">
 		<div class="box box-primary">
 			<div class="box-header with-border">
-				<h3 class="box-title">GroundTruth数据查询</h3>
+				<h3 class="box-title">@SharedLocalizer["GroundTruth_Title"]</h3>
 				<div class="form-group">
 					<div class="input-group">
 						<div class="input-group-addon">
-							时间范围
+							@SharedLocalizer["GroundTruth_TimeRange"]
 							<i class="fa fa-clock-o"></i>
 							<input type="text" id="reservationtime">
-							IP地址
+							@SharedLocalizer["GroundTruth_IP"]
 							<i class="fa fa-laptop"></i>
 							<input type="text" data-inputmask="'alias': 'ip'" data-mask="">
 						</div>
 						<div class="pull-right box-tools">
 							<button id="btnQuery" class="btn btn-primary" type="button">
-								查询
+								@SharedLocalizer["GroundTruth_Query"]
 							</button>
 							<button id="btnExportData" class="btn btn-primary" type="button">
-								导出结果
+								@SharedLocalizer["GroundTruth_Export"]
 							</button>
 						</div>
 					</div>
@@ -48,18 +52,18 @@
 						<thead>
 							<tr role="row">
 								<th tabindex="0" aria-label="">
-									IP地址
+									@SharedLocalizer["GroundTruth_IP"]
 								</th>
 								<th tabindex="0" aria-label="">
-									时间
+									@SharedLocalizer["GroundTruth_Time"]
 								</th>
 								<th tabindex="0" aria-label="">
-									左/右
+									@SharedLocalizer["GroundTruth_LR"]
 								</th>
 								<th tabindex="0" style="width: 230px;" aria-label="">
-									操作
+									@SharedLocalizer["GroundTruth_Operation"]
 								</th>
-								
+
 							</tr>
 						</thead>
 						<tbody id="tableBody"></tbody>
@@ -72,6 +76,21 @@
 		</div>
 	</div>
 </div>
+
+<p id="editone" hidden>@SharedLocalizer["Control_Edit"] </p>
+<p id="addone" hidden>@SharedLocalizer["Control_Add"] </p>
+<p id="deleteone" hidden>@SharedLocalizer["Control_Delete"] </p>
+<p id="checkone" hidden>@SharedLocalizer["Control_CheckOne"] </p>
+<p id="updateone" hidden>@SharedLocalizer["Control_UpdateOne"] </p>
+<p id="startone" hidden>@SharedLocalizer["Control_StartOne"] </p>
+<p id="stopone" hidden>@SharedLocalizer["Control_StopOne"] </p>
+
+
+<p id="deletewaring" hidden>@SharedLocalizer["Control_DeleteSelected_Warning"] </p>
+<p id="deleteok" hidden>@SharedLocalizer["Control_Warning_OK"] </p>
+<p id="deletecancel" hidden>@SharedLocalizer["Control_Warning_Cancel"] </p>
+<p id="selecttodelete" hidden>@SharedLocalizer["Control_Delete_NoSelected"] </p>
+<p id="deletefailed" hidden>@SharedLocalizer["Control_DeleteFailed_Warning"] </p>
 @section scripts{
 	<script src="~/Views/App_GroundTruthData/Index.js"></script>
 }

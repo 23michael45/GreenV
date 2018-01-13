@@ -1,4 +1,31 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
+
+
+var editone = $("#editone").text();
+var addone = $("#addone").text();
+var deleteone = $("#deleteone").text();
+var checkeone = $("#checkone").text();
+var updateone = $("#updateone").text();
+var startone = $("#startone").text();
+var stopone = $("#stopone").text();
+
+
+var deletewaring = $("#deletewaring").text();
+var deleteok = $("#deleteok").text();
+var deletecancel = $("#deletecancel").text();
+var selecttodelete = $("#selecttodelete").text();
+var deletefailed = $("#deletefailed").text();
+
+
+var selectselectonedep = $("#selectonedep").text();
+var sureselect = $("#sureselect").text();
+
+var depok = $("#depok").text();
+var depcancel = $("#depcancel").text();
+
+
+var setactive = $("#setactive").text();
+
 var cstartPage = 1;
 var cpageSize = 10;
 $(function () {
@@ -66,11 +93,11 @@ function ajaxresult(data) {
 		tr += "<td>" + (item.contactNumber == null ? "" : item.contactNumber) + "</td>";
 		tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
 		if (selectedId == item.id) {
-			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> " + editone + " </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> " + deleteone + " </button> </td>"
 
 		}
 		else {
-			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button><button class='btn btn-info btn-xs' href='javascript:;' onclick='select(\"" + item.id + "\")'><i class='fa fa-edit'></i> 设为选中 </button></td>"
+			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> " + editone + " </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> " + deleteone + " </button><button class='btn btn-info btn-xs' href='javascript:;' onclick='select(\"" + item.id + "\")'><i class='fa fa-edit'></i>  " + setactive + " </button></td>"
 
 		}
 
@@ -160,7 +187,7 @@ function checkAll(obj) {
 function add(type) {
     if (type === 1) {
         if (selectedId === "00000000-0000-0000-0000-000000000000") {
-            layer.alert("请选择部门。");
+			layer.alert(selectselectonedep);
             return;
         }
         $("#ParentId").val(selectedId);
@@ -174,7 +201,7 @@ function add(type) {
     $("#Manager").val("");
     $("#ContactNumber").val("");
     $("#Remarks").val("");
-    $("#Title").text("新增顶级");
+    $("#Title").text(addone);
     //弹出新增窗体
     $("#addRootModal").modal("show");
 };
@@ -192,7 +219,7 @@ function edit(id) {
             $("#ContactNumber").val(data.contactNumber);
             $("#Remarks").val(data.remarks);
 
-            $("#Title").text("编辑功能")
+            $("#Title").text(editone)
             $("#addRootModal").modal("show");
         }
     })
@@ -224,13 +251,13 @@ function deleteMulti() {
         }
     });
     ids = ids.substring(0, ids.length - 1);
-    if (ids.length == 0) {
-        layer.alert("请选择要删除的记录。");
+	if (ids.length == 0) {
+		layer.alert(selecttodelete);
         return;
     };
-    //询问框
-    layer.confirm("您确认删除选定的记录吗？", {
-        btn: ["确定", "取消"]
+	//询问框
+	layer.confirm(deletewaring, {
+        btn: [deleteok, deletecancel]
     }, function () {
         var sendData = { "ids": ids };
         $.ajax({
@@ -242,8 +269,8 @@ function deleteMulti() {
                     initTree();
                     layer.closeAll();
                 }
-                else {
-                    layer.alert("删除失败！");
+				else {
+					layer.alert(deletefailed);
                 }
             }
         });
@@ -251,8 +278,9 @@ function deleteMulti() {
 };
 //删除单条数据
 function deleteSingle(id) {
-    layer.confirm("您确认删除选定的记录吗？", {
-        btn: ["确定", "取消"]
+	layer.confirm(deletewaring, {
+		btn: [deleteok, deletecancel],
+		title:false
     }, function () {
         $.ajax({
             type: "POST",
@@ -264,7 +292,7 @@ function deleteSingle(id) {
                     layer.closeAll();
                 }
                 else {
-                    layer.alert("删除失败！");
+					layer.alert(deletefailed);
                 }
             }
         })
@@ -275,8 +303,8 @@ function select(id) {
 	selectedId = id;
 	$.session.set('select_deparmentid', selectedId);
 
-	layer.confirm("您确认选中当前楼层吗？", {
-		btn: ["确定", "取消"]
+	layer.confirm(sureselect, {
+		btn: [depok, delcancel]
 	}, function () {
 		$.ajax({
 			type: "POST",

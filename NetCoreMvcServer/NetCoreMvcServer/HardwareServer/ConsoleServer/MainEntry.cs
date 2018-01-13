@@ -99,7 +99,21 @@ namespace ConsoleServer
         }
 
 
+        static void StartAutoExportTxt()
+        {
+            Console.WriteLine("StartAutoExportTxt");
+            Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                   
 
+
+
+                }
+            });
+
+        }
 
         static void StartUdpServer()
         {
@@ -320,5 +334,8 @@ namespace ConsoleServer
                 }
             }
         }
+
+
+      
     }
 }

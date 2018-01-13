@@ -1,4 +1,19 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
+
+var editone = $("#editone").text();
+var addone = $("#addone").text();
+var deleteone = $("#deleteone").text();
+var checkeone = $("#checkone").text();
+var updateone = $("#updateone").text();
+var startone = $("#startone").text();
+var stopone = $("#stopone").text();
+
+
+var deletewaring = $("#deletewaring").text();
+var deleteok = $("#deleteok").text();
+var deletecancel = $("#deletecancel").text();
+var selecttodelete = $("#selecttodelete").text();
+var deletefailed = $("#deletefailed").text();
 $(function () {
 	$("#btnQuery").click(function () { query(1, 10); });
 	$("#btnExportData").click(function () { exportdata(); });
@@ -61,7 +76,7 @@ function query(startPage, pageSize) {
 				tr += "<td>" + (item.device == null ? "" : item.device) + "</td>";
 				tr += "<td>" + (item.createtime == null ? "" : item.createtime) + "</td>";
 				tr += "<td>" + (item.leftright == 0 ? "左" : "右") + "</td>";
-				tr += "<td> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+				tr += "<td> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> " + deleteone + " </button> </td>"
 				tr += "</tr>";
 				$("#tableBody").append(tr);
 			})
@@ -96,7 +111,7 @@ function loadTables(startPage, pageSize) {
 				tr += "<td>" + (item.email == null ? "" : item.email) + "</td>";
 				tr += "<td>" + (item.mobileNumber == null ? "" : item.mobileNumber) + "</td>";
 				tr += "<td>" + (item.remarks == null ? "" : item.remarks) + "</td>";
-				tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> 编辑 </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> 删除 </button> </td>"
+				tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='edit(\"" + item.id + "\")'><i class='fa fa-edit'></i> " + editone + " </button> <button class='btn btn-danger btn-xs' href='javascript:;' onclick='deleteSingle(\"" + item.id + "\")'><i class='fa fa-trash-o'></i> " + deleteone + " </button> </td>"
 				tr += "</tr>";
 				$("#tableBody").append(tr);
 			})
@@ -121,8 +136,8 @@ function loadTables(startPage, pageSize) {
 //删除单条数据
 function deleteSingle(id) {
 
-	layer.confirm("您确认删除选定的记录吗？", {
-		btn: ["确定", "取消"]
+	layer.confirm(deletewaring, {
+		btn: [deleteok, deletecancel]
 	}, function () {
 
 		$.ajax({
@@ -135,7 +150,7 @@ function deleteSingle(id) {
 					layer.closeAll();
 				}
 				else {
-					layer.alert("删除失败！");
+					layer.alert(deletefailed);
 				}
 			}
 		})

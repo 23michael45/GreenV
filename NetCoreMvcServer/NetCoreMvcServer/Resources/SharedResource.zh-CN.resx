@@ -270,4 +270,142 @@
   <data name="Share_Language" xml:space="preserve">
     <value>语言</value>
   </data>
+  <data name="Department_Admin" xml:space="preserve">
+    <value>负责人</value>
+  </data>
+  <data name="Department_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Department_Code" xml:space="preserve">
+    <value>楼层编号</value>
+  </data>
+  <data name="Department_Description" xml:space="preserve">
+    <value>部门描述</value>
+  </data>
+  <data name="Department_Name" xml:space="preserve">
+    <value>楼层名称</value>
+  </data>
+  <data name="Department_OK" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="Department_Operation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="Department_Phone" xml:space="preserve">
+    <value>联系电话</value>
+  </data>
+  <data name="Department_Please_Select" xml:space="preserve">
+    <value>请选择楼层</value>
+  </data>
+  <data name="Department_Set_Select" xml:space="preserve">
+    <value>设为选中</value>
+  </data>
+  <data name="Department_Sure_Select" xml:space="preserve">
+    <value>您确认选中当前楼层吗?</value>
+  </data>
+  <data name="Department_Title" xml:space="preserve">
+    <value>楼层管理</value>
+  </data>
+  <data name="GroundTruth_Export" xml:space="preserve">
+    <value>导出结果</value>
+  </data>
+  <data name="GroundTruth_IP" xml:space="preserve">
+    <value>IP地址</value>
+  </data>
+  <data name="GroundTruth_LR" xml:space="preserve">
+    <value>左/右</value>
+  </data>
+  <data name="GroundTruth_Operation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="GroundTruth_Query" xml:space="preserve">
+    <value>查询</value>
+  </data>
+  <data name="GroundTruth_Time" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="GroundTruth_TimeRange" xml:space="preserve">
+    <value>时间范围</value>
+  </data>
+  <data name="GroundTruth_Title" xml:space="preserve">
+    <value>GroundTruth数据查询</value>
+  </data>
+  <data name="SensorData_IP_Address" xml:space="preserve">
+    <value>IP地址</value>
+  </data>
+  <data name="SensorData_Null_Result" xml:space="preserve">
+    <value>查询结果为空！请确定时间段与IP是否正确！</value>
+  </data>
+  <data name="SensorData_Query_Export" xml:space="preserve">
+    <value>查询并导出结果</value>
+  </data>
+  <data name="SensorData_Query_Result" xml:space="preserve">
+    <value>查询到{0}条结果!如果没有开始下载，请点击下载按钮！</value>
+  </data>
+  <data name="SensorData_Query_Title" xml:space="preserve">
+    <value>传感器数据查询</value>
+  </data>
+  <data name="SensorData_Time_Range" xml:space="preserve">
+    <value>时间范围</value>
+  </data>
+  <data name="User_Add" xml:space="preserve">
+    <value>新增用户</value>
+  </data>
+  <data name="User_Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="User_Description" xml:space="preserve">
+    <value>用户描述</value>
+  </data>
+  <data name="User_Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="User_Email" xml:space="preserve">
+    <value>邮箱</value>
+  </data>
+  <data name="User_FullName" xml:space="preserve">
+    <value>姓名</value>
+  </data>
+  <data name="User_Management" xml:space="preserve">
+    <value>用户管理</value>
+  </data>
+  <data name="User_Operation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="User_Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="User_Phone" xml:space="preserve">
+    <value>手机号</value>
+  </data>
+  <data name="User_Remark" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="User_Role" xml:space="preserve">
+    <value>所属角色</value>
+  </data>
+  <data name="User_UserName" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="GroundTruthControl_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="GroundTruthControl_IP" xml:space="preserve">
+    <value>IP地址</value>
+  </data>
+  <data name="GroundTruthControl_Operation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="GroundTruthControl_Sync" xml:space="preserve">
+    <value>同步</value>
+  </data>
+  <data name="GroundTruthControl_Sync_All" xml:space="preserve">
+    <value>同步全部</value>
+  </data>
+  <data name="GroundTruthControl_Title" xml:space="preserve">
+    <value>GroundTruth终端管理</value>
+  </data>
+  <data name="SensorData_Download" xml:space="preserve">
+    <value>下载到本地</value>
+  </data>
 </root>

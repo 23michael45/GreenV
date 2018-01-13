@@ -40,5 +40,14 @@ namespace NetCoreMvcServer.Controllers
 
             return RedirectToAction("Index", CurrentController);
         }
+
+        public IActionResult Navigate(string url)
+        {
+            string[] strs = url.Split('/');
+            string controller = strs[1];
+            string action = strs[2];
+            Response.Cookies.Append("CurrentController", controller);
+            return RedirectToAction(action,controller);
+        }
     }
 }

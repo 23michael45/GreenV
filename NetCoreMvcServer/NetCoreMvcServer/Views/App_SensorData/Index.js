@@ -1,7 +1,8 @@
 ﻿var selectedId = "00000000-0000-0000-0000-000000000000";
 var intervalId;
 $(function () {
-	
+
+	$("#btnDownloadData").click(function () { exportdata(); });
 	$("#btnQueryExport").click(function () { queryandexport(); });
 	//$("#btnQuery").click(function () { query(1, 10); });
 	//$("#btnExportData").click(function () { exportdata(); });
@@ -50,6 +51,7 @@ function queryandexport() {
 	var dt = $('#reservationtime').val();
 	var ip = $('#inputip').val();
 
+	$("#ExportMsg").html("");
 	startExportProgressIndicator();
 	$.ajax({
 		type: "GET",
@@ -57,7 +59,7 @@ function queryandexport() {
 		success: function (data) {
 			stopExportProgressIndicator();
 			if (data.isEmpty) {
-				$("#ExportMsg").html("查询结果为空！请确定时间段与IP是否正确！");
+				$("#ExportMsg").html(data.msg);
 
 
 			}
@@ -66,7 +68,7 @@ function queryandexport() {
 				//var progress = data.percentComplete;
 				$("#exportprogress").css({ width: "100%" });
 				$("#exportlabel").html("100%");
-				$("#ExportMsg").html("查询到" + data.count + "条结果！");
+				$("#ExportMsg").html(data.msg);
 
 
 				window.location = '/App_SensorData/Download?fileGuid=' + data.fileGuid + '&filename=' + data.fileName;
@@ -81,10 +83,14 @@ function queryandexport() {
 }
 
 function startExportProgressIndicator() {
+
+
 	$("#exportprogresscontainer").show();
 	$("#exportprogress").css({ width: "0%" });
 	$("#exportlabel").html("0%");
 
+	//alert("xx");
+	//$("#myBar").width(0);
 
 	intervalId = setInterval(
 		function () {
@@ -98,6 +104,8 @@ function startExportProgressIndicator() {
 					var progress = data.percentComplete;
 					$("#exportprogress").css({ width: progress + "%" });
 					$("#exportlabel").html(progress + "%");
+
+					//$("#myBar").css("width", progress + "%" });
 				}
 			});
 		},
@@ -220,7 +228,8 @@ function exportdata() {
 		type: "Get",
 		url: "/App_SensorData/DownloadFile?dt=" + dt + "&ip=" + ip,    //获取数据的ajax请求地址
 		success: function (data) {
-			window.location = '/App_SensorData/Download?fileGuid=' + data.fileGuid + '&filename=' + data.fileName;
+			//alert(x);
+			window.location = '/App_SensorData/Download?&filename=' + data.fileName;
 
 			//window.location = '/App_SensorData/Download?fileGuid=1&filename=sensor.txt';
 		}

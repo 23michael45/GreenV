@@ -207,7 +207,81 @@ namespace ConsoleServer
             fs.Close();
         }
 
+        public async Task<Package> ExportTxt(string ip, DateTime startdt, DateTime enddt)
+        {
+            IQueryable<App_SensorData> rt = null;
+            if (ip == null || ip == "" || ip == "undefined")
+            {
+                rt = _context.App_SensorData.Where(item => (item.createtime > startdt && item.createtime < enddt)).OrderBy(it => it.createtime);
 
+            }
+            else
+            {
+                rt = _context.App_SensorData.Where(item => (item.device == ip) && (item.createtime > startdt && item.createtime < enddt)).OrderBy(it => it.createtime);
+
+            }
+
+            byte[] SaveSensor(IQueryable<App_SensorData> list, ref float progress)
+            {
+                if (System.IO.File.Exists("sensor.txt") == true)
+                {
+                    System.IO.File.Delete("sensor.txt");
+                }
+
+                if (list == null)
+                {
+                    return null;
+                }
+
+                FileStream fs = new FileStream("sensor.txt", FileMode.OpenOrCreate);
+                var file = new System.IO.StreamWriter(fs);
+
+                int totalCount = list.Count<App_SensorData>();
+                int curCount = 0;
+                foreach (App_SensorData asd in list)
+                {
+
+
+                    Guid id = asd.Id;
+                    string device = asd.device;
+                    int timestamps = asd.timestamps;
+                    int timestampms = asd.timestampms;
+                    int rate = asd.rate;
+                    int gain = asd.gain;
+                    DateTime createtime = asd.createtime;
+
+
+
+                    byte[] data = new byte[1200];
+                    long len = asd.sensorvalue.Length;
+                    MemoryStream ms = new MemoryStream(asd.sensorvalue);
+                    BinaryReader reader = new BinaryReader(ms);
+
+
+
+                    string s = string.Format("id:{0} device:{1} createtime:{2} timestamp:{3} : {4}  rate: {5}  gain:{6} data: ", id, device, createtime, timestamps, timestampms, rate, gain);
+                    for (int i = 0; i < len / 2; i++)
+                    {
+                        UInt16 d = reader.ReadUInt16();
+                        s += " " + d.ToString();
+                    }
+                    file.WriteLine(s);
+
+
+                    curCount++;
+
+                    progress = (float)curCount * 100 / totalCount;
+
+                }
+
+                file.Flush();
+
+
+                fs.Close();
+
+                return null;
+            }
+        }
 
 
         public class InputSensorData
