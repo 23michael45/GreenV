@@ -176,7 +176,10 @@ namespace ConsoleServer
                         terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
                         foreach (Terminal terminal in terminals)
                         {
-                            ExportTxt(Startup._GVContext, terminal.ip, startdt, enddt);
+                            if(ExportTxt(Startup._GVContext, terminal.ip, startdt, enddt))
+                            {
+
+                            }
                         }
 
                         _LastExportDt = enddt;
@@ -417,7 +420,7 @@ namespace ConsoleServer
 
 
 
-        public static void ExportTxt(GVContext context, string ip, DateTime startdt, DateTime enddt)
+        public static bool ExportTxt(GVContext context, string ip, DateTime startdt, DateTime enddt)
         {
             try
             {
@@ -425,7 +428,7 @@ namespace ConsoleServer
                 if (ip == null || ip == "" || ip == "undefined")
                 {
 
-                    return;
+                    return false;
                 }
                 else
                 {
@@ -463,16 +466,19 @@ namespace ConsoleServer
                     System.IO.File.Delete(filename);
                 }
 
-                if (rt == null)
-                {
-                    return;
-                }
+
 
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
                 var file = new System.IO.StreamWriter(fs);
 
-                int totalCount = rt.Count<App_SensorData>();
-                int curCount = 0;
+                //int totalCount = rt.Count<App_SensorData>();
+
+                if (rt == null)
+                {
+                    file.Flush();
+                    fs.Close();
+                    return false;
+                }
                 foreach (App_SensorData asd in rt)
                 {
 
@@ -501,22 +507,16 @@ namespace ConsoleServer
                     }
                     file.WriteLine(s);
 
-
-                    curCount++;
-
-
                 }
 
                 file.Flush();
-
-
                 fs.Close();
 
-                return;
+                return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return;
+                return false;
             }
            
         }
