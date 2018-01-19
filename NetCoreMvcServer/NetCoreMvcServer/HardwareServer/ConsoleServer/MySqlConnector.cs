@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
+using NetCoreMvcServer.Models;
 
 namespace ConsoleServer
 {
@@ -61,6 +62,35 @@ namespace ConsoleServer
                 Console.WriteLine(rdr[0] + " -- " + rdr[1]);
             }
             rdr.Close();
+        }
+
+        public List<App_SensorData> QueryTimeIP(string ip,DateTime startdt,DateTime enddt)
+        {
+            string sql = string.Format("SELECT * FROM app_sensordata WHERE device='{0}' and createtime between '{1}' and '{2}'" , ip,startdt.ToString("yyyy/MM/dd HH:mm:ss"),enddt.ToString("yyyy/MM/dd HH:mm:ss"));
+            MySqlCommand cmd = new MySqlCommand(sql, mConnection);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+
+            List<App_SensorData> list = new List<App_SensorData>();
+
+            while (rdr.Read())
+            {
+                Console.WriteLine(rdr[0] + " -- " + rdr[1]);
+
+                App_SensorData data = new App_SensorData();
+                data.Id = Guid.Parse(rdr[0].ToString());
+                data.createtime = DateTime.Parse(rdr[1].ToString());
+                data.device = rdr[2].ToString();
+                data.gain = Convert.ToInt16(rdr[3].ToString());
+                data.rate = Convert.ToInt16(rdr[4].ToString());
+                data.sensorvalue = (byte[])rdr[5];
+                data.timestampms = Convert.ToInt16(rdr[6].ToString());
+                data.timestamps = Convert.ToInt16(rdr[7].ToString());
+
+                list.Add(data);
+
+            }
+            rdr.Close();
+            return list;
         }
 
 

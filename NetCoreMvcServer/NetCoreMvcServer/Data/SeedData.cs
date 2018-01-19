@@ -146,7 +146,7 @@ namespace NetCoreMvcServer.Models
 
 
 
-            int totalcount = 60;
+            int totalcount = 35;
             Terminal[] ts = new Terminal[totalcount];
             for(int i = 0; i< totalcount; i++)
             {
@@ -164,13 +164,16 @@ namespace NetCoreMvcServer.Models
                     departmentId = departmentId3;
                 }
 
+                //测试用
+                departmentId = departmentId1;
+
                 Random rx = new Random(i);
                 Random ry = new Random(i*i);
                 Terminal t = new Terminal
                 {
                   
                     DepartmentId = departmentId,
-                    ip = "192.168.1." + (i + 140).ToString(),
+                    ip = "192.168.31." + (i + 1).ToString(),
                     PositionX = rx.Next(100,800),
                     PositionY = ry.Next(100,800),
                     desc = "Terminal:" + i.ToString() + " in Department:" + departmentId,
@@ -196,6 +199,42 @@ namespace NetCoreMvcServer.Models
             }
 
             context.GroundTruths.AddRange(gts);
+
+
+            context.SaveChanges();
+        }
+
+        public static void InitializeTerminal(GVContext context)
+        {
+            if (context.Terminals.Any())
+            {
+                return;   // 已经初始化过数据，直接返回
+            }
+            Guid departmentId = context.Departments.First<Department>().Id;
+          
+
+            int totalcount = 35;
+            Terminal[] ts = new Terminal[totalcount];
+            for (int i = 0; i < totalcount; i++)
+            {
+
+                Random rx = new Random(i);
+                Random ry = new Random(i * i);
+                Terminal t = new Terminal
+                {
+
+                    DepartmentId = departmentId,
+                    ip = "192.168.31." + (i + 1).ToString(),
+                    PositionX = rx.Next(100, 800),
+                    PositionY = ry.Next(100, 800),
+                    desc = "Terminal:" + i.ToString() + " in Department:" + departmentId,
+                };
+                ts[i] = t;
+            }
+
+            context.Terminals.AddRange(ts);
+
+
 
 
             context.SaveChanges();

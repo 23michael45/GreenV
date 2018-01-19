@@ -9,6 +9,9 @@ using LitJson;
 using System.Net;
 using NetCoreMvcServer.Controllers;
 using NetCoreMvcServer.Utility;
+using NetCoreMvcServer.Models;
+using System.Threading;
+using NetCoreMvcServer;
 
 namespace ConsoleServer
 {
@@ -18,13 +21,17 @@ namespace ConsoleServer
 
 
         public static MySqlConnector _MySqlConnector;
+        public static SensorCache _SensorCache = new SensorCache();
 
 
         public CommandParser()
         {
             _MySqlConnector = new MySqlConnector();
             _PackageParser = new PackageParser();
-           
+
+            _SensorCache.StartAutoExportTxt();
+
+
         }
 
         public bool  ConnectMySql()
@@ -550,12 +557,16 @@ namespace ConsoleServer
 
 
             byte[] bufferdata = reader.ReadBytes(len - 12);
-            if (_MySqlConnector != null)
-            {
-                _MySqlConnector.InsertSensor(ip, timestamps, timestampms,rate,gain,bufferdata);
+            //if (_MySqlConnector != null)
+            //{
+            //    _MySqlConnector.InsertSensor(ip, timestamps, timestampms,rate,gain,bufferdata);
 
-            }
+            //}
 
+            //测试用
+            //ip = string.Format("192.168.{0}.{1}", rate, gain); 
+
+            _SensorCache.Insert(ip, timestamps, timestampms, rate, gain, bufferdata);
 
             Console.WriteLine("ReceiveSensorData " + (len - 12 ) / 2);
 
@@ -615,4 +626,285 @@ namespace ConsoleServer
 
 
     }
+}
+
+
+
+public class SensorCache
+{
+
+    public class DeviceCache
+    {
+        public class MiniteCache
+        {
+            public DateTime _Minite;
+            public List<App_SensorData> _DataList = new List<App_SensorData>();
+
+            
+         
+        }
+
+
+        public DateTime _LastRevTime;
+        public string _IP;
+
+        public Queue<MiniteCache> _MiniteCache = new Queue<MiniteCache>();
+
+        public void AddMiniteCache(App_SensorData data)
+        {
+            if(_MiniteCache.Count == 0)
+            {
+                MiniteCache newminite = new MiniteCache();
+                
+                DateTime mtime = new DateTime(
+                   data.createtime.Year,
+                   data.createtime.Month,
+                   data.createtime.Day,
+                   data.createtime.Hour,
+                   data.createtime.Minute,
+                   0,
+                   0);
+
+                newminite._Minite = mtime;
+                _MiniteCache.Enqueue(newminite);
+                newminite._DataList.Add(data);
+
+                return;
+            }
+            else
+            {
+
+            }
+
+            MiniteCache last = _MiniteCache.Last<MiniteCache>();
+            DateTime firstdt = last._Minite;
+            
+            DateTime startdt = new DateTime(
+             firstdt.Year,
+             firstdt.Month,
+             firstdt.Day,
+             firstdt.Hour,
+             firstdt.Minute,
+             0,
+             0);
+
+            DateTime enddt = startdt.AddMinutes(1);
+
+            
+            if(data.createtime > enddt)
+            {
+                DateTime newdt = new DateTime(
+                data.createtime.Year,
+                data.createtime.Month,
+                data.createtime.Day,
+                data.createtime.Hour,
+                data.createtime.Minute,
+                0,
+                0);
+
+                MiniteCache newminite = new MiniteCache();
+                newminite._Minite = newdt;
+
+                _MiniteCache.Enqueue(newminite);
+                newminite._DataList.Add(data);
+
+
+            }
+            else
+            {
+                last._DataList.Add(data);
+
+            }
+        }
+
+
+     
+        public bool ExportTxt(DeviceCache.MiniteCache minitecache)
+        {
+            try
+            {
+
+                string rootdir = "C:/Export";
+                if (!Directory.Exists(rootdir))
+                {
+                    Directory.CreateDirectory(rootdir);
+                }
+
+                string ipstring = rootdir + "/" + _IP;
+                if (!Directory.Exists(ipstring))
+                {
+                    Directory.CreateDirectory(ipstring);
+                }
+
+                string daystring = minitecache._Minite.ToString("yyyy-MM-dd");
+                daystring = daystring.Replace("/", "-");
+                daystring = rootdir + "/" + _IP + "/" + daystring;
+                if (!Directory.Exists(daystring))
+                {
+                    Directory.CreateDirectory(daystring);
+                }
+
+
+                string minitestring = minitecache._Minite.ToString("HH-mm");
+                string filename = daystring + "/" + minitestring + ".txt";
+
+
+                if (System.IO.File.Exists(filename) == true)
+                {
+                    System.IO.File.Delete(filename);
+                }
+
+
+
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
+                var file = new System.IO.StreamWriter(fs);
+
+                //int totalCount = rt.Count<App_SensorData>();
+
+                if (minitecache == null)
+                {
+                    file.Flush();
+                    fs.Close();
+                    return false;
+                }
+                foreach (App_SensorData asd in minitecache._DataList)
+                {
+
+
+                    Guid id = asd.Id;
+                    string device = asd.device;
+                    int timestamps = asd.timestamps;
+                    int timestampms = asd.timestampms;
+                    int rate = asd.rate;
+                    int gain = asd.gain;
+                    DateTime createtime = asd.createtime;
+
+
+
+                    byte[] data = new byte[1200];
+                    long len = asd.sensorvalue.Length;
+                    MemoryStream ms = new MemoryStream(asd.sensorvalue);
+                    BinaryReader reader = new BinaryReader(ms);
+
+
+                    string s = string.Format(" createtime:{0} device:{1} timestamp:{2} : {3}  rate: {4}  gain:{5} data: ", createtime, device, timestamps, timestampms, rate, gain);
+                    for (int i = 0; i < len / 2; i++)
+                    {
+                        UInt16 d = reader.ReadUInt16();
+                        s += " " + d.ToString();
+                    }
+                    file.WriteLine(s);
+
+                }
+
+                file.Flush();
+                fs.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public void ProcessOnce()
+        {
+            if(_MiniteCache.Count ==0)
+            {
+                return;
+            }
+            MiniteCache first = _MiniteCache.First<MiniteCache>();
+            DateTime firstdt = first._Minite;
+
+            DateTime startdt = new DateTime(
+             firstdt.Year,
+             firstdt.Month,
+             firstdt.Day,
+             firstdt.Hour,
+             firstdt.Minute,
+             0,
+             0);
+
+            DateTime enddt = startdt.AddMinutes(1);
+
+            if (DateTime.Now > enddt)
+            {
+                MiniteCache exfirst = _MiniteCache.Dequeue();
+                ExportTxt(exfirst);
+                
+            }
+        }
+    }
+
+
+    public Dictionary<string, DeviceCache> _DevicesCache = new Dictionary<string, DeviceCache>();
+
+
+    public void Insert(string ip, UInt32 timestamps, UInt32 timestampms, UInt16 rate, UInt16 gain, byte[] bufferdata)
+    {
+        DeviceCache dv = GetDevice(ip);
+
+
+        DateTime dt = DateTime.Now;
+        
+        App_SensorData data = new App_SensorData();
+        data.createtime = dt;
+        data.device = ip;
+        data.gain = (short)gain;
+        data.rate =(short)rate;
+        data.sensorvalue = bufferdata;
+        data.timestampms = (int)timestampms;
+        data.timestamps = (int)timestamps;
+
+        dv.AddMiniteCache(data);
+        
+
+    }
+
+    public DeviceCache GetDevice(string ip)
+    {
+        if(_DevicesCache.ContainsKey(ip))
+        {
+            return _DevicesCache[ip];
+        }
+        else
+        {
+            DeviceCache cache = new DeviceCache();
+            cache._IP = ip;
+            cache._LastRevTime = DateTime.Now;
+            _DevicesCache.Add(ip, cache);
+            return cache;
+        }
+    }
+
+
+
+    public void StartAutoExportTxt()
+    {
+        Console.WriteLine("StartAutoExportTxt");
+
+        IQueryable<Terminal> terminals = null;
+        Task.Factory.StartNew(() =>
+        {
+
+            terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
+            while (true)
+            {
+                foreach (Terminal terminal in terminals)
+                {
+                    DeviceCache dv = GetDevice(terminal.ip);
+                    dv.ProcessOnce();
+                }
+
+                Thread.Sleep(1000);
+
+        
+            }
+        });
+
+    }
+
+
 }

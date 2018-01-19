@@ -206,8 +206,9 @@ namespace NetCoreMvcServer
 
 
             //ConsoleServer.MySqlConnector.TransferDB();
-            SeedData.Initialize(gvcontext); //初始化数据
-
+            //SeedData.Initialize(gvcontext); //初始化数据
+            SeedData.InitializeTerminal(gvcontext); //初始化数据
+            
             //SeedData.CopySensorData(gvcontext);
         }
 
