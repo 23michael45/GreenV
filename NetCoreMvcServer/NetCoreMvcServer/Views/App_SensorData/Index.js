@@ -2,12 +2,18 @@
 var intervalId;
 $(function () {
 
-	$("#btnDownloadData").click(function () { exportdata(); });
-	$("#btnQueryExport").click(function () { queryandexport(); });
+	//$("#btnDownloadData").click(function () { exportdata(); });
+	//$("#btnQueryExport").click(function () { queryandexport(); });
+
+	$("#btnSetPath").click(function () { setpath(); });
+
+	$("#btnReset").click(function () { reset(); });
 	//$("#btnQuery").click(function () { query(1, 10); });
 	//$("#btnExportData").click(function () { exportdata(); });
-	$("#exportprogresscontainer").hide();
-    initTree();
+	//$("#exportprogresscontainer").hide();
+	initTree();
+
+	getpath();
 });
 //加载楼层树
 function initTree() {
@@ -232,6 +238,44 @@ function exportdata() {
 			window.location = '/App_SensorData/Download?&filename=' + data.fileName;
 
 			//window.location = '/App_SensorData/Download?fileGuid=1&filename=sensor.txt';
+		}
+	});
+};
+function setpath() {
+
+	var path = $('#exportpath').val();
+	$.ajax({
+		type: "Get",
+		url: "/App_SensorData/SetExportPath?path=" + path,
+		success: function (data) {
+
+			alert("OK");
+			
+		}
+	});
+};
+
+function reset() {
+	
+	$.ajax({
+		type: "Get",
+		url: "/App_SensorData/Reset",
+		success: function (data) {
+
+			alert("OK");
+		}
+	});
+};
+
+function getpath() {
+
+	$.ajax({
+		type: "Get",
+		url: "/App_SensorData/GetPath",
+		success: function (data) {
+
+
+			$('#exportpath').val(data.path);
 		}
 	});
 };

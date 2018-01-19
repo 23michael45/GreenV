@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ConsoleServer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -433,5 +434,24 @@ namespace NetCoreMvcServer.Controllers
             }
 
         }
+        public IActionResult SetExportPath(string path)
+        {
+            CommandParser._ExportPath = path;
+            return Content("OK");
+        }
+        public IActionResult Reset()
+        {
+            CommandParser._SensorCache.Reset();
+            return Content("OK");
+        }
+        public IActionResult GetPath()
+        {
+            return Json(new
+            {
+                path = CommandParser._ExportPath
+            });
+        }
     }
+
+ 
 }

@@ -303,6 +303,18 @@
   <data name="SensorData_Query_Title" xml:space="preserve">
     <value>Sensor Data Query</value>
   </data>
+  <data name="SensorData_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SensorData_Set" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="SensorData_Set_ExportPath" xml:space="preserve">
+    <value>Set Export Path</value>
+  </data>
+  <data name="SensorData_Success" xml:space="preserve">
+    <value>Set Success</value>
+  </data>
   <data name="SensorData_Time_Range" xml:space="preserve">
     <value>Time Range</value>
   </data>

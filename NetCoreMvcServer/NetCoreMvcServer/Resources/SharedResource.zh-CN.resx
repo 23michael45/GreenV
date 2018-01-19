@@ -408,4 +408,16 @@
   <data name="SensorData_Download" xml:space="preserve">
     <value>下载到本地</value>
   </data>
+  <data name="SensorData_Reset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="SensorData_Set" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SensorData_Set_ExportPath" xml:space="preserve">
+    <value>设置输出路径</value>
+  </data>
+  <data name="SensorData_Success" xml:space="preserve">
+    <value>设置成功</value>
+  </data>
 </root>

@@ -25,13 +25,32 @@
 				<h3 class="box-title">@SharedLocalizer["SensorData_Query_Title"]</h3>
 				<div class="form-group">
 					<div class="input-group">
+
+
 						<div class="input-group-addon">
-							@SharedLocalizer["SensorData_Time_Range"]
-							<i class="fa fa-clock-o"></i>
-							<input type="text" width="500" id="reservationtime">
-							@SharedLocalizer["SensorData_IP_Address"]
+							<!--
+	@SharedLocalizer["SensorData_Time_Range"]
+	<i class="fa fa-clock-o"></i>
+	<input type="text" width="500" id="reservationtime">
+	@SharedLocalizer["SensorData_IP_Address"]
+	<i class="fa fa-laptop"></i>
+	<input type="text" id="inputip" data-inputmask="'alias': 'ip'" data-mask="">
+	-->
+							@SharedLocalizer["SensorData_Set_ExportPath"]
+
 							<i class="fa fa-laptop"></i>
-							<input type="text" id="inputip" data-inputmask="'alias': 'ip'" data-mask="">
+							<input type="text" id="exportpath">
+							<button id="btnSetPath" class="btn btn-primary" type="button">
+								@SharedLocalizer["SensorData_Set"]
+							</button>
+
+							<button id="btnReset" class="btn btn-primary" type="button">
+								@SharedLocalizer["SensorData_Reset"]
+							</button>
+							<!--
+				<i class="fa fa-laptop"></i>
+				<input type="file" webkitdirectory directory multiple />
+	-->
 						</div>
 						<div class="pull-right box-tools">
 
@@ -40,60 +59,61 @@
 		查询
 	</button>
 		-->
-
-							<button id="btnQueryExport" class="btn btn-primary" type="button">
-								@SharedLocalizer["SensorData_Query_Export"]
-							</button>
-							<button id="btnDownloadData" class="btn btn-primary" type="button">
-								@SharedLocalizer["SensorData_Download"]
-							</button>
+							<!--
+						<button id="btnQueryExport" class="btn btn-primary" type="button">
+							@SharedLocalizer["SensorData_Query_Export"]
+						</button>
+						<button id="btnDownloadData" class="btn btn-primary" type="button">
+							@SharedLocalizer["SensorData_Download"]
+						</button>
+	-->
 						</div>
 
-					</div>
-
-				</div>
-				<div id="exportprogresscontainer" class="progress">
-					<div id="exportprogress" style="width: 0%"></div>
-				</div>
-
-				<div>
-					<p id="ExportMsg"></p>
-				</div>
 			</div>
-			<div class="box-body">
-				<!--
-				<div class="table-scrollable">
-					<table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="sample_2_info">
-						<thead>
-							<tr role="row">
-								<th tabindex="0" aria-label="">
-									IP地址
-								</th>
-								<th tabindex="0" aria-label="">
-									时间
-								</th>
-								<th tabindex="0" aria-label="">
-									数值
-								</th>
-								<th tabindex="0" aria-label="">
-									采集速率
-								</th>
-								<th tabindex="0" aria-label="">
-									放大倍数
-								</th>
-								<th tabindex="0" style="width: 230px;" aria-label="">
-									操作
-								</th>
-							</tr>
-						</thead>
-						<tbody id="tableBody"></tbody>
-					</table>
-					<div class="paging-toolbar">
-						<ul id="grid_paging_part"></ul>
-					</div>
-				</div>
-					-->
+
+		</div>
+		<div id="exportprogresscontainer" class="progress">
+			<div id="exportprogress" style="width: 0%"></div>
+		</div>
+
+		<div>
+			<p id="ExportMsg"></p>
+		</div>
+	</div>
+	<div class="box-body">
+		<!--
+		<div class="table-scrollable">
+			<table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="sample_2_info">
+				<thead>
+					<tr role="row">
+						<th tabindex="0" aria-label="">
+							IP地址
+						</th>
+						<th tabindex="0" aria-label="">
+							时间
+						</th>
+						<th tabindex="0" aria-label="">
+							数值
+						</th>
+						<th tabindex="0" aria-label="">
+							采集速率
+						</th>
+						<th tabindex="0" aria-label="">
+							放大倍数
+						</th>
+						<th tabindex="0" style="width: 230px;" aria-label="">
+							操作
+						</th>
+					</tr>
+				</thead>
+				<tbody id="tableBody"></tbody>
+			</table>
+			<div class="paging-toolbar">
+				<ul id="grid_paging_part"></ul>
 			</div>
+		</div>
+			-->
+						</div>
 		</div>
 	</div>
 

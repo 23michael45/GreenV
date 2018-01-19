@@ -12,6 +12,7 @@ using NetCoreMvcServer.Utility;
 using NetCoreMvcServer.Models;
 using System.Threading;
 using NetCoreMvcServer;
+using ConsoleServer;
 
 namespace ConsoleServer
 {
@@ -20,6 +21,7 @@ namespace ConsoleServer
         PackageParser _PackageParser;
 
 
+        public static string _ExportPath = "C:/Export";
         public static MySqlConnector _MySqlConnector;
         public static SensorCache _SensorCache = new SensorCache();
 
@@ -724,7 +726,7 @@ public class SensorCache
             try
             {
 
-                string rootdir = "C:/Export";
+                string rootdir = CommandParser._ExportPath;
                 if (!Directory.Exists(rootdir))
                 {
                     Directory.CreateDirectory(rootdir);
@@ -880,13 +882,15 @@ public class SensorCache
     }
 
 
-
+    Task _ExportTask;
+    CancellationTokenSource tokenSource;
     public void StartAutoExportTxt()
     {
+        tokenSource = new CancellationTokenSource();
         Console.WriteLine("StartAutoExportTxt");
 
         IQueryable<Terminal> terminals = null;
-        Task.Factory.StartNew(() =>
+        _ExportTask = Task.Factory.StartNew(() =>
         {
 
             terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
@@ -900,10 +904,29 @@ public class SensorCache
 
                 Thread.Sleep(1000);
 
-        
+                if (tokenSource.IsCancellationRequested == true)
+                {
+                    Console.WriteLine("Task {0} was cancelled before it got started.",
+                                      tokenSource);
+                    tokenSource.Token.ThrowIfCancellationRequested();
+                }
             }
         });
 
+    }
+    public void Reset()
+    {
+        if(_ExportTask != null && tokenSource != null)
+        {
+            var token = tokenSource.Token;
+            tokenSource.Cancel();
+            tokenSource = null;
+            _ExportTask = null;
+        }
+
+        Thread.Sleep(1000);
+
+        StartAutoExportTxt();
     }
 
 
