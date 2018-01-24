@@ -32,7 +32,7 @@ namespace NetCoreMvcServer.Controllers
             {
                 _Timer = new System.Timers.Timer();
 
-                _Timer.Interval = 2000;
+                _Timer.Interval = 10000;
                 _Timer.Elapsed -= HandleTimer;
                 _Timer.Elapsed += HandleTimer;
 
@@ -264,6 +264,7 @@ namespace NetCoreMvcServer.Controllers
         {
 
             return Json(new { ips = _ConnectedTerminals, state = "ok" });
+
         }
         #endregion
 

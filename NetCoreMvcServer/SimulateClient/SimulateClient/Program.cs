@@ -12,6 +12,8 @@ namespace SimulateClient
     class Program
     {
         static UdpUser client;
+        static Dictionary<int, byte[]> dic = new Dictionary<int, byte[]>();
+
         static void Main(string[] args)
         {
 
@@ -21,10 +23,16 @@ namespace SimulateClient
             client = UdpUser.ConnectTo(ip,port);
 
             bool quit = false;
-            while(!quit)
+
+            for (int i = 0; i < 33; i++)
+            {
+                dic[i] = Pack(31, (Int16)i);
+
+            }
+            while (!quit)
             {
                 SendOnce();
-                Thread.Sleep(60);
+                Thread.Sleep(30);
             }
 
           
@@ -34,8 +42,7 @@ namespace SimulateClient
         {
             for (int i = 0; i < 33; i++)
             {
-                byte[] senddata = Pack(31, (Int16)i);
-                client.Send(senddata);
+                client.Send(dic[i]);
                 Console.Write("Send IP:" + i);
             }
         }
@@ -56,10 +63,10 @@ namespace SimulateClient
             Int16 len = 1212;
             mWriter.Write(len);
 
-            Int32 timestamps = 1;
+            Int32 timestamps = Int32.MaxValue;
             mWriter.Write(timestamps);
 
-            Int32 timestampms = 1;
+            Int32 timestampms = Int32.MaxValue;
             mWriter.Write(timestampms);
 
 
@@ -70,7 +77,10 @@ namespace SimulateClient
 
 
             byte[] data = new byte[1200];
-            
+            for(int i = 0; i < 1200;i++)
+            {
+                data[i] = 0xff;
+            }
             mWriter.Write(data);
 
             mStream.Seek(0, SeekOrigin.Begin);
