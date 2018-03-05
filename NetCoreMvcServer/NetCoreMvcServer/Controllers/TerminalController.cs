@@ -439,6 +439,7 @@ namespace NetCoreMvcServer.Controllers
         }
         Task<JsonResult> TaskSetupAll(List<TerminalDto> ts, short m,short n)
         {
+            ConnectedTerminalState cts;
             return Task.Run(() =>
             {
                 _ConnectedTerminals.Clear();
@@ -458,6 +459,14 @@ namespace NetCoreMvcServer.Controllers
                             if (!_ConnectedTerminals.ContainsStringKey(receiveip))
                             {
                                 _ConnectedTerminals.AddIfNotExistStringKey(receiveip);
+
+                                cts = _ConnectedTerminals.GetStringKey(receiveip);
+                                if (cts != null)
+                                {
+                                    cts.mRate = m;
+                                    cts.mGain = n;
+                                }
+
                             }
                         }
                     });

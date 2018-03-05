@@ -165,9 +165,7 @@ function checkresult(data) {
 		tr += "<td><input type='text' id='rate_input_" + replacedId+ "'/>" + "</td>";
 		tr += "<td><input type='text' id='gain_input_" + replacedId + "'/>" + "</td>";
 
-		$('#rate_input_' + replacedId).val(item.mRate);
-		$('#gain_input_' + replacedId).val(item.mGain);
-
+		
 
 		if (item.mIsStart) {
 			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='updatesetup(\"" + item.mId + "\")'> " + updateone + " </button> <button class='btn btn-info btn-xs' href='javascript:;' onclick='stopterminal(\"" + item.mId + "\")'> " + stopone +" </button>  </td>"
@@ -180,6 +178,10 @@ function checkresult(data) {
 
 		tr += "</tr>";
 		$("#tableconnectedBody").append(tr);
+
+		$('#rate_input_' + replacedId).val(item.mRate);
+		$('#gain_input_' + replacedId).val(item.mGain);
+
 
 	})
 	var elment = $("#grid_paging_part"); //分页插件的容器id
@@ -225,6 +227,17 @@ function stopterminal(ip) {
 		success: checkresult
 	})
 }
+
+
+
+
+
+function checkresultupdate(data) {
+	checkresult(data);
+
+	alert("Setup OK");
+
+}
 function sendupdatesetupall() {
 
 
@@ -233,7 +246,7 @@ function sendupdatesetupall() {
 	$.ajax({
 		type: "Get",
 		url: "/Terminal/UpdateSetupAll?departmentId=" + selectedId + "&m=" + rate + "&n=" + gain + "&_t=" + new Date().getTime(),
-		success: checkresult
+		success: checkresultupdate
 	})
 }
 function sendstartall() {
