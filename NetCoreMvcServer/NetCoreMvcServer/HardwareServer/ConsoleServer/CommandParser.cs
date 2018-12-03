@@ -212,6 +212,13 @@ namespace ConsoleServer
 
                 ReceiveSyncRsp(pkg);
             }
+            else if (pkg._Cmd == 'y')
+            {
+
+                DateTime now = DateTime.Now;
+                pkg._AddtionalData = now;
+                ReceiveSyncAutoRsp(pkg);
+            }
 
 
             else
@@ -399,7 +406,12 @@ namespace ConsoleServer
             string str = string.Format("y>{0:D2}:{1:D2}:{2:D2}:{3}", now.Hour, now.Minute, now.Second, now.Millisecond);
             return new StringPackage(iep, null, str);
         }
-
+        public StringPackage SendSyncAuto(IPEndPoint iep,string t1t2)
+        {
+            DateTime now = DateTime.Now;
+            string str = t1t2 + string.Format("{0:D2}:{1:D2}:{2:D2}:{3}", now.Hour, now.Minute, now.Second, now.Millisecond);
+            return new StringPackage(iep, null, str);
+        }
         #endregion
 
 
@@ -620,8 +632,24 @@ namespace ConsoleServer
                 MainEntry.SendCBParse("SendY", "error");
             }
         }
+        void ReceiveSyncAutoRsp(StringPackage pkg)
+        {
+            if (pkg._StringContent.StartsWith("y"))
+            {
+                string T1 = pkg._StringContent.Replace("y>","Y>");
 
-        
+                DateTime recTime = (DateTime)pkg._AddtionalData;
+                string T2 = string.Format("+{0:D2}:{1:D2}:{2:D2}:{3}", recTime.Hour, recTime.Minute, recTime.Second, recTime.Millisecond);
+
+                DateTime now = DateTime.Now;
+                string T3 = string.Format("+{0:D2}:{1:D2}:{2:D2}:{3}", now.Hour, now.Minute, now.Second, now.Millisecond);
+
+                string str = T1 + T2 + T3;
+                Console.WriteLine("ReceiveSyncAuto OK");
+                MainEntry.SendToTerminal(new StringPackage(pkg._ReceiveFrom, null, str), false);
+            }
+        }
+
 
 
         #endregion

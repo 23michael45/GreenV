@@ -27,6 +27,7 @@ namespace ConsoleServer
 
         public char _Cmd;
         public byte[] _FullData; //整包数据
+        public object _AddtionalData;//附带信息，如同步信息中的T1为终端时间  T2要在接收时算时间，发送时再取T3，所以在接收时要计个时间放在包里
 
         public IPEndPoint _SendTo;
         public IPEndPoint _ReceiveFrom;
@@ -193,6 +194,7 @@ namespace ConsoleServer
         {
             _GroundTruthCmdList.Add('g');
             _GroundTruthCmdList.Add('Y');
+            _GroundTruthCmdList.Add('y');
 
             mStream = new MemoryStream();
             mWriter = new BinaryWriter(mStream);

@@ -47,7 +47,8 @@ namespace ConsoleServer
             SendCBNames.Add("SendC");
             SendCBNames.Add("SendU");
             SendCBNames.Add("SendY");
-            foreach(string name in SendCBNames)
+            SendCBNames.Add("SendYAuto");
+            foreach (string name in SendCBNames)
             {
                 _SendCheckCallBackDic[name] = new Dictionary<string, Action<object>>();
             }
@@ -315,6 +316,11 @@ namespace ConsoleServer
                 SendToTerminal(_CmdParser.SendSync(MainEntry.GetTerminalIPEndPoint(ip)));
 
             }
+            else if (cmd == "Y")
+            {
+                SendToTerminal(_CmdParser.SendSyncAuto(MainEntry.GetTerminalIPEndPoint(ip),"Y>t1+t2"));
+
+            }
         }
 
 
@@ -350,6 +356,11 @@ namespace ConsoleServer
         {
             _SendCheckCallBackDic["SendY"][ip] = cb;
             SendToTerminal(_CmdParser.SendSync(MainEntry.GetTerminalIPEndPoint(ip)));
+        }
+        public static void SendYAuto(string ip, Action<object> cb)
+        {
+            _SendCheckCallBackDic["SendYAuto"][ip] = cb;
+            SendToTerminal(_CmdParser.SendSyncAuto(MainEntry.GetTerminalIPEndPoint(ip),""));
         }
 
         public static void SendCBParse(string name,string ip)
