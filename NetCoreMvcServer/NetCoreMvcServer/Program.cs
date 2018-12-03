@@ -27,6 +27,8 @@ namespace NetCoreMvcServer
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
+
+            //Publish的时候 一定要copy exportpath.txt文件和Views文件夹到Publish的地方，否则会报错
             WebHost.CreateDefaultBuilder(args)
                 .CaptureStartupErrors(true)
                 .UseContentRoot("c:/wwwroot/Publish")
