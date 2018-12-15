@@ -113,4 +113,9 @@ namespace NetCoreMvcServer.Models
     {
 
     }
+
+    public interface IRepositoryInt<TEntity> : IRepository<TEntity, long> where TEntity : EntityInt
+    {
+
+    }
 }

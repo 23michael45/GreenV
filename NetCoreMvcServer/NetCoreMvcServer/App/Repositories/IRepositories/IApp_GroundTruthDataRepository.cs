@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public interface IApp_GroundTruthDataRepository : IRepository<App_GroundTruthData>
+    public interface IApp_GroundTruthDataRepository : IRepositoryInt<App_GroundTruthData>
     {
     }
 }

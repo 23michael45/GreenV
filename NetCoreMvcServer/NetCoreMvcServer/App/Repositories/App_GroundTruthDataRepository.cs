@@ -8,7 +8,7 @@ namespace NetCoreMvcServer.Models
     /// <summary>
     /// 用户管理仓储实现
     /// </summary>
-    public class App_GroundTruthDataRepository : FonourRepositoryBase<App_GroundTruthData>, IApp_GroundTruthDataRepository
+    public class App_GroundTruthDataRepository : FonourRepositoryIntBase<App_GroundTruthData>, IApp_GroundTruthDataRepository
     {
         public App_GroundTruthDataRepository(GVContext dbcontext) : base(dbcontext)
         {

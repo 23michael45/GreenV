@@ -207,4 +207,16 @@ namespace NetCoreMvcServer.Models
         }
 
     }
+
+    /// <summary>
+    /// 主键为Guid类型的仓储基类
+    /// </summary>
+    /// <typeparam name="TEntity">实体类型</typeparam>
+    public abstract class FonourRepositoryIntBase<TEntity> : FonourRepositoryBase<TEntity, long> where TEntity : EntityInt
+    {
+        public FonourRepositoryIntBase(GVContext dbContext) : base(dbContext)
+        {
+        }
+
+    }
 }

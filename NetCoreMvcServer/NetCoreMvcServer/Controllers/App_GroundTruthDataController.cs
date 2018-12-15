@@ -30,7 +30,7 @@ namespace NetCoreMvcServer.Controllers
         }
 
         // GET: App_GroundTruthData/Details/5
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(long id)
         {
             if (id == null)
             {
@@ -70,7 +70,7 @@ namespace NetCoreMvcServer.Controllers
         }
 
         // GET: App_GroundTruthData/Edit/5
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<IActionResult> Edit(long id)
         {
             if (id == null)
             {
@@ -90,7 +90,7 @@ namespace NetCoreMvcServer.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("id,device,timestamps,timestampms,sendsorvalue")] App_GroundTruthData App_GroundTruthData)
+        public async Task<IActionResult> Edit(long id, [Bind("id,device,timestamps,timestampms,sendsorvalue")] App_GroundTruthData App_GroundTruthData)
         {
             if (id != App_GroundTruthData.Id)
             {
@@ -125,7 +125,7 @@ namespace NetCoreMvcServer.Controllers
         // POST: App_GroundTruthData/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var App_GroundTruthData = await _context.App_GroundTruthData.SingleOrDefaultAsync(m => m.Id == id);
             _context.App_GroundTruthData.Remove(App_GroundTruthData);
@@ -133,12 +133,12 @@ namespace NetCoreMvcServer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool App_GroundTruthDataExists(Guid id)
+        private bool App_GroundTruthDataExists(long id)
         {
             return _context.App_GroundTruthData.Any(e => e.Id == id);
         }
 
-        public IActionResult GetDataByDepartment(int startPage, int pageSize, Guid departmentId)
+        public IActionResult GetDataByDepartment(int startPage, int pageSize, long departmentId)
         {
             return Content(departmentId.ToString());
         }
@@ -183,7 +183,7 @@ namespace NetCoreMvcServer.Controllers
 
 
 
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete(long id)
         {
             try
             {
@@ -214,7 +214,7 @@ namespace NetCoreMvcServer.Controllers
 
             return Json(new
             {
-                fileGuid = handle,
+                filelong = handle,
                 fileName = "groundtruth.txt",
             });
         }
@@ -232,10 +232,10 @@ namespace NetCoreMvcServer.Controllers
             {
 
 
-                Guid id = asd.Id;
+                long id = asd.Id;
                 string device = asd.device;
                 int leftright = asd.leftright;
-                long timestamp = asd.timestamp;
+                string timestamp = asd.timestamp;
                 DateTime createtime = asd.createtime;
 
 
@@ -255,12 +255,12 @@ namespace NetCoreMvcServer.Controllers
             return filecontent;
         }
         [HttpGet]
-        public virtual ActionResult Download(string fileGuid, string fileName)
+        public virtual ActionResult Download(string filelong, string fileName)
         {
 
-            if (_TempDataDic[fileGuid] != null)
+            if (_TempDataDic[filelong] != null)
             {
-                byte[] data = _TempDataDic[fileGuid] as byte[];
+                byte[] data = _TempDataDic[filelong] as byte[];
                 return File(data, "application/vnd.ms-excel", fileName);
             }
             else

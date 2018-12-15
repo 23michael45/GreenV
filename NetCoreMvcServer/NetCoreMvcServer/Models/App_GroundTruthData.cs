@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace NetCoreMvcServer.Models
 {
-    public class App_GroundTruthData : Entity
+    public class App_GroundTruthData : EntityInt
     {
 
         [Column(Order = 1)]
         public string device { get; set; }
         [Column(Order = 2)]
-        public long timestamp { get; set; }
+        public string timestamp { get; set; }
         [Column(Order = 3)]
         public int leftright { get; set; }
         [Column(Order = 4)]
