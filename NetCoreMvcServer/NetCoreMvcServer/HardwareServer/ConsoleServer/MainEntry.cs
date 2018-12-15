@@ -39,6 +39,11 @@ namespace ConsoleServer
 
         public static void Entry()
         {
+            FileStream fs = new FileStream("udpport.txt", FileMode.Open);
+            var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+            string eport = file.ReadLine();
+            _TerminalPort = Convert.ToInt32(eport);
+
             List<string> SendCBNames = new List<string>();
             SendCBNames.Add("SendT");
             SendCBNames.Add("SendR");
