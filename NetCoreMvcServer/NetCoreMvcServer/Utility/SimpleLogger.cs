@@ -26,8 +26,11 @@ namespace NetCoreMvcServer.Utility
 
             if(debug)
             {
-                datetimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
-                logFilename = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + FILE_EXT;
+                datetimeFormat = "yyyy-MM-dd-HH-mm-ss-fff";
+                DateTime dt = DateTime.Now;
+                
+                //logFilename = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + FILE_EXT;
+                logFilename = dt.ToString(datetimeFormat) + FILE_EXT;
 
                 // Log file header line
                 string logHeader = logFilename + " is created.";

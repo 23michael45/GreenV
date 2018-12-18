@@ -621,11 +621,11 @@ namespace ConsoleServer
 
                 }
 
-                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, true));
+                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, true),false);
             }
             catch(Exception e)
             {
-                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, false));
+                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, false),false);
             }
 
         }
