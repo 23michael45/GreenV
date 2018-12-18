@@ -28,12 +28,15 @@ namespace ConsoleServer
 
             if (result.RemoteEndPoint.Address.ToString() == "127.0.0.1")
             {
+                MainEntry._Logger.Debug("Receive JsonPackage");
                 package = JsonPackage.Unpack(result.Buffer);
+
             }
             else
             {
+                MainEntry._Logger.Debug("Receive TerminalPackage");
 
-                 package = Package.Unpack(result.RemoteEndPoint, result.Buffer);
+                package = Package.Unpack(result.RemoteEndPoint, result.Buffer);
 
             }
 

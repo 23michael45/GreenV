@@ -232,7 +232,7 @@ namespace ConsoleServer
 
             if(_GroundTruthCmdList.Contains(cmd))
             {
-                
+
                 StringPackage pkg = new StringPackage(null, iep, data);
                 return pkg;
             }

@@ -1,6 +1,7 @@
 ﻿using LitJson;
 using NetCoreMvcServer;
 using NetCoreMvcServer.Models;
+using NetCoreMvcServer.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,7 +27,7 @@ namespace ConsoleServer
 
         static string _MCUFilePath = @"D:\DevelopProj\GreenV\Document\STM32F107_PTP.bin";
 
-
+        public static SimpleLogger _Logger = new SimpleLogger();
         #region Callback
 
         public static Dictionary<string, Dictionary<string, Action<object>>> _SendCheckCallBackDic = new Dictionary<string, Dictionary<string, Action<object>>>();
@@ -86,6 +87,8 @@ namespace ConsoleServer
 
         public static void SendToTerminal(Package pkg,bool addtimer = true)
         {
+
+            MainEntry._Logger.Debug("SendToTerminal:" + pkg._Cmd);
             Console.WriteLine(string.Format("SendToTerminal: {0}  Len:{1}", pkg._SendTo.Address, pkg._FullData.Length));
             _Server.SendToTerminal(pkg);
 

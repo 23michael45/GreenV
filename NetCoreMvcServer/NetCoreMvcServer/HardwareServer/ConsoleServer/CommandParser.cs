@@ -137,6 +137,7 @@ namespace ConsoleServer
 
         void ParseByteFromTerminal(TerminalPackage pkg)
         {
+            MainEntry._Logger.Debug("Receive ParseByteFromTerminal:" + pkg._Cmd);
             byte[] data = pkg._PackageData;
             string ip = pkg._ReceiveFrom.Address.ToString();
             char cmd = pkg._Cmd;
@@ -199,6 +200,7 @@ namespace ConsoleServer
         void ParseByteFromString(StringPackage pkg)
         {
 
+            MainEntry._Logger.Debug("Receive ParseByteFromString:" + pkg._Cmd);
             QueueNeedRsp.Instance.RemovePackage(pkg._Cmd);
 
 
@@ -597,25 +599,35 @@ namespace ConsoleServer
 
         void ReceiveGroundTruth(StringPackage pkg)
         {
-            string s = pkg._StringContent;
-            int start = s.IndexOf('>');
-            int end = s.IndexOf('=');
-            string time = s.Substring(start + 1, end - start - 1);
-            string lr = s.Substring(end + 1, 1);
-
-            string[] timeparam = time.Split(':');
-            if(timeparam.Length == 4)
+            try
             {
-                int hour = Convert.ToInt32(timeparam[0]);
-                int min = Convert.ToInt32(timeparam[1]);
-                int sec = Convert.ToInt32(timeparam[2]);
-                int ms = Convert.ToInt32(timeparam[3]);
-            }
-            if (_MySqlConnector != null)
-            {
-                _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, Convert.ToInt16(lr));
+                string s = pkg._StringContent;
+                int start = s.IndexOf('>');
+                int end = s.IndexOf('=');
+                string time = s.Substring(start + 1, end - start - 1);
+                string lr = s.Substring(end + 1, 1);
 
+                string[] timeparam = time.Split(':');
+                if (timeparam.Length == 4)
+                {
+                    int hour = Convert.ToInt32(timeparam[0]);
+                    int min = Convert.ToInt32(timeparam[1]);
+                    int sec = Convert.ToInt32(timeparam[2]);
+                    int ms = Convert.ToInt32(timeparam[3]);
+                }
+                if (_MySqlConnector != null)
+                {
+                    _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, Convert.ToInt16(lr));
+
+                }
+
+                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, true));
             }
+            catch(Exception e)
+            {
+                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, false));
+            }
+
         }
         void ReceiveSyncRsp(StringPackage pkg)
         {
