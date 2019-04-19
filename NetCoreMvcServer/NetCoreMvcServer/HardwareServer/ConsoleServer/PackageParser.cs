@@ -192,9 +192,9 @@ namespace ConsoleServer
 
         public PackageParser()
         {
-            _GroundTruthCmdList.Add('g');
-            _GroundTruthCmdList.Add('Y');
-            _GroundTruthCmdList.Add('y');
+            //_GroundTruthCmdList.Add('g');
+            //_GroundTruthCmdList.Add('Y');
+            //_GroundTruthCmdList.Add('y');
 
             mStream = new MemoryStream();
             mWriter = new BinaryWriter(mStream);
@@ -223,37 +223,46 @@ namespace ConsoleServer
 
         public Package Unpack(IPEndPoint iep, byte[] data)
         {
-            BeginWriting();
-            mWriter.Write(data);
-            EndWriting();
-
-            BinaryReader reader = BeginReading();
-            char cmd = (char)reader.ReadByte();
-
-            if(_GroundTruthCmdList.Contains(cmd))
+            try
             {
 
-                StringPackage pkg = new StringPackage(null, iep, data);
-                return pkg;
-            }
-            else
-            {
-                Int16 frame = (Int16)reader.ReadInt16();
-                Int16 len = (Int16)reader.ReadInt16();
+                BeginWriting();
+                mWriter.Write(data);
+                EndWriting();
 
-                byte[] rdata = null;
-                if (len > 0)
+                BinaryReader reader = BeginReading();
+                char cmd = (char)reader.ReadByte();
+
+                if (_GroundTruthCmdList.Contains(cmd))
                 {
-                    rdata = reader.ReadBytes(len);
 
+                    StringPackage pkg = new StringPackage(null, iep, data);
+                    return pkg;
                 }
+                else
+                {
+                    Int16 frame = (Int16)reader.ReadInt16();
+                    Int16 len = (Int16)reader.ReadInt16();
+
+                    byte[] rdata = null;
+                    if (len > 0)
+                    {
+                        rdata = reader.ReadBytes(len);
+
+                    }
 
 
-                TerminalPackage pkg = new TerminalPackage(null, iep, cmd, frame, len, rdata);
+                    TerminalPackage pkg = new TerminalPackage(null, iep, cmd, frame, len, rdata);
 
 
-                return pkg;
+                    return pkg;
+                }
             }
+            catch(Exception e)
+            {
+                MainEntry._Logger.Debug(e.Message);
+            }
+            return null;
 
             
 

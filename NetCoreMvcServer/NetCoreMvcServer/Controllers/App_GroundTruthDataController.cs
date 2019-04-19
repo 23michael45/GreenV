@@ -146,8 +146,8 @@ namespace NetCoreMvcServer.Controllers
         {
 
             IQueryable<App_GroundTruthData> rt = DoQuery(dt, ip);
-            rt = rt.Skip((startPage - 1) * pageSize).Take(pageSize);
             int totalCount = rt.Count();
+            rt = rt.Skip((startPage - 1) * pageSize).Take(pageSize);
             return Json(new
             {
                 rowCount = totalCount,
@@ -234,14 +234,15 @@ namespace NetCoreMvcServer.Controllers
 
                 long id = asd.Id;
                 string device = asd.device;
-                int leftright = asd.leftright;
-                string timestamp = asd.timestamp;
+                byte leftright = asd.leftright;
+                byte nodeindex = asd.nodeindex;
+                int timestamp = asd.timestamp;
+                int timestampms= asd.timestampms;
                 DateTime createtime = asd.createtime;
 
+                string s = string.Format(" createtime:{0} device:{1} timestamp:{2} timestampms: {3}  leftright: {4} nodeIndex:{5}", createtime, device, timestamp, timestampms, leftright, nodeindex);
 
 
-                string s = string.Format("id:{0} device:{1} createtime:{2} timestamp:{3} leftright:{4} ", id, device,createtime, timestamp, leftright);
-                
                 file.WriteLine(s);
                 
             }

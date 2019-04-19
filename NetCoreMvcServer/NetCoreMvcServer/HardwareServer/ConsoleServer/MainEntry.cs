@@ -23,6 +23,7 @@ namespace ConsoleServer
         static UdpUser _Client;
 
         static int _TerminalPort = 5000;
+        static int _ListenOnPort = 4000;
         static int _WebPort = 6000;
 
         static string _MCUFilePath = @"D:\DevelopProj\GreenV\Document\STM32F107_PTP.bin";
@@ -40,10 +41,16 @@ namespace ConsoleServer
 
         public static void Entry()
         {
-            FileStream fs = new FileStream("udpport.txt", FileMode.Open);
+            FileStream fs = new FileStream("udpterminalport.txt", FileMode.Open);
             var file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
             string eport = file.ReadLine();
             _TerminalPort = Convert.ToInt32(eport);
+
+            fs = new FileStream("udplistenport.txt", FileMode.Open);
+            file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+            eport = file.ReadLine();
+            _TerminalPort = Convert.ToInt32(eport);
+            _ListenOnPort = Convert.ToInt32(eport);
 
             List<string> SendCBNames = new List<string>();
             SendCBNames.Add("SendT");
@@ -80,6 +87,12 @@ namespace ConsoleServer
         {
             return new IPEndPoint(ip, _TerminalPort);
         }
+
+        public static IPEndPoint GetServerListenOnIPEndPoint(IPAddress ip)
+        {
+            return new IPEndPoint(ip, _ListenOnPort);
+        }
+
         public static IPEndPoint GetWebIPEndPoint()
         {
             return new IPEndPoint(IPAddress.Parse("127.0.0.1"), _WebPort);
@@ -162,7 +175,7 @@ namespace ConsoleServer
             Console.WriteLine("Init UDP Server OK , Start Receiving");
             //start listening for messages and copy the messages back to the client
             Task.Factory.StartNew(async () =>
-            {
+           {
                 while (true)
                 {
                     var received = await _Server.Receive();

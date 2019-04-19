@@ -28,12 +28,21 @@ namespace NetCoreMvcServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-           
+            G_Configuration = configuration;
             InitMapper();
         }
 
         public IConfiguration Configuration { get; }
+        static IConfiguration G_Configuration;
+
+        static public GVContext CreateDBContext()
+        {
+            string connectstring = G_Configuration.GetConnectionString("GVContext");
+            DbContextOptionsBuilder<GVContext> builder = new DbContextOptionsBuilder<GVContext>();
+            builder.UseMySql(connectstring);
+            var GVContext = new GVContext(builder.Options);
+            return GVContext;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -202,11 +211,11 @@ namespace NetCoreMvcServer
             });
 
 
-           
+
 
 
             //ConsoleServer.MySqlConnector.TransferDB();
-            //SeedData.Initialize(gvcontext); //初始化数据
+            SeedData.Initialize(gvcontext); //初始化数据
             SeedData.InitializeTerminal(gvcontext); //初始化数据
             
             //SeedData.CopySensorData(gvcontext);

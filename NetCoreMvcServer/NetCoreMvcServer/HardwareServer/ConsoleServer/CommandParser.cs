@@ -13,6 +13,7 @@ using NetCoreMvcServer.Models;
 using System.Threading;
 using NetCoreMvcServer;
 using ConsoleServer;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleServer
 {
@@ -24,15 +25,21 @@ namespace ConsoleServer
         public static string _ExportPath = "C:/Export";
         public static MySqlConnector _MySqlConnector;
         public static SensorCache _SensorCache = new SensorCache();
+        public static GroundTruthCache _GroundTruthCache = new GroundTruthCache();
 
+        public static Mutex mutex = new Mutex();
 
         public CommandParser()
         {
             _MySqlConnector = new MySqlConnector();
             _PackageParser = new PackageParser();
 
-            _SensorCache.StartAutoExportTxt();
-
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(5);
+                _SensorCache.StartAutoExportTxt();
+                _GroundTruthCache.StartAutoExportTxt();
+            });
 
         }
 
@@ -188,7 +195,10 @@ namespace ConsoleServer
 
                     ReceiveMessage(datalen, reader, ip);
                 }
-               
+                if (pkg._Cmd == 'g')
+                {
+                    ReceiveGroundTruth(datalen, reader, ip);
+                }
             }
             else
             {
@@ -206,20 +216,19 @@ namespace ConsoleServer
 
             if (pkg._Cmd == 'g')
             {
-
-                ReceiveGroundTruth(pkg);
+                //ReceiveGroundTruth(pkg);
             }
             else if (pkg._Cmd == 'Y')
             {
 
-                ReceiveSyncRsp(pkg);
+                //ReceiveSyncRsp(pkg);
             }
             else if (pkg._Cmd == 'y')
             {
 
-                DateTime now = DateTime.Now;
-                pkg._AddtionalData = now;
-                ReceiveSyncAutoRsp(pkg);
+                //DateTime now = DateTime.Now;
+                //pkg._AddtionalData = now;
+                //ReceiveSyncAutoRsp(pkg);
             }
 
 
@@ -233,6 +242,10 @@ namespace ConsoleServer
 
         public void ReceiveData(Package pkg)
         {
+            if(pkg == null)
+            {
+                return;
+            }
             try
             {
                 if (pkg._PackageType == Package.ENUMPACKAGETYPE.EPT_JSON)
@@ -597,35 +610,54 @@ namespace ConsoleServer
 
         }
 
-        void ReceiveGroundTruth(StringPackage pkg)
+        //void ReceiveGroundTruth(StringPackage pkg)
+        void ReceiveGroundTruth(int len, BinaryReader reader, string ip)
         {
             try
             {
-                string s = pkg._StringContent;
-                int start = s.IndexOf('>');
-                int end = s.IndexOf('=');
-                string time = s.Substring(start + 1, end - start - 1);
-                string lr = s.Substring(end + 1, 1);
 
-                string[] timeparam = time.Split(':');
-                if (timeparam.Length == 4)
-                {
-                    int hour = Convert.ToInt32(timeparam[0]);
-                    int min = Convert.ToInt32(timeparam[1]);
-                    int sec = Convert.ToInt32(timeparam[2]);
-                    int ms = Convert.ToInt32(timeparam[3]);
-                }
+                //string ip = pkg._ReceiveFrom.Address.ToString();
+
+                //string s = pkg._StringContent;
+                //int start = s.IndexOf('>');
+                //int end = s.IndexOf('=');
+                //string time = s.Substring(start + 1, end - start - 1);
+                //string slr = s.Substring(end + 1, 1);
+                //ushort lr = Convert.ToUInt16(slr);
+
+                //string[] timeparam = time.Split(':');
+                //if (timeparam.Length == 4)
+                //{
+                //    int hour = Convert.ToInt32(timeparam[0]);
+                //    int min = Convert.ToInt32(timeparam[1]);
+                //    int sec = Convert.ToInt32(timeparam[2]);
+                //    int ms = Convert.ToInt32(timeparam[3]);
+                //}
+
+
+                byte nodeIndex = reader.ReadByte();
+                byte lr = reader.ReadByte();
+                int timestamps = reader.ReadInt32();
+                int timestampms = reader.ReadInt32();
+
+
+
                 if (_MySqlConnector != null)
                 {
-                    _MySqlConnector.InsertGroundTruth(pkg._ReceiveFrom.Address.ToString(), time, Convert.ToInt16(lr));
+                    _MySqlConnector.InsertGroundTruth(ip, timestamps, timestampms, nodeIndex,lr);
 
                 }
 
-                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, true),false);
+
+                _GroundTruthCache.Insert(ip, nodeIndex,timestamps, timestampms, lr);
+
+                //MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, true),false);
+                MainEntry.SendToTerminal(SendGroundTruthRsp(MainEntry.GetTerminalIPEndPoint(ip), true), false);
             }
             catch(Exception e)
             {
-                MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, false),false);
+                //MainEntry.SendToTerminal(SendGroundTruthRsp(pkg._ReceiveFrom, false),false);
+                MainEntry.SendToTerminal(SendGroundTruthRsp(MainEntry.GetTerminalIPEndPoint(ip), false), false);
             }
 
         }
@@ -672,18 +704,22 @@ namespace ConsoleServer
 
 
 
-public class SensorCache
+
+
+
+public class GroundTruthCache
 {
+
 
     public class DeviceCache
     {
         public class MiniteCache
         {
             public DateTime _Minite;
-            public List<App_SensorData> _DataList = new List<App_SensorData>();
+            public List<App_GroundTruthData> _DataList = new List<App_GroundTruthData>();
 
-            
-         
+
+
         }
 
 
@@ -692,12 +728,12 @@ public class SensorCache
 
         public Queue<MiniteCache> _MiniteCache = new Queue<MiniteCache>();
 
-        public void AddMiniteCache(App_SensorData data)
+        public void AddMiniteCache(App_GroundTruthData data)
         {
-            if(_MiniteCache.Count == 0)
+            if (_MiniteCache.Count == 0)
             {
                 MiniteCache newminite = new MiniteCache();
-                
+
                 DateTime mtime = new DateTime(
                    data.createtime.Year,
                    data.createtime.Month,
@@ -720,7 +756,7 @@ public class SensorCache
 
             MiniteCache last = _MiniteCache.Last<MiniteCache>();
             DateTime firstdt = last._Minite;
-            
+
             DateTime startdt = new DateTime(
              firstdt.Year,
              firstdt.Month,
@@ -732,8 +768,8 @@ public class SensorCache
 
             DateTime enddt = startdt.AddMinutes(1);
 
-            
-            if(data.createtime > enddt)
+
+            if (data.createtime > enddt)
             {
                 DateTime newdt = new DateTime(
                 data.createtime.Year,
@@ -760,7 +796,7 @@ public class SensorCache
         }
 
 
-     
+
         public bool ExportTxt(DeviceCache.MiniteCache minitecache)
         {
             try
@@ -780,7 +816,306 @@ public class SensorCache
 
                 string daystring = minitecache._Minite.ToString("yyyy-MM-dd");
                 daystring = daystring.Replace("/", "-");
-                daystring = rootdir + "/" + _IP + "/" + daystring;
+                daystring = rootdir + "/" + _IP + "/" + "gt-" + daystring;
+                if (!Directory.Exists(daystring))
+                {
+                    Directory.CreateDirectory(daystring);
+                }
+
+
+                string minitestring = minitecache._Minite.ToString("HH-mm");
+                string filename = daystring + "/" + minitestring + ".txt";
+
+
+                if (System.IO.File.Exists(filename) == true)
+                {
+                    System.IO.File.Delete(filename);
+                }
+
+
+
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
+                var file = new System.IO.StreamWriter(fs);
+
+                //int totalCount = rt.Count<App_SensorData>();
+
+                if (minitecache == null)
+                {
+                    file.Flush();
+                    fs.Close();
+                    return false;
+                }
+                foreach (App_GroundTruthData agd in minitecache._DataList)
+                {
+
+
+                    long id = agd.Id;
+                    string device = agd.device;
+                    int timestamp = agd.timestamp;
+                    int timestampms = agd.timestampms;
+                    int leftright = agd.leftright;
+                    byte nodeindex = agd.nodeindex;
+                    DateTime createtime = agd.createtime;
+
+
+
+
+                    string s = string.Format(" createtime:{0} device:{1} timestamp:{2} timestampms: {3}  leftright: {4} nodeIndex:{5}", createtime, device, timestamp, timestampms, leftright,nodeindex);
+                  
+                    file.WriteLine(s);
+
+                }
+
+                file.Flush();
+                fs.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public void ProcessOnce()
+        {
+            if (_MiniteCache.Count == 0)
+            {
+                return;
+            }
+            MiniteCache first = _MiniteCache.First<MiniteCache>();
+            DateTime firstdt = first._Minite;
+
+            DateTime startdt = new DateTime(
+             firstdt.Year,
+             firstdt.Month,
+             firstdt.Day,
+             firstdt.Hour,
+             firstdt.Minute,
+             0,
+             0);
+
+            DateTime enddt = startdt.AddMinutes(1);
+
+            if (DateTime.Now > enddt)
+            {
+                MiniteCache exfirst = _MiniteCache.Dequeue();
+                ExportTxt(exfirst);
+
+            }
+        }
+    }
+
+    public Dictionary<string, DeviceCache> _DevicesCache = new Dictionary<string, DeviceCache>();
+
+
+    public void Insert(string ip, byte nodeindex,int timestamp ,int timestampms, byte lr)
+    {
+        DeviceCache dv = GetDevice(ip);
+
+
+        DateTime dt = DateTime.Now;
+        
+        App_GroundTruthData data = new App_GroundTruthData();
+        data.createtime = dt;
+        data.device = ip;
+        data.timestamp = timestamp;
+        data.timestampms = timestampms;
+        data.leftright = lr;
+        data.nodeindex = nodeindex;
+
+        dv.AddMiniteCache(data);
+        
+
+    }
+
+    public DeviceCache GetDevice(string ip)
+    {
+        if(_DevicesCache.ContainsKey(ip))
+        {
+            return _DevicesCache[ip];
+        }
+        else
+        {
+            DeviceCache cache = new DeviceCache();
+            cache._IP = ip;
+            cache._LastRevTime = DateTime.Now;
+            _DevicesCache.Add(ip, cache);
+            return cache;
+        }
+    }
+
+
+    Task _ExportTask;
+    CancellationTokenSource tokenSource;
+    public void StartAutoExportTxt()
+    {
+        tokenSource = new CancellationTokenSource();
+        Console.WriteLine("StartAutoExportTxt");
+
+        IQueryable<GroundTruth> groundtruths = null;
+        _ExportTask = Task.Factory.StartNew(() =>
+        {
+
+            var GVContext = Startup.CreateDBContext();
+            while (true)
+            {
+
+                groundtruths = GVContext.GroundTruths.OrderBy(item => item.ip);
+
+
+                foreach (GroundTruth groundtruth in groundtruths)
+                {
+                    DeviceCache dv = GetDevice(groundtruth.ip);
+                    dv.ProcessOnce();
+                }
+
+                Thread.Sleep(30000);
+
+                if (tokenSource.IsCancellationRequested == true)
+                {
+                    Console.WriteLine("Task {0} was cancelled before it got started.",
+                                      tokenSource);
+                    tokenSource.Token.ThrowIfCancellationRequested();
+                }
+            }
+            
+        });
+
+    }
+    public void Reset()
+    {
+        if(_ExportTask != null && tokenSource != null)
+        {
+            var token = tokenSource.Token;
+            tokenSource.Cancel();
+            tokenSource = null;
+            _ExportTask = null;
+        }
+
+        Thread.Sleep(1000);
+
+        StartAutoExportTxt();
+    }
+
+
+}
+
+
+
+public class SensorCache
+{
+
+
+
+    public class DeviceCache
+    {
+        public class MiniteCache
+        {
+            public DateTime _Minite;
+            public List<App_SensorData> _DataList = new List<App_SensorData>();
+
+
+
+        }
+
+
+        public DateTime _LastRevTime;
+        public string _IP;
+
+        public Queue<MiniteCache> _MiniteCache = new Queue<MiniteCache>();
+
+        public void AddMiniteCache(App_SensorData data)
+        {
+            if (_MiniteCache.Count == 0)
+            {
+                MiniteCache newminite = new MiniteCache();
+
+                DateTime mtime = new DateTime(
+                   data.createtime.Year,
+                   data.createtime.Month,
+                   data.createtime.Day,
+                   data.createtime.Hour,
+                   data.createtime.Minute,
+                   0,
+                   0);
+
+                newminite._Minite = mtime;
+                _MiniteCache.Enqueue(newminite);
+                newminite._DataList.Add(data);
+
+                return;
+            }
+            else
+            {
+
+            }
+
+            MiniteCache last = _MiniteCache.Last<MiniteCache>();
+            DateTime firstdt = last._Minite;
+
+            DateTime startdt = new DateTime(
+             firstdt.Year,
+             firstdt.Month,
+             firstdt.Day,
+             firstdt.Hour,
+             firstdt.Minute,
+             0,
+             0);
+
+            DateTime enddt = startdt.AddMinutes(1);
+
+
+            if (data.createtime > enddt)
+            {
+                DateTime newdt = new DateTime(
+                data.createtime.Year,
+                data.createtime.Month,
+                data.createtime.Day,
+                data.createtime.Hour,
+                data.createtime.Minute,
+                0,
+                0);
+
+                MiniteCache newminite = new MiniteCache();
+                newminite._Minite = newdt;
+
+                _MiniteCache.Enqueue(newminite);
+                newminite._DataList.Add(data);
+
+
+            }
+            else
+            {
+                last._DataList.Add(data);
+
+            }
+        }
+
+
+
+
+        public bool ExportTxt(DeviceCache.MiniteCache minitecache)
+        {
+            try
+            {
+
+                string rootdir = CommandParser._ExportPath;
+                if (!Directory.Exists(rootdir))
+                {
+                    Directory.CreateDirectory(rootdir);
+                }
+
+                string ipstring = rootdir + "/" + _IP;
+                if (!Directory.Exists(ipstring))
+                {
+                    Directory.CreateDirectory(ipstring);
+                }
+
+                string daystring = minitecache._Minite.ToString("yyyy-MM-dd");
+                daystring = daystring.Replace("/", "-");
+                daystring = rootdir + "/" + _IP + "/" + "sd-" + daystring;
                 if (!Directory.Exists(daystring))
                 {
                     Directory.CreateDirectory(daystring);
@@ -853,7 +1188,7 @@ public class SensorCache
 
         public void ProcessOnce()
         {
-            if(_MiniteCache.Count ==0)
+            if (_MiniteCache.Count == 0)
             {
                 return;
             }
@@ -875,12 +1210,10 @@ public class SensorCache
             {
                 MiniteCache exfirst = _MiniteCache.Dequeue();
                 ExportTxt(exfirst);
-                
+
             }
         }
     }
-
-
     public Dictionary<string, DeviceCache> _DevicesCache = new Dictionary<string, DeviceCache>();
 
 
@@ -890,24 +1223,24 @@ public class SensorCache
 
 
         DateTime dt = DateTime.Now;
-        
+
         App_SensorData data = new App_SensorData();
         data.createtime = dt;
         data.device = ip;
         data.gain = (short)gain;
-        data.rate =(short)rate;
+        data.rate = (short)rate;
         data.sensorvalue = bufferdata;
         data.timestampms = (int)timestampms;
         data.timestamps = (int)timestamps;
 
         dv.AddMiniteCache(data);
-        
+
 
     }
 
     public DeviceCache GetDevice(string ip)
     {
-        if(_DevicesCache.ContainsKey(ip))
+        if (_DevicesCache.ContainsKey(ip))
         {
             return _DevicesCache[ip];
         }
@@ -932,17 +1265,20 @@ public class SensorCache
         IQueryable<Terminal> terminals = null;
         _ExportTask = Task.Factory.StartNew(() =>
         {
-
-            terminals = Startup._GVContext.Terminals.OrderBy(item => item.ip);
             while (true)
             {
+                var GVContext = Startup.CreateDBContext();
+
+                terminals = GVContext.Terminals.OrderBy(item => item.ip);
+
+
                 foreach (Terminal terminal in terminals)
                 {
                     DeviceCache dv = GetDevice(terminal.ip);
                     dv.ProcessOnce();
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(30000);
 
                 if (tokenSource.IsCancellationRequested == true)
                 {
@@ -956,7 +1292,7 @@ public class SensorCache
     }
     public void Reset()
     {
-        if(_ExportTask != null && tokenSource != null)
+        if (_ExportTask != null && tokenSource != null)
         {
             var token = tokenSource.Token;
             tokenSource.Cancel();

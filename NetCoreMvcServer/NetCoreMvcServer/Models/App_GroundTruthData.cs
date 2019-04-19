@@ -13,11 +13,15 @@ namespace NetCoreMvcServer.Models
         [Column(Order = 1)]
         public string device { get; set; }
         [Column(Order = 2)]
-        public string timestamp { get; set; }
+        public int timestamp { get; set; }
         [Column(Order = 3)]
-        public int leftright { get; set; }
+        public byte leftright { get; set; }
         [Column(Order = 4)]
         public DateTime createtime { get; set; }
+        [Column(Order = 5)]
+        public int timestampms { get; set; }
+        [Column(Order = 6)]
+        public byte nodeindex { get; set; }
 
     }
 }

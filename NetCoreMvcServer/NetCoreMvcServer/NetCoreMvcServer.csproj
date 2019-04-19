@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Terminal\" />
   </ItemGroup>

@@ -40,7 +40,16 @@ namespace ConsoleServer
 
             }
 
-            Console.WriteLine(string.Format("Socket ReceiveData Package Type {0}", package._PackageType));
+            if(package != null)
+            {
+                Console.WriteLine(string.Format("Socket ReceiveData Package Type {0}", package._PackageType));
+
+            }
+            else
+            {
+
+                Console.WriteLine(string.Format("Socket ReceiveData Package but Null"));
+            }
             return package;
         }
     }
@@ -53,7 +62,7 @@ namespace ConsoleServer
         UdpClient _SendClient;
         public UdpListener()
         {
-            IPEndPoint endpoint = MainEntry.GetTerminalIPEndPoint(IPAddress.Any);
+            IPEndPoint endpoint = MainEntry.GetServerListenOnIPEndPoint(IPAddress.Any);
             _listenOn = endpoint;
             Client = new UdpClient(_listenOn);
             _SendClient = new UdpClient();

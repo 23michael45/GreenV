@@ -29,9 +29,13 @@ namespace NetCoreMvcServer.Migrations
 
                     b.Property<string>("device");
 
-                    b.Property<int>("leftright");
+                    b.Property<byte>("leftright");
 
-                    b.Property<string>("timestamp");
+                    b.Property<byte>("nodeindex");
+
+                    b.Property<int>("timestamp");
+
+                    b.Property<int>("timestampms");
 
                     b.HasKey("Id");
 

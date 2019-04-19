@@ -122,12 +122,12 @@ namespace ConsoleServer
             }
 
         }
-        public void InsertGroundTruth(string dv, string timestamp, Int16 lr)
+        public void InsertGroundTruth(string dv, int timestamp ,int timestampms,byte nodeindex, byte lr)
         {
             try
             {
                 DateTime dt = DateTime.Now;
-                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,leftright,createtime) VALUES ('{0}','{1}',{2},(@createtime))", dv, timestamp, lr);
+                string sql = string.Format("INSERT INTO app_groundtruthdata (device,timestamp,timestampms,nodeindex,leftright,createtime) VALUES ('{0}',{1},{2},{3},{4},(@createtime))", dv, timestamp, timestampms,nodeindex, lr);
 
                 MySqlParameter createtime = new MySqlParameter("@createtime", MySqlDbType.DateTime);
                 createtime.Value = dt;

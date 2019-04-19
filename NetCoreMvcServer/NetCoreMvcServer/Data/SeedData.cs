@@ -15,26 +15,28 @@ namespace NetCoreMvcServer.Models
             {
                 return;   // 已经初始化过数据，直接返回
             }
-            Guid departmentId1 = Guid.NewGuid();
-            Guid departmentId2 = Guid.NewGuid();
-            Guid departmentId3 = Guid.NewGuid();
+            Guid[] departmentIds = new Guid[3];
+            for(int i = 0; i< 3;i++)
+            {
+                departmentIds[i] = Guid.NewGuid();
+            }
             //增加一个部门
             context.Departments.AddRange(
                 new Department
                 {
-                    Id = departmentId1,
+                    Id = departmentIds[0],
                     Name = "C215F1",
                     ParentId = Guid.Empty
                 },
                 new Department
                 {
-                    Id = departmentId2,
+                    Id = departmentIds[1],
                     Name = "C320F1",
                     ParentId = Guid.Empty
                 },
                  new Department
                  {
-                     Id = departmentId3,
+                     Id = departmentIds[2],
                      Name = "C321F1",
                      ParentId = Guid.Empty
                  }
@@ -146,26 +148,14 @@ namespace NetCoreMvcServer.Models
 
 
 
-            int totalcount = 35;
+            int totalcount = 3;
             Terminal[] ts = new Terminal[totalcount];
             for(int i = 0; i< totalcount; i++)
             {
                 Guid departmentId = Guid.Empty;
-                if (i < totalcount / 3)
-                {
-                    departmentId = departmentId1;
-                }
-                else if (i >=  totalcount / 3 && i < totalcount / 3 * 2)
-                {
-                    departmentId = departmentId2;
-                }
-                else
-                {
-                    departmentId = departmentId3;
-                }
+                departmentId = departmentIds[i%3];
 
-                //测试用
-                departmentId = departmentId1;
+
 
                 Random rx = new Random(i);
                 Random ry = new Random(i*i);
@@ -191,7 +181,7 @@ namespace NetCoreMvcServer.Models
             {
                 GroundTruth gt = new GroundTruth
                 {
-                    DepartmentId = departmentId1,
+                    DepartmentId = departmentIds[0],
                     ip = "192.168.1." + (i + 100).ToString(),
                     desc = "GroundTruth:" + i.ToString(),
                 };
