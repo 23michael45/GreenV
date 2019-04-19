@@ -1,7 +1,10 @@
-﻿using System;
+﻿using ConsoleServer;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -11,117 +14,87 @@ namespace SimulateClient
 {
     class Program
     {
-        static UdpUser client;
-        static Dictionary<int, byte[]> dic = new Dictionary<int, byte[]>();
+        static UdpListener _ListenClient;
+        static UdpUser _Client;
+
+
+        static CommandParser _CmdParser;
+
+        static string _ServerIP = "192.168.1.183";
+        static int _SendToServerPort = 4000;
 
         static void Main(string[] args)
         {
 
-            string ip = args[0];
-            int port = Convert.ToInt32(args[1]);
+            StartUdpClient();
 
-            client = UdpUser.ConnectTo(ip,port);
 
-            bool quit = false;
 
-            for (int i = 0; i < 33; i++)
-            {
-                dic[i] = Pack(31, (Int16)i);
-
-            }
-            while (!quit)
-            {
-                SendOnce();
-                Thread.Sleep(30);
-            }
-
-          
+            Console.Read();
 
         }
-        static void SendOnce()
+
+
+
+        static void StartUdpClient()
         {
-            for (int i = 0; i < 33; i++)
+            _CmdParser = new CommandParser();
+            //create a new client
+            _Client = UdpUser.ConnectTo(_ServerIP, _SendToServerPort);
+            _ListenClient = new UdpListener();
+            //wait for reply messages from server and send them to console 
+            Task.Factory.StartNew(async () =>
             {
-                client.Send(dic[i]);
-                Console.Write("Send IP:" + i);
-            }
-        }
-
-        static byte[] Pack(Int16 r, Int16 g)
-        {
-
-            MemoryStream mStream = new MemoryStream();
-            BinaryWriter mWriter = new BinaryWriter(mStream);
+                while (true)
+                {
+                    try
+                    {
+                        Package package = await _ListenClient.Receive();
 
 
-
-            char cmd = 'a';
-            mWriter.Write(cmd);
-            Int16 frame = 1;
-            mWriter.Write(frame);
-
-            Int16 len = 1212;
-            mWriter.Write(len);
-
-            Int32 timestamps = Int32.MaxValue;
-            mWriter.Write(timestamps);
-
-            Int32 timestampms = Int32.MaxValue;
-            mWriter.Write(timestampms);
+                        _CmdParser.ReceiveData(package);
 
 
-            Int16 rate = r;
-            mWriter.Write(rate);
-            Int16 gain = g;
-            mWriter.Write(gain);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Write(ex);
+                    }
+                }
+            });
 
 
-            byte[] data = new byte[1200];
-            for(int i = 0; i < 1200;i++)
+            Task.Factory.StartNew(async () =>
             {
-                data[i] = 0xff;
-            }
-            mWriter.Write(data);
-
-            mStream.Seek(0, SeekOrigin.Begin);
-            return mStream.ToArray();
-        }
+                while (true)
+                {
+                    try
+                    {
 
 
-        abstract class UdpBase
-        {
-            protected UdpClient Client;
+                        IPEndPoint iep = new IPEndPoint(IPAddress.Parse(_ServerIP), _SendToServerPort);
 
 
-            protected UdpBase()
-            {
-                Client = new UdpClient();
-            }
-            
-        }
+                        var package = _CmdParser.SendSensorData(iep);
+                        _Client.Send(package._FullData);
 
-        //Client
-        class UdpUser : UdpBase
-        {
-            private UdpUser() { }
 
-            public static UdpUser ConnectTo(string hostname, int port)
-            {
-                var connection = new UdpUser();
-                connection.Client.Connect(hostname, port);
-                return connection;
-            }
+                        package = _CmdParser.SendGroundTruthData(iep);
+                        _Client.Send(package._FullData);
 
-            public void Send(string message)
-            {
-                var datagram = Encoding.ASCII.GetBytes(message);
-                Send(datagram);
-            }
-            public void Send(byte[] datagram)
-            {
-                Client.Send(datagram, datagram.Length);
-            
-            }
+
+                        Console.Write("\nSend T");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Write(ex);
+                    }
+                    Thread.Sleep(2000);
+                }
+            });
+
+
         }
     }
 }

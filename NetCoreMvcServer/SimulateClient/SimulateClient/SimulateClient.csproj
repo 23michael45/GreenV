@@ -42,7 +42,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HardwareServer\ConsoleServer\CommandParser.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\IJsonWrapper.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonData.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonException.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonMapper.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonMockWrapper.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonReader.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\JsonWriter.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\Lexer.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\LitJson\ParserToken.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\MainEntry.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\PackageParser.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\QueueNeedRsp.cs" />
+    <Compile Include="HardwareServer\ConsoleServer\UdpUtility.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Program_Old.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
