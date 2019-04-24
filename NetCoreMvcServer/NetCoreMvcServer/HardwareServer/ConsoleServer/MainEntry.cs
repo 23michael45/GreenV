@@ -23,7 +23,8 @@ namespace ConsoleServer
         static UdpUser _Client;
 
         static int _TerminalPort = 5000;
-        static int _ListenOnPort = 4000;
+        static int _GroundTruthPort = 4000;
+        static int _ListenOnPort = 5000;
         static int _WebPort = 6000;
 
         static string _MCUFilePath = @"D:\DevelopProj\GreenV\Document\STM32F107_PTP.bin";
@@ -49,8 +50,12 @@ namespace ConsoleServer
             fs = new FileStream("udplistenport.txt", FileMode.Open);
             file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
             eport = file.ReadLine();
-            _TerminalPort = Convert.ToInt32(eport);
             _ListenOnPort = Convert.ToInt32(eport);
+
+            fs = new FileStream("udpgroundtruthport.txt", FileMode.Open);
+            file = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true, 128);
+            eport = file.ReadLine();
+            _GroundTruthPort = Convert.ToInt32(eport);
 
             List<string> SendCBNames = new List<string>();
             SendCBNames.Add("SendT");
@@ -83,9 +88,18 @@ namespace ConsoleServer
         {
             return GetTerminalIPEndPoint(IPAddress.Parse(ip));
         }
+        public static IPEndPoint GetGroundTruthIPEndPoint(string ip)
+        {
+            return GetGroundTruthIPEndPoint(IPAddress.Parse(ip));
+        }
+
         public static IPEndPoint GetTerminalIPEndPoint(IPAddress ip)
         {
             return new IPEndPoint(ip, _TerminalPort);
+        }
+        public static IPEndPoint GetGroundTruthIPEndPoint(IPAddress ip)
+        {
+            return new IPEndPoint(ip, _GroundTruthPort);
         }
 
         public static IPEndPoint GetServerListenOnIPEndPoint(IPAddress ip)
@@ -324,22 +338,22 @@ namespace ConsoleServer
             {
                 if (param == "o")
                 {
-                    SendToTerminal(_CmdParser.SendGroundTruthRsp(MainEntry.GetTerminalIPEndPoint(ip), true));
+                    SendToTerminal(_CmdParser.SendGroundTruthRsp(MainEntry.GetGroundTruthIPEndPoint(ip), true));
                 }
                 else if (param == "e")
                 {
 
-                    SendToTerminal(_CmdParser.SendGroundTruthRsp(MainEntry.GetTerminalIPEndPoint(ip), false));
+                    SendToTerminal(_CmdParser.SendGroundTruthRsp(MainEntry.GetGroundTruthIPEndPoint(ip), false));
                 }
             }
             else if (cmd == "y")
             {
-                SendToTerminal(_CmdParser.SendSync(MainEntry.GetTerminalIPEndPoint(ip)));
+                SendToTerminal(_CmdParser.SendSync(MainEntry.GetGroundTruthIPEndPoint(ip)));
 
             }
             else if (cmd == "Y")
             {
-                SendToTerminal(_CmdParser.SendSyncAuto(MainEntry.GetTerminalIPEndPoint(ip),"Y>t1+t2"));
+                SendToTerminal(_CmdParser.SendSyncAuto(MainEntry.GetGroundTruthIPEndPoint(ip),"Y>t1+t2"));
 
             }
         }
