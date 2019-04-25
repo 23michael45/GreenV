@@ -23,22 +23,29 @@ namespace NetCoreMvcServer.Controllers
         [HttpPost]
         public IActionResult SwitchLanguage()
         {
-            string slang = Request.Form["Language"];
+            try
+            {
+                string slang = Request.Form["Language"];
 
-            slang = slang.Replace("_", "-");
-            Response.Cookies.Append(
-            CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(slang)),
-            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(1) }
-             );
-            
-            string CurrentController = "";
-            Request.Cookies.TryGetValue("CurrentController", out CurrentController);
-            CurrentController = CurrentController.Substring(CurrentController.LastIndexOf('.') + 1);
-            CurrentController = CurrentController.Replace("Controller", "");
+                slang = slang.Replace("_", "-");
+                Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(slang)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(1) }
+                 );
 
+                string CurrentController = "";
+                Request.Cookies.TryGetValue("CurrentController", out CurrentController);
+                CurrentController = CurrentController.Substring(CurrentController.LastIndexOf('.') + 1);
+                CurrentController = CurrentController.Replace("Controller", "");
 
-            return RedirectToAction("Index", CurrentController);
+                return RedirectToAction("Index", CurrentController);
+            }
+            catch(Exception e)
+            {
+
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public IActionResult Navigate(string url)

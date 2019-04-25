@@ -10,7 +10,7 @@ namespace ConsoleServer
 {
 
 
-    abstract class UdpBase
+    public abstract class UdpBase
     {
         protected UdpClient Client;
 
@@ -46,7 +46,7 @@ namespace ConsoleServer
     }
 
     //Server
-    class UdpListener : UdpBase
+    public class UdpListener : UdpBase
     {
         private IPEndPoint _listenOn;
 
@@ -72,12 +72,11 @@ namespace ConsoleServer
         public void SendToTerminal(Package pkg)
         {
             try
-            {
-                
+            { 
                 _SendClient.Send(pkg._FullData, pkg._FullData.Length, pkg._SendTo);
              
 
-                Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", pkg._SendTo.Address.ToString(), pkg._FullData.Length));
+                //Console.WriteLine(string.Format("Send To Terminal: {0} Data Length: {1}", pkg._SendTo.Address.ToString(), pkg._FullData.Length));
             }
             catch(Exception ex)
             {

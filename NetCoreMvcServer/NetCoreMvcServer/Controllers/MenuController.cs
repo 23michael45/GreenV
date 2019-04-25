@@ -39,6 +39,10 @@ namespace NetCoreMvcServer.Controllers
             List<TreeModel> treeModels = new List<TreeModel>();
             foreach (var menu in menus)
             {
+                if(menu.Name == "Share_GroundTruthData")
+                {
+                    continue;
+                }
                 treeModels.Add(new TreeModel() { Id = menu.Id.ToString(), Text = menu.Name, Parent = menu.ParentId == Guid.Empty ? "#" : menu.ParentId.ToString() });
             }
             return Json(treeModels);

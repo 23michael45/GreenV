@@ -363,7 +363,7 @@ namespace ConsoleServer
         public static void SendT(string ip,Action<object> cb)
         {
             _SendCheckCallBackDic["SendT"][ip] = cb;
-            SendToTerminal(_CmdParser.SendCheck(MainEntry.GetTerminalIPEndPoint(ip)));
+            SendToTerminal(_CmdParser.SendCheck(MainEntry.GetTerminalIPEndPoint(ip)), false);
         }
 
         public static void SendS(string ip,bool start,Action<object> cb)
@@ -371,14 +371,14 @@ namespace ConsoleServer
             if(start)
             {
                 _SendCheckCallBackDic["SendST"][ip] = cb;
-                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),true));
+                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),true),false);
 
             }
             else
             {
 
                 _SendCheckCallBackDic["SendSP"][ip] = cb;
-                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),false));
+                SendToTerminal(_CmdParser.SendStartStop(MainEntry.GetTerminalIPEndPoint(ip),false), false);
             }
 
         }

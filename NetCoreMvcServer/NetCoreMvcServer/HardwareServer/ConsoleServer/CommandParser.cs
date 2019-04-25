@@ -642,11 +642,11 @@ namespace ConsoleServer
 
 
 
-                if (_MySqlConnector != null)
-                {
-                    _MySqlConnector.InsertGroundTruth(ip, timestamps, timestampms, nodeIndex,lr);
+                //if (_MySqlConnector != null)
+                //{
+                //    _MySqlConnector.InsertGroundTruth(ip, timestamps, timestampms, nodeIndex,lr);
 
-                }
+                //}
 
 
                 _GroundTruthCache.Insert(ip, nodeIndex,timestamps, timestampms, lr);

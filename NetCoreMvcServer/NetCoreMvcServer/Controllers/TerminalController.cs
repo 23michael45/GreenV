@@ -262,8 +262,16 @@ namespace NetCoreMvcServer.Controllers
 
         public IActionResult GetOnLineTerminals()
         {
+            if(_ConnectedTerminals == null || _ConnectedTerminals.Count <= 0)
+            {
+                return Json(new { });
+            }
+            else
+            {
+                return Json(new { ips = _ConnectedTerminals, state = "ok" });
 
-            return Json(new { ips = _ConnectedTerminals, state = "ok" });
+            }
+
 
         }
         #endregion

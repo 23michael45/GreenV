@@ -139,7 +139,7 @@ namespace NetCoreMvcServer.Utility
             }
             catch
             {
-                throw;
+                //throw;
             }
         }
 

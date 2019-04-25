@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading;
 
 using ConsoleServer;
+using SimulateClient;
 
 namespace ConsoleServer
 {
@@ -144,14 +145,17 @@ namespace ConsoleServer
                     reader = new BinaryReader(stream);
                 }
 
-                QueueNeedRsp.Instance.RemovePackage(cmd);
+                //QueueNeedRsp.Instance.RemovePackage(cmd);
 
 
                 if (cmd == 't')
                 {
                     ReceiveCheck(datalen, reader, ip);
                 }
-
+                else if (cmd == 's')
+                {
+                    ReceiveStartStop(datalen, reader, ip);
+                }
                 //if (cmd == 'T')
                 //{
                 //    ReceiveCheck(datalen, reader, ip);
@@ -355,10 +359,14 @@ namespace ConsoleServer
             if (bstart)
             {
                 writer.Write('t');
+
+                Program.StartSendData();
             }
             else
             {
                 writer.Write('p');
+
+                Program.StopSendData();
 
             }
             stream.Seek(0, SeekOrigin.Begin);
@@ -367,8 +375,13 @@ namespace ConsoleServer
             byte[] buffer = new byte[stream.Length];
             Buffer.BlockCopy(stream.GetBuffer(), 0, buffer, 0, (int)stream.Length);
 
-            return SendCmdBase(iep,'s', 0, buffer);
+
+
+            return SendCmdBase(iep,'S', 0, buffer);
         }
+
+
+
 
         public TerminalPackage SendCollect(IPEndPoint iep, Int16 n, Int16 m)
         {
@@ -485,36 +498,42 @@ namespace ConsoleServer
         {
             Console.WriteLine("ReceiveCheck OK");
 
+            var pkg = SendCheck(MainEntry.GetTerminalIPEndPoint(ip));
+            Console.WriteLine("ReceiveCheck OK Pkg");
+            MainEntry.SendToTerminal(pkg, false);
 
-            MainEntry.SendToTerminal(SendCheck(MainEntry.GetTerminalIPEndPoint(ip)), false);
-
+            Console.WriteLine("ReceiveCheck OK Finish");
         }
 
         void ReceiveStartStop(int len, BinaryReader reader, string ip)
         {
-            if(len == 1)
+            Console.WriteLine("ReceiveStartStop Start");
+            if (len == 1)
             {
                 byte bytedata = reader.ReadByte();
 
                 char ret = (char)bytedata;
-
+     
                 if (ret == 't')
                 {
 
-                    Console.WriteLine("ReceiveStart OK");
-                    MainEntry.SendCBParse("SendST", ip);
+                    Console.WriteLine("ReceiveStart t start OK");
+
+                    Program.StartSendData();
+                    //MainEntry.SendCBParse("SendST", ip);
                 }
                 else if (ret == 'p')
                 {
 
-                    Console.WriteLine("ReceiveStop OK");
-                    MainEntry.SendCBParse("SendSP", ip);
+                    Console.WriteLine("ReceiveStop p stop OK");
+                    Program.StopSendData();
+                    //MainEntry.SendCBParse("SendSP", ip);
                 }
                 else if (ret == 'e')
                 {
                     Console.WriteLine("ReceiveStartStop Error");
-                    MainEntry.SendCBParse("SendST", "error");
-                    MainEntry.SendCBParse("SendSP", "error");
+                    //MainEntry.SendCBParse("SendST", "error");
+                    //MainEntry.SendCBParse("SendSP", "error");
                 }
 
             }

@@ -20,8 +20,8 @@ namespace SimulateClient
 
         static CommandParser _CmdParser;
 
-        static string _ServerIP = "192.168.1.183";
-        static int _SendToServerPort = 4000;
+        static string _ServerIP = "192.168.1.8";
+        static int _SendToServerPort = 5000;
 
         static void Main(string[] args)
         {
@@ -42,6 +42,7 @@ namespace SimulateClient
             //create a new client
             _Client = UdpUser.ConnectTo(_ServerIP, _SendToServerPort);
             _ListenClient = new UdpListener();
+            MainEntry._Server = _ListenClient;
             //wait for reply messages from server and send them to console 
             Task.Factory.StartNew(async () =>
             {
@@ -64,13 +65,21 @@ namespace SimulateClient
             });
 
 
+
+        }
+
+
+
+        static bool mSending = false;
+        public static void StartSendData()
+        {
+            mSending = true;
             Task.Factory.StartNew(async () =>
             {
-                while (true)
+                while (mSending)
                 {
                     try
                     {
-
 
                         IPEndPoint iep = new IPEndPoint(IPAddress.Parse(_ServerIP), _SendToServerPort);
 
@@ -93,8 +102,11 @@ namespace SimulateClient
                     Thread.Sleep(2000);
                 }
             });
+        }
+        public static void StopSendData()
+        {
 
-
+            mSending = false;
         }
     }
 }

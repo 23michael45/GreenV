@@ -214,6 +214,7 @@ function updatesetup(ip) {
 	})
 }
 function startterminal(ip) {
+    
 	$.ajax({
 		type: "Get",
 		url: "/Terminal/StartTerminal?ip=" + ip + "&_t=" + new Date().getTime(),
@@ -221,6 +222,7 @@ function startterminal(ip) {
 	})
 }
 function stopterminal(ip) {
+ 
 	$.ajax({
 		type: "Get",
 		url: "/Terminal/StopTerminal?ip=" + ip + "&_t=" + new Date().getTime(),
@@ -379,7 +381,7 @@ function startCheckingTimer() {
 			});
 		},
 
-		10
+		1000
 	);
 }
 

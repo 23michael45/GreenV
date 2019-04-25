@@ -90,24 +90,24 @@ namespace NetCoreMvcServer.Models
                    Icon = "fa fa-link",
                    Url = "App_SensorData/Index",
                },
-               new Menu
-               {
-                   Name = "Share_GroundTruthData",
-                   Code = "App_GroundTruthData",
-                   SerialNumber = 4,
-                   ParentId = Guid.Empty,
-                   Icon = "fa fa-link",
-                   Url = "App_GroundTruthData/Index",
-               },
-               new Menu
-               {
-                   Name = "Share_Map",
-                   Code = "Map",
-                   SerialNumber = 5,
-                   ParentId = Guid.Empty,
-                   Icon = "fa fa-link",
-                   Url = "Map/Index",
-               },
+               //new Menu
+               //{
+               //    Name = "Share_GroundTruthData",
+               //    Code = "App_GroundTruthData",
+               //    SerialNumber = 4,
+               //    ParentId = Guid.Empty,
+               //    Icon = "fa fa-link",
+               //    Url = "App_GroundTruthData/Index",
+               //},
+               //new Menu
+               //{
+               //    Name = "Share_Map",
+               //    Code = "Map",
+               //    SerialNumber = 5,
+               //    ParentId = Guid.Empty,
+               //    Icon = "fa fa-link",
+               //    Url = "Map/Index",
+               //},
                new Menu
                {
                    Name = "Share_User_Manage",

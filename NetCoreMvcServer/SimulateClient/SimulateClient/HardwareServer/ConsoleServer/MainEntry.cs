@@ -16,7 +16,7 @@ namespace ConsoleServer
 
         static bool _bQuit = false;
         static CommandParser _CmdParser = new CommandParser();
-        static UdpListener _Server;
+        public static UdpListener _Server;
         static UdpUser _Client;
 
         static int _TerminalPort = 5000;
