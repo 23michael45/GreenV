@@ -82,7 +82,7 @@ function checkAll(obj) {
             $(this).prop("checked", true)
 
         }
-        if (obj.checked == false) {
+        if (obj.checked === false) {
             $(this).prop("checked", false)
         }
     });

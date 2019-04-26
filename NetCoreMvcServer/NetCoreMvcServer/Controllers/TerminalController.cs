@@ -24,8 +24,8 @@ namespace NetCoreMvcServer.Controllers
                 StartTimer();
             }
             public bool mIsStart = false;
-            public short mRate = 0;
-            public short mGain = 0;
+            public ushort mRate = 0;
+            public ushort mGain = 0;
 
             System.Timers.Timer _Timer;
             void StartTimer()
@@ -286,9 +286,9 @@ namespace NetCoreMvcServer.Controllers
         {
             return TaskStartStop(ip,false).Result;
         }
-        public JsonResult UpdateSetup(string ip,short m,short n)
+        public JsonResult UpdateSetup(string ip,ushort rate,ushort gain)
         {
-            return TaskSetup(ip,m,n).Result;
+            return TaskSetup(ip,rate,gain).Result;
 
         }
         public JsonResult StartAll(Guid departmentId)
@@ -305,12 +305,12 @@ namespace NetCoreMvcServer.Controllers
 
             return TaskStartStopAll(result,false).Result;
         }
-        public JsonResult UpdateSetupAll(Guid departmentId,short m,short n)
+        public JsonResult UpdateSetupAll(Guid departmentId,ushort rate,ushort gain)
         {
             int rowCount = 0;
             var result = _service.GetTerminalByDepartment(departmentId, 1, 256, out rowCount);
 
-            return TaskSetupAll(result,m,n).Result;
+            return TaskSetupAll(result,rate,gain).Result;
         }
 
 
@@ -360,13 +360,13 @@ namespace NetCoreMvcServer.Controllers
 
         }
 
-        Task<JsonResult> TaskSetup(string ip,short m,short n)
+        Task<JsonResult> TaskSetup(string ip,ushort rate,ushort gain)
         {
             return Task.Run(() =>
             {
                 bool received = false;
                 string receiveip = "";
-                MainEntry.SendC(ip, m,n, (obj) =>
+                MainEntry.SendC(ip, rate,gain, (obj) =>
                 {
                     receiveip = (string)obj;
 
@@ -381,8 +381,8 @@ namespace NetCoreMvcServer.Controllers
                         ConnectedTerminalState t = _ConnectedTerminals.GetStringKey(receiveip);
                         if (t != null)
                         {
-                            t.mRate = m;
-                            t.mGain = n;
+                            t.mRate = rate;
+                            t.mGain = gain;
                         }
 
                     }
@@ -445,7 +445,7 @@ namespace NetCoreMvcServer.Controllers
                 return Json(new { ips = _ConnectedTerminals, state = "ok" });
             });
         }
-        Task<JsonResult> TaskSetupAll(List<TerminalDto> ts, short m,short n)
+        Task<JsonResult> TaskSetupAll(List<TerminalDto> ts, ushort rate,ushort gain)
         {
             ConnectedTerminalState cts;
             return Task.Run(() =>
@@ -454,7 +454,7 @@ namespace NetCoreMvcServer.Controllers
                 foreach (TerminalDto t in ts)
                 {
                     string receiveip = "";
-                    MainEntry.SendC(t.ip, m,n, (obj) =>
+                    MainEntry.SendC(t.ip, rate,gain, (obj) =>
                     {
 
                         receiveip = (string)obj;
@@ -471,8 +471,8 @@ namespace NetCoreMvcServer.Controllers
                                 cts = _ConnectedTerminals.GetStringKey(receiveip);
                                 if (cts != null)
                                 {
-                                    cts.mRate = m;
-                                    cts.mGain = n;
+                                    cts.mRate = rate;
+                                    cts.mGain = gain;
                                 }
 
                             }

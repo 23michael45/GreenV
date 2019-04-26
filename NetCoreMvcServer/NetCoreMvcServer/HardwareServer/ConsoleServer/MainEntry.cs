@@ -317,10 +317,10 @@ namespace ConsoleServer
             else if (cmd == "c")
             {
 
-                short n = Convert.ToInt16(ParseConsoleLine(s, 2));
-                short m = Convert.ToInt16(ParseConsoleLine(s, 3));
+                ushort gain = Convert.ToUInt16(ParseConsoleLine(s, 2));
+                ushort rate = Convert.ToUInt16(ParseConsoleLine(s, 3));
 
-                SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip), n, m));
+                SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip), gain, rate));
             }
             else if (cmd == "u")
             {
@@ -382,10 +382,10 @@ namespace ConsoleServer
             }
 
         }
-        public static void SendC(string ip,short m,short n, Action<object> cb)
+        public static void SendC(string ip,ushort rate,ushort gain, Action<object> cb)
         {
             _SendCheckCallBackDic["SendC"][ip] = cb;
-            SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip),m,n));
+            SendToTerminal(_CmdParser.SendCollect(MainEntry.GetTerminalIPEndPoint(ip),gain,rate));
         }
         public static void SendY(string ip,Action<object> cb)
         {

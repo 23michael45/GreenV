@@ -139,11 +139,11 @@ namespace ConsoleServer
                 return "";
             }
         }
-        public Int16 GetInt16(string key)
+        public UInt16 GetUInt16(string key)
         {
             try
             {
-                return Convert.ToInt16(_JsonData[key]);
+                return Convert.ToUInt16(_JsonData[key]);
             }
             catch (Exception ex)
             {

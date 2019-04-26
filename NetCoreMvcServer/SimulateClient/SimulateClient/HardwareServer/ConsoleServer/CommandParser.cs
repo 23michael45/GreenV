@@ -108,7 +108,7 @@ namespace ConsoleServer
                 else if (cmd == "collection")
                 {
                     IPEndPoint iep = MainEntry.GetTerminalIPEndPoint(pkg.GetString("ip"));
-                    MainEntry.SendToTerminal(SendCollect(iep, pkg.GetInt16("n"),pkg.GetInt16("m")));
+                    MainEntry.SendToTerminal(SendCollect(iep, pkg.GetInt16("gain"),pkg.GetInt16("rate")));
 
                 }
                 else if (cmd == "mcu")
@@ -155,6 +155,11 @@ namespace ConsoleServer
                 else if (cmd == 's')
                 {
                     ReceiveStartStop(datalen, reader, ip);
+                }
+                else if (cmd == 'c')
+                {
+
+                    ReceiveCollection(datalen, reader, ip);
                 }
                 //if (cmd == 'T')
                 //{
@@ -294,12 +299,12 @@ namespace ConsoleServer
                 long stamp = 999;
                 bw.Write(stamp);
 
-                short rate = 11;
+                ushort rate = Program.mRate;
                 bw.Write(rate);
-                short gain = 22;
+                ushort gain = Program.mGain;
                 bw.Write(gain);
 
-                for(int i = 0; i< 1200;i++)
+                for (int i = 0; i< 1200;i++)
                 {
                     byte b = (byte)i;
                     bw.Write(b);
@@ -542,23 +547,14 @@ namespace ConsoleServer
 
         void ReceiveCollection(int len, BinaryReader reader, string ip)
         {
-            if (len == 1)
-            {
-                char ret = (char)reader.ReadByte();
 
-                if (ret == 'o')
-                {
+                ushort rate = (char)reader.ReadUInt16();
+                ushort gain = (char)reader.ReadUInt16();
 
-                    Console.WriteLine("ReceiveCollection OK");
-                    MainEntry.SendCBParse("SendC", ip);
-                }
-                else if (ret == 'e')
-                {
-
-                    Console.WriteLine("ReceiveCollection Error");
-                    MainEntry.SendCBParse("SendC", "error");
-                }
-            }
+            Console.WriteLine(string.Format("ReceiveCollection OK n gain = {0}  m  rate = {1}", gain, rate));
+            Program.mGain = gain;
+            Program.mRate = rate;
+            
         }
         void ReceiveMCU(int len, BinaryReader reader, string ip)
         {

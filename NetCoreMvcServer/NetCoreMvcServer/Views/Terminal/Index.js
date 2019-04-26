@@ -156,16 +156,13 @@ function checkresult(data) {
 	$.each(data.ips, function (i, item) {
 		var tr = "<tr>";
 		tr += "<td align='center'><input type='checkbox' class='checkboxs' value='" + item.mId + "'/></td>";
-		tr += "<td>" + (item.mId == null ? "" : item.mId) + "</td>";
+		tr += "<td>" + (item.mId === null ? "" : item.mId) + "</td>";
 
 		var reg = new RegExp("\\.", "g");
 		var replacedId = item.mId.replace(reg , "_");
 
-
-		tr += "<td><input type='text' id='rate_input_" + replacedId+ "'/>" + "</td>";
-		tr += "<td><input type='text' id='gain_input_" + replacedId + "'/>" + "</td>";
-
-		
+        tr += "<td><div id='rate_input_" + replacedId + "'/>" + "</td>";
+        tr += "<td><div id='gain_input_" + replacedId + "'/>" + "</td>";
 
 		if (item.mIsStart) {
 			tr += "<td><button class='btn btn-info btn-xs' href='javascript:;' onclick='updatesetup(\"" + item.mId + "\")'> " + updateone + " </button> <button class='btn btn-info btn-xs' href='javascript:;' onclick='stopterminal(\"" + item.mId + "\")'> " + stopone +" </button>  </td>"
@@ -179,8 +176,8 @@ function checkresult(data) {
 		tr += "</tr>";
 		$("#tableconnectedBody").append(tr);
 
-		$('#rate_input_' + replacedId).val(item.mRate);
-		$('#gain_input_' + replacedId).val(item.mGain);
+		$('#rate_input_' + replacedId).text(item.mRate);
+		$('#gain_input_' + replacedId).text(item.mGain);
 
 
 	})
@@ -204,12 +201,14 @@ function updatesetup(ip) {
 
 	var reg = new RegExp("\\.", "g");
 	var replacedId =  ip.replace(reg, "_");
-	var rate = $('#rate_input_' + replacedId).val();
-	var gain = $('#gain_input_' + replacedId).val();
+	//var rate = $('#rate_input_' + replacedId).val();
+    //var gain = $('#gain_input_' + replacedId).val();
+    var rate = $('#rate_input').val();
+    var gain = $('#gain_input').val();
 	
 	$.ajax({
 		type: "Get",
-		url: "/Terminal/UpdateSetup?ip=" + ip + "&m=" + rate + "&n=" + gain + "&_t=" + new Date().getTime(),
+		url: "/Terminal/UpdateSetup?ip=" + ip + "&rate=" + rate + "&gain=" + gain + "&_t=" + new Date().getTime(),
 		success: checkresult
 	})
 }
@@ -247,7 +246,7 @@ function sendupdatesetupall() {
 	var gain = $('#gain_input').val();
 	$.ajax({
 		type: "Get",
-		url: "/Terminal/UpdateSetupAll?departmentId=" + selectedId + "&m=" + rate + "&n=" + gain + "&_t=" + new Date().getTime(),
+		url: "/Terminal/UpdateSetupAll?departmentId=" + selectedId + "&rate=" + rate + "&gain=" + gain + "&_t=" + new Date().getTime(),
 		success: checkresultupdate
 	})
 }

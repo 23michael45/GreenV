@@ -69,7 +69,8 @@ namespace SimulateClient
         }
 
 
-
+        public static ushort mGain = 0;
+        public static ushort mRate = 0;
         static bool mSending = false;
         public static void StartSendData()
         {

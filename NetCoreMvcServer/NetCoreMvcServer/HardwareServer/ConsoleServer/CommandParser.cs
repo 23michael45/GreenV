@@ -122,7 +122,7 @@ namespace ConsoleServer
                 else if (cmd == "collection")
                 {
                     IPEndPoint iep = MainEntry.GetTerminalIPEndPoint(pkg.GetString("ip"));
-                    MainEntry.SendToTerminal(SendCollect(iep, pkg.GetInt16("n"),pkg.GetInt16("m")));
+                    MainEntry.SendToTerminal(SendCollect(iep, pkg.GetUInt16("gain"),pkg.GetUInt16("rate")));
 
                 }
                 else if (cmd == "mcu")
@@ -324,13 +324,14 @@ namespace ConsoleServer
             return SendCmdBase(iep,'s', 0, buffer);
         }
 
-        public TerminalPackage SendCollect(IPEndPoint iep, Int16 n, Int16 m)
+        public TerminalPackage SendCollect(IPEndPoint iep, UInt16 gain, UInt16 rate)
         {
             
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(n);
-            writer.Write(m);
+     
+            writer.Write(rate);
+            writer.Write(gain);
             stream.Seek(0, SeekOrigin.Begin);
 
 
@@ -572,15 +573,19 @@ namespace ConsoleServer
             //    }
             //}
 
-            if(TerminalController._ConnectedTerminals.ContainsStringKey(ip))
+            if (TerminalController._ConnectedTerminals.ContainsStringKey(ip))
             {
 
                 TerminalController._ConnectedTerminals.GetStringKey(ip).mIsStart = true;
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mRate = rate;
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mGain = gain;
                 TerminalController._ConnectedTerminals.GetStringKey(ip).ResetTimer();
             }
             else
             {
                 TerminalController._ConnectedTerminals.AddIfNotExistStringKey(ip);
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mRate = rate;
+                TerminalController._ConnectedTerminals.GetStringKey(ip).mGain = gain;
                 TerminalController._ConnectedTerminals.GetStringKey(ip).mIsStart = true;
             }
 
