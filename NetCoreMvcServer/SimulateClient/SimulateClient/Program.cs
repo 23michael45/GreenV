@@ -64,8 +64,31 @@ namespace SimulateClient
                 }
             });
 
+            Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    try
+                    {
+
+                        IPEndPoint iep = new IPEndPoint(IPAddress.Parse(_ServerIP), _SendToServerPort);
 
 
+                        var package = _CmdParser.SendMessage(iep);
+                        _Client.Send(package._FullData);
+
+
+
+                        Console.Write("\nSend M");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Write(ex);
+                    }
+                    Thread.Sleep(5000);
+                }
+            });
         }
 
 

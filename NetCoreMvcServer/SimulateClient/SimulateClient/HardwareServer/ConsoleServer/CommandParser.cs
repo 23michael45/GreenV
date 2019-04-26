@@ -386,6 +386,10 @@ namespace ConsoleServer
         }
 
 
+        public TerminalPackage SendMessage(IPEndPoint iep)
+        {
+            return SendCmdBase(iep, 'm', 0);
+        }
 
 
         public TerminalPackage SendCollect(IPEndPoint iep, Int16 n, Int16 m)

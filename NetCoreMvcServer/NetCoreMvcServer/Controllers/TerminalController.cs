@@ -32,7 +32,7 @@ namespace NetCoreMvcServer.Controllers
             {
                 _Timer = new System.Timers.Timer();
 
-                _Timer.Interval = 10000;
+                _Timer.Interval = 30000;
                 _Timer.Elapsed -= HandleTimer;
                 _Timer.Elapsed += HandleTimer;
 

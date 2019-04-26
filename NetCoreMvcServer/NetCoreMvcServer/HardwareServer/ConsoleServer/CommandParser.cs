@@ -611,6 +611,17 @@ namespace ConsoleServer
         {
 
             Console.WriteLine("ReceiveMessage OK");
+
+            if (TerminalController._ConnectedTerminals.ContainsStringKey(ip))
+            {
+                TerminalController._ConnectedTerminals.GetStringKey(ip).ResetTimer();
+            }
+            else
+            {
+                TerminalController._ConnectedTerminals.AddIfNotExistStringKey(ip);
+            }
+
+
             MainEntry.SendToTerminal(SendMessageRsp(MainEntry.GetTerminalIPEndPoint(ip)),false);
 
         }
